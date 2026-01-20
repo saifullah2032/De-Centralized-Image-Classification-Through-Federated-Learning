@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DecentralizedAI | Federated Learning Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/templatemo-606-string-master.css') }}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body>
+
+  <nav>
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-icon">FL</div>
+        DecentralizedAI
+      </a>
+      <ul class="nav-links">
+        <li><a href="#importance">Importance</a></li>
+        <li><a href="#modules">Modules</a></li>
+        <li><a href="#algorithm">Algorithm</a></li>
+        <li><a href="#tech">Tech Stack</a></li>
+      </ul>
+      <a href="/login" class="nav-cta"><span>Access Dashboard</span></a>
+      <button class="mobile-menu-btn">☰</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>●</span> Privacy-Preserving Image Classification
+        </div>
+        <h1>Mastering AI with <span class="highlight">Decentralized</span> Intelligence</h1>
+        <p class="hero-description">
+          Train powerful global models on local data without ever compromising privacy. 
+          Our portal leverages Federated Learning to synchronize knowledge across nodes.
+        </p>
+        <div class="hero-buttons">
+          <a href="/register" class="btn-primary">Get Started →</a>
+          <a href="/classify" class="btn-secondary">Test Global Model</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <div class="stat-value">Round 5</div>
+            <div class="stat-label">Current Training Cycle</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">100%</div>
+            <div class="stat-label">Privacy Guarantee</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">FedAvg</div>
+            <div class="stat-label">Aggregation Logic</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="guitar-wrapper">
+        <div class="guitar-card">
+          <div class="guitar-header">
+            <span class="guitar-title">System Status: Live Node Monitoring</span>
+            <div class="guitar-controls">
+                <span class="badge bg-success" style="padding: 5px 10px; border-radius: 5px; font-size: 0.8rem; background: #22c55e; color: white;">Online</span>
+            </div>
+          </div>
+          <div class="guitar-neck" style="padding: 20px; background: #1a1a1a; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+             <div class="text-center">
+                <i class="bi bi-shield-lock" style="font-size: 4rem; color: #f59e0b;"></i>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: #a3a3a3;">Raw data never leaves your device</p>
+             </div>
+          </div>
+          <div class="guitar-footer">
+            <div class="guitar-footer-row">
+              <span class="guitar-hint">Federated Averaging Protocol Active</span>
+              <div class="footer-controls">
+                <div class="sound-toggle">
+                  <span>SSL Security</span>
+                  <div class="toggle-switch active"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="features" id="importance">
+    <div class="section-container">
+      <div class="section-header">
+        <div class="section-label">Importance</div>
+        <h2 class="section-title">The Future of Secure Machine Learning</h2>
+        <p class="section-description">Traditional AI requires data centralization. We provide the alternative.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
+          <h3>Unmatched Privacy</h3>
+          <p>Local data stays local. Only model weights are shared, mitigating data leakage risks entirely.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-cpu"></i></div>
+          <h3>Edge Intelligence</h3>
+          <p>Utilize processing power on edge devices, reducing central server overhead and latency.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"><i class="bi bi-broadcast"></i></div>
+          <h3>Regulatory Compliance</h3>
+          <p>Easily meet GDPR and HIPAA requirements by keeping sensitive data within its original silo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="pricing" id="algorithm">
+    <div class="section-container">
+        <div class="section-header">
+          <div class="section-label">Step-by-Step</div>
+          <h2 class="section-title">The FedAvg Algorithm</h2>
+        </div>
+        <div class="pricing-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="pricing-card featured">
+            <div class="pricing-name">The Core Process</div>
+            <ul class="pricing-features" style="text-align: left;">
+              <li><strong>Local Training:</strong> Nodes train on local data slices.</li>
+              <li><strong>Update Upload:</strong> Only weights are sent to the server.</li>
+              <li><strong>Aggregation:</strong> Server averages updates via FedAvg.</li>
+              <li><strong>Model Broadcast:</strong> Global model is sent back to all nodes.</li>
+            </ul>
+          </div>
+          <div class="pricing-card">
+            <div class="pricing-name">Mathematical Foundation</div>
+            <p class="pricing-description">Global weights are calculated as a weighted average of local parameters.</p>
+            <div style="background: #242424; padding: 15px; border-radius: 8px; font-family: monospace; color: #f59e0b;">
+                w<sub>t+1</sub> = Σ (n<sub>k</sub> / n) * w<sub>t</sub><sup>k</sup>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section>
+
+  <section class="features" id="modules">
+    <div class="section-container">
+        <h2 class="section-title text-center">Core Modules</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <i class="bi bi-server fs-1 text-primary mb-3"></i>
+                <h3>Central Aggregator</h3>
+                <p>Coordinates training rounds and manages weight averaging using the Flower framework.</p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-laptop fs-1 text-primary mb-3"></i>
+                <h3>Distributed Clients</h3>
+                <p>Python scripts that perform local backpropagation on CIFAR-10 data partitions.</p>
+            </div>
+            <div class="feature-card">
+                <i class="bi bi-display fs-1 text-primary mb-3"></i>
+                <h3>Flask UI Dashboard</h3>
+                <p>Real-time visualization of global accuracy and client registration management.</p>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <section class="instructors" id="tech">
+    <div class="section-container">
+        <h2 class="section-title">Technologies Used</h2>
+        <div class="instructors-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="tech-card text-center p-3">
+                <i class="bi bi-filetype-py fs-1" style="color: #f59e0b;"></i>
+                <h5>Python / Flask</h5>
+            </div>
+            <div class="tech-card text-center p-3">
+                <i class="bi bi-flower1 fs-1" style="color: #22c55e;"></i>
+                <h5>Flower Framework</h5>
+            </div>
+            <div class="tech-card text-center p-3">
+                <i class="bi bi-gpu-card fs-1" style="color: #ef4444;"></i>
+                <h5>TensorFlow / Keras</h5>
+            </div>
+        </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-container">
+      <div class="footer-bottom">
+        <span>© 2025 DecentralizedAI. Empowering Privacy in ML.</span>
+        <span>Redesigned using <a href="https://templatemo.com" target="_blank">StringMaster UI</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/templatemo-606-string-scripts.js') }}"></script>
+</body>
+</html>

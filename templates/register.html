@@ -1,0 +1,153 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <style>
+        .register-wrapper {
+            min-height: 85vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .register-card {
+            background: #1a1a1a; /* bg-card from theme */
+            border: 1px solid #2e2e2e; /* border from theme */
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .register-header h3 {
+            font-weight: 700;
+            color: #fafafa;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .register-header p {
+            color: #a3a3a3;
+            font-size: 0.9rem;
+        }
+
+        .form-label {
+            color: #a3a3a3;
+            font-weight: 500;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control, .form-select {
+            background: #0d0d0d; /* bg-dark */
+            border: 1px solid #2e2e2e;
+            color: #fafafa;
+            padding: 0.8rem 1rem;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: #0d0d0d;
+            border-color: #f59e0b; /* accent */
+            box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.2);
+            color: #fafafa;
+        }
+
+        /* Styling for the dropdown arrow in dark mode */
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23a3a3a3' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        }
+
+        .btn-register {
+            background: #f59e0b; /* accent */
+            color: #0d0d0d;
+            font-weight: 700;
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: none;
+            width: 100%;
+            margin-top: 1.5rem;
+            transition: all 0.2s;
+        }
+
+        .btn-register:hover {
+            background: #fbbf24;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
+        }
+
+        .card-footer-custom {
+            margin-top: 1.5rem;
+            text-align: center;
+            padding-top: 1.5rem;
+            border-top: 1px solid #2e2e2e;
+            font-size: 0.85rem;
+            color: #737373;
+        }
+
+        .card-footer-custom a {
+            color: #f59e0b;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .role-hint {
+            font-size: 0.75rem;
+            color: #737373;
+            margin-top: 0.4rem;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="register-wrapper">
+    <div class="register-card">
+        <div class="register-header">
+            <div class="logo-icon mx-auto mb-3" style="width: 48px; height: 48px; background: #f59e0b; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #0d0d0d; font-weight: 800; font-size: 1.5rem;">
+                FL
+            </div>
+            <h3>Join the Network</h3>
+            <p>Deploy your node and start decentralized training</p>
+        </div>
+
+        <form action="/register" method="POST">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" placeholder="Choose a unique username" required>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Create a strong password" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Node Role</label>
+                <select name="role" class="form-select" required>
+                    <option value="client" selected>Client (Training Node)</option>
+                    <option value="admin">Admin (Server Monitor)</option>
+                </select>
+                <div class="role-hint">
+                    <i class="bi bi-info-circle me-1"></i> 
+                    Clients contribute data; Admins manage global aggregation.
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-register">
+                Initialize Node <i class="bi bi-cpu ms-2"></i>
+            </div>
+        </form>
+
+        <div class="card-footer-custom">
+            Already registered? <a href="/login">Sign In here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

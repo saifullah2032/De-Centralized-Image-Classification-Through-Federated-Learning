@@ -1,0 +1,171 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    /* Theme Integration */
+    :root {
+        --bg-dark: #0d0d0d;
+        --bg-card: #1a1a1a;
+        --accent: #f59e0b;
+        --text-muted: #737373;
+        --border: #2e2e2e;
+    }
+
+    .results-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 6rem 2rem 4rem;
+    }
+
+    /* Result Split Layout */
+    .result-split {
+        display: grid;
+        grid-template-columns: 1fr 1.2fr;
+        gap: 2.5rem;
+        align-items: start;
+    }
+
+    .result-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2.5rem;
+        transition: all 0.3s ease;
+    }
+
+    /* Image Display Area */
+    .image-preview-container {
+        background: #000;
+        border-radius: 12px;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .result-img {
+        max-width: 100%;
+        max-height: 350px;
+        border-radius: 8px;
+        box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    /* Prediction Details */
+    .label-badge {
+        display: inline-block;
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--accent);
+        padding: 0.5rem 1.5rem;
+        border-radius: 100px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+        border: 1px solid var(--accent);
+    }
+
+    /* Progress Bar for Confidence */
+    .confidence-meter {
+        height: 12px;
+        background: #0d0d0d;
+        border-radius: 100px;
+        overflow: hidden;
+        margin: 1.5rem 0;
+        border: 1px solid var(--border);
+    }
+
+    .confidence-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--accent), #fbbf24);
+        border-radius: 100px;
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+
+    .tech-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.8rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
+    }
+
+    .tech-label { color: var(--text-muted); }
+    .tech-val { color: #fff; font-weight: 600; }
+
+    .btn-action {
+        background: var(--accent);
+        color: #0d0d0d;
+        border: none;
+        padding: 1rem;
+        border-radius: 10px;
+        font-weight: 700;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        transition: all 0.2s;
+        text-transform: uppercase;
+    }
+
+    .btn-action:hover {
+        background: #fbbf24;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(245, 158, 11, 0.2);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="results-wrapper">
+    <div class="hero-badge mb-4" style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--bg-card); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 100px; font-size: 0.85rem; color: var(--accent);">
+        <span>●</span> Inference Analysis Complete
+    </div>
+
+    <h1 class="display-4 fw-bold text-white mb-5">Classification <span style="color: var(--accent);">Result</span></h1>
+
+    <div class="result-split">
+        <div class="result-card">
+            <h5 class="text-white mb-4"><i class="bi bi-image me-2 text-warning"></i> Input Data</h5>
+            <div class="image-preview-container">
+                <img src="{{ url_for('static', filename='../' + img_path) }}" class="result-img" alt="Analyzed Image">
+            </div>
+            <p class="text-muted small text-center mb-0">Original Resolution: 32x32 (CIFAR-10 Scaled)</p>
+        </div>
+
+        <div class="result-card">
+            <h5 class="text-white border-bottom border-secondary pb-3 mb-4"><i class="bi bi-cpu me-2 text-warning"></i> Model Insight</h5>
+            
+            <p class="text-muted small mb-1">Global Model Prediction:</p>
+            <div class="label-badge">{{ label }}</div>
+
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="text-muted small mb-0">Confidence Level</p>
+                    <span class="text-white fw-bold">{{ confidence }}%</span>
+                </div>
+                <div class="confidence-meter">
+                    <div class="confidence-fill" style="width: {{ confidence }}%;"></div>
+                </div>
+            </div>
+
+            <div class="tech-row">
+                <span class="tech-label">Processing Engine</span>
+                <span class="tech-val">Federated MobileNetV2</span>
+            </div>
+            <div class="tech-row">
+                <span class="tech-label">Silo Transparency</span>
+                <span class="tech-val">Full (Local Privacy)</span>
+            </div>
+            <div class="tech-row">
+                <span class="tech-label">Inference Status</span>
+                <span class="text-success fw-bold">Verified</span>
+            </div>
+
+            <div class="mt-5">
+                <a href="/classify" class="btn-action">Run New Analysis <i class="bi bi-arrow-right-circle ms-2"></i></a>
+                <a href="/dashboard" class="btn btn-link text-muted w-100 mt-2" style="text-decoration: none;">Return to Command Center</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

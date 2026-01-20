@@ -1,0 +1,232 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    /* Theme Variables Integration */
+    :root {
+        --bg-dark: #0d0d0d;
+        --bg-card: #1a1a1a;
+        --accent: #f59e0b;
+        --accent-hover: #fbbf24;
+        --text-muted: #737373;
+        --border: #2e2e2e;
+    }
+
+    body { background: var(--bg-dark); color: #fafafa; }
+
+    .client-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 6rem 2rem 4rem;
+    }
+
+    /* Hero Badge & Header */
+    .node-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Top Stats Grid */
+    .node-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+    }
+
+    .stat-icon { font-size: 2rem; color: var(--accent); margin-bottom: 1rem; }
+    .stat-label { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .stat-value { font-size: 2.2rem; font-weight: 700; }
+
+    /* Main Console Split */
+    .command-split {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 2rem;
+    }
+
+    .glass-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2rem;
+    }
+
+    /* Terminal Styling */
+    .terminal-box {
+        background: #000;
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: 350px;
+        overflow-y: auto;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9rem;
+        color: #a3a3a3;
+        border: 1px solid var(--border);
+    }
+
+    /* Custom Form Elements */
+    .form-select-custom {
+        background: #0d0d0d;
+        border: 1px solid var(--border);
+        color: #fff;
+        padding: 1rem;
+        border-radius: 10px;
+        width: 100%;
+        margin-bottom: 1.5rem;
+        appearance: none;
+    }
+
+    .btn-action {
+        background: var(--accent);
+        color: #000;
+        border: none;
+        padding: 1rem;
+        border-radius: 10px;
+        width: 100%;
+        font-weight: 700;
+        text-transform: uppercase;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .btn-action:hover {
+        background: var(--accent-hover);
+        box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .pulse {
+        width: 10px; height: 10px; background: #22c55e; border-radius: 50%;
+        display: inline-block; margin-right: 8px; box-shadow: 0 0 10px #22c55e;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="client-wrapper">
+    <div class="node-badge">
+        <span>●</span> Client Training Node
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <h1 class="display-4 fw-bold">Local Trainer <span style="color: var(--accent);">Live</span></h1>
+            <p class="text-secondary fs-5">Decentralized processing node contributing to global aggregation.</p>
+        </div>
+        <div class="col-md-4 text-end d-flex align-items-center justify-content-end">
+            <div style="background: #1a1a1a; padding: 10px 20px; border-radius: 10px; border: 1px solid #2e2e2e;">
+                <span class="pulse"></span> <span class="text-white fw-bold">NODE ID: {{ current_user.username }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="node-stats">
+        <div class="stat-card">
+            <i class="bi bi-hdd-network stat-icon"></i>
+            <div class="stat-label">Local Data</div>
+            <div class="stat-value">5,000 <span style="font-size: 0.9rem; color: var(--text-muted);">Samples</span></div>
+        </div>
+        <div class="stat-card">
+            <i class="bi bi-lightning-charge stat-icon"></i>
+            <div class="stat-label">Training Rounds</div>
+            <div class="stat-value" id="round-count">0 / 5</div>
+        </div>
+        <div class="stat-card">
+            <i class="bi bi-activity stat-icon"></i>
+            <div class="stat-label">Current Accuracy</div>
+            <div class="stat-value text-success" id="local-acc">--%</div>
+        </div>
+        <div class="stat-card">
+            <i class="bi bi-shield-check stat-icon"></i>
+            <div class="stat-label">Encryption</div>
+            <div class="stat-value">Active</div>
+        </div>
+    </div>
+
+    <div class="command-split">
+        <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0 text-white"><i class="bi bi-terminal me-2"></i> Local Training Logs</h5>
+                <small class="text-muted">Node status: Waiting</small>
+            </div>
+            <div class="terminal-box" id="progress">
+                <div style="color: #737373;">[SYSTEM] Initializing node environment...</div>
+                <div style="color: #737373;">[INFO] Awaiting dataset selection to begin training.</div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h5 class="text-white border-bottom border-secondary pb-3 mb-4">Training Configuration</h5>
+            
+            <form id="trainForm">
+                <label class="stat-label mb-2">Select Dataset Partition</label>
+                <select class="form-select-custom" id="dataset">
+                    <option value="cifar10_part1">CIFAR-10 Partition 1 (Trucks/Birds)</option>
+                    <option value="cifar10_part2">CIFAR-10 Partition 2 (Cats/Dogs)</option>
+                </select>
+
+                <div class="mb-4" style="background: #0d0d0d; padding: 1rem; border-radius: 10px; border: 1px dashed var(--border);">
+                    <small class="stat-label">Aggregation Protocol</small>
+                    <p class="mb-0 fw-bold">FedAvg Synchronous</p>
+                </div>
+
+                <button type="button" class="btn-action" onclick="startTraining()">
+                    Join Training & Share Updates <i class="bi bi-cloud-arrow-up ms-2"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function startTraining() {
+    const logBox = document.getElementById('progress');
+    const dataset = document.getElementById('dataset').value;
+    const timestamp = new Date().toLocaleTimeString();
+
+    // Visual feedback for the terminal
+    const entries = [
+        `<div style="color: var(--accent);">[${timestamp}] Requesting connection to aggregator...</div>`,
+        `<div style="color: #22c55e;">[SUCCESS] Connected to Server: 8080</div>`,
+        `<div>[INFO] Loading ${dataset} into memory...</div>`,
+        `<div class="fw-bold">[TRAINING] Federated Round 1/5 started.</div>`
+    ];
+
+    let i = 0;
+    const interval = setInterval(() => {
+        if (i < entries.length) {
+            logBox.innerHTML += entries[i];
+            logBox.scrollTop = logBox.scrollHeight;
+            i++;
+        } else {
+            clearInterval(interval);
+        }
+    }, 800);
+
+    // Update the stat cards
+    document.getElementById('round-count').innerText = "1 / 5";
+    document.getElementById('local-acc').innerText = "12.4%";
+}
+</script>
+{% endblock %}

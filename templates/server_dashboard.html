@@ -1,0 +1,249 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    /* Modern UI Variable Overrides */
+    :root {
+        --bg-dark: #0d0d0d;
+        --bg-card: #1a1a1a;
+        --accent: #f59e0b;
+        --accent-glow: rgba(245, 158, 11, 0.3);
+        --text-muted: #737373;
+        --border: #2e2e2e;
+    }
+
+    body { background: var(--bg-dark); font-family: 'Space Grotesk', sans-serif; }
+
+    .dashboard-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 6rem 2rem 4rem;
+    }
+
+    /* Hero Badge & Header */
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Stats Grid - High Visibility Blocks */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .stat-block {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 2rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-block:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    /* Split Main Layout */
+    .command-split {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr;
+        gap: 2rem;
+    }
+
+    /* Live Terminal Block */
+    .console-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .console-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .terminal-body {
+        background: #000;
+        margin: 1rem;
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: 400px;
+        overflow-y: auto;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 0.9rem;
+        color: #a3a3a3;
+    }
+
+    /* Technical Detail Block */
+    .detail-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2rem;
+    }
+
+    .algorithm-box {
+        background: #0d0d0d;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+        border: 1px dashed var(--border);
+    }
+
+    .pulse {
+        width: 10px;
+        height: 10px;
+        background: #22c55e;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        box-shadow: 0 0 10px #22c55e;
+        animation: pulse-glow 2s infinite;
+    }
+
+    @keyframes pulse-glow {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(34, 197, 94, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="hero-badge">
+        <span>●</span> Administrator Command Center
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <h1 class="display-4 fw-bold text-white">Global Aggregator <span style="color: var(--accent);">Live</span></h1>
+            <p class="text-secondary fs-5">Decentralized Image Classification Node Management System.</p>
+        </div>
+        <div class="col-md-4 text-end d-flex align-items-center justify-content-end">
+            <div style="background: #1a1a1a; padding: 10px 20px; border-radius: 10px; border: 1px solid #2e2e2e;">
+                <span class="pulse"></span> <span class="text-white fw-bold">SERVER: 8080</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-block">
+            <i class="bi bi-arrow-repeat stat-icon"></i>
+            <div class="stat-label">Training Rounds</div>
+            <div class="stat-value">5 / 5</div>
+        </div>
+        <div class="stat-block">
+            <i class="bi bi-cpu stat-icon"></i>
+            <div class="stat-label">Min. Node Req.</div>
+            <div class="stat-value">2 Nodes</div>
+        </div>
+        <div class="stat-block">
+            <i class="bi bi-graph-up stat-icon"></i>
+            <div class="stat-label">Global Accuracy</div>
+            <div class="stat-value text-success">64.2%</div>
+        </div>
+        <div class="stat-block">
+            <i class="bi bi-shield-lock stat-icon"></i>
+            <div class="stat-label">Encryption</div>
+            <div class="stat-value">SSL Off</div>
+        </div>
+    </div>
+
+    <div class="command-split">
+        <div class="console-card">
+            <div class="console-header">
+                <h5 class="text-white mb-0"><i class="bi bi-terminal me-2"></i> Federated Learning Live Stream</h5>
+                <span class="badge bg-dark border border-secondary text-muted">Auto-Refresh: ON</span>
+            </div>
+            <div class="terminal-body" id="log-box">
+                </div>
+        </div>
+
+        <div class="detail-card">
+            <h5 class="text-white border-bottom border-secondary pb-3">Training Parameters</h5>
+            
+            <div class="mt-4">
+                <label class="stat-label">Optimization Strategy</label>
+                <h6 class="text-white fw-bold">Federated Averaging (FedAvg)</h6>
+            </div>
+
+            <div class="mt-4">
+                <label class="stat-label">Dataset Infrastructure</label>
+                <h6 class="text-white fw-bold">CIFAR-10 Partitioned</h6>
+            </div>
+
+            <div class="algorithm-box">
+                <div class="stat-label mb-2">Mathematical Logic</div>
+                <code style="color: var(--accent); font-size: 0.9rem;">
+                    w_next = Σ (n_k / n) * w_local_k
+                </code>
+            </div>
+
+            <div class="mt-5">
+                <button class="btn btn-warning w-100 fw-bold py-3" style="background: var(--accent); color: #000; border: none; border-radius: 12px;">
+                    <i class="bi bi-cloud-download me-2"></i> EXPORT GLOBAL WEIGHTS (.H5)
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const eventSource = new EventSource("/stream-status");
+    const logBox = document.getElementById('log-box');
+
+    eventSource.onmessage = function(event) {
+        const entry = document.createElement('div');
+        entry.style.marginBottom = '8px';
+        const timestamp = new Date().toLocaleTimeString();
+        
+        // Color coding for success messages
+        if (event.data.includes("complete")) {
+            entry.style.color = "#22c55e";
+        }
+
+        entry.innerHTML = `<span style="color: var(--accent);">[${timestamp}]</span> ${event.data}`;
+        logBox.appendChild(entry);
+        logBox.scrollTop = logBox.scrollHeight;
+    };
+</script>
+{% endblock %}

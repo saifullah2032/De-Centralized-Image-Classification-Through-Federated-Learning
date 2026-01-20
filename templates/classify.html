@@ -1,0 +1,188 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    /* Modern UI Variable Integration */
+    :root {
+        --bg-dark: #0d0d0d;
+        --bg-card: #1a1a1a;
+        --accent: #f59e0b;
+        --accent-hover: #fbbf24;
+        --text-muted: #737373;
+        --border: #2e2e2e;
+    }
+
+    body { background: var(--bg-dark); color: #fafafa; }
+
+    .classify-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 6rem 2rem 4rem;
+    }
+
+    /* Hero Badge & Header */
+    .analysis-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        padding: 0.5rem 1rem;
+        border-radius: 100px;
+        font-size: 0.85rem;
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+    }
+
+    /* Split Main Layout */
+    .analysis-split {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 2rem;
+    }
+
+    .glass-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 2.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .glass-card:hover {
+        border-color: var(--accent);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    /* Custom File Upload Area */
+    .upload-zone {
+        border: 2px dashed var(--border);
+        border-radius: 12px;
+        padding: 3rem 1.5rem;
+        text-align: center;
+        background: #0d0d0d;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-bottom: 1.5rem;
+    }
+
+    .upload-zone:hover {
+        border-color: var(--accent);
+        background: rgba(245, 158, 11, 0.05);
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: var(--accent);
+        margin-bottom: 1rem;
+    }
+
+    /* Technical Detail Items */
+    .tech-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .tech-label { color: var(--text-muted); font-size: 0.85rem; }
+    .tech-val { font-weight: 600; color: #fff; font-size: 0.9rem; }
+
+    .btn-analyze {
+        background: var(--accent);
+        color: #000;
+        border: none;
+        padding: 1rem;
+        border-radius: 10px;
+        width: 100%;
+        font-weight: 700;
+        text-transform: uppercase;
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+
+    .btn-analyze:hover {
+        background: var(--accent-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(245, 158, 11, 0.3);
+    }
+
+    .pulse {
+        width: 10px; height: 10px; background: #22c55e; border-radius: 50%;
+        display: inline-block; margin-right: 8px; box-shadow: 0 0 10px #22c55e;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="classify-wrapper">
+    <div class="analysis-badge">
+        <span>●</span> Global Model Evaluation Node
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-8">
+            <h1 class="display-4 fw-bold text-white">Image <span style="color: var(--accent);">Analysis</span></h1>
+            <p class="text-secondary fs-5">Test the collective intelligence of the Federated Global Model.</p>
+        </div>
+        <div class="col-md-4 text-end d-flex align-items-center justify-content-end">
+            <div style="background: #1a1a1a; padding: 10px 20px; border-radius: 10px; border: 1px solid #2e2e2e;">
+                <span class="pulse"></span> <span class="text-white fw-bold">MODEL: ACTIVE</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="analysis-split">
+        <div class="glass-card">
+            <h5 class="text-white mb-4">Inference Input</h5>
+            
+            <form action="/classify" method="POST" enctype="multipart/form-data">
+                <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                    <i class="bi bi-cloud-arrow-up upload-icon"></i>
+                    <h6 class="text-white">Click or Drag to Upload Image</h6>
+                    <p class="text-muted small">Supported: JPG, PNG (CIFAR-10 Scale: 32x32)</p>
+                    <input type="file" name="image" id="fileInput" hidden required onchange="updateFileName(this)">
+                    <div id="file-name" class="mt-2 text-warning fw-bold"></div>
+                </div>
+
+                <button type="submit" class="btn-analyze">
+                    Run Classification <i class="bi bi-cpu ms-2"></i>
+                </button>
+            </form>
+        </div>
+
+        <div class="glass-card">
+            <h5 class="text-white border-bottom border-secondary pb-3 mb-4">Engine Specifications</h5>
+            
+            <div class="tech-item">
+                <span class="tech-label">Architecture</span>
+                <span class="tech-val">MobileNetV2 (Aggregated)</span>
+            </div>
+            <div class="tech-item">
+                <span class="tech-label">Weights Source</span>
+                <span class="tech-val">global_model_weights.h5</span>
+            </div>
+            <div class="tech-item">
+                <span class="tech-label">Class Diversity</span>
+                <span class="tech-val">10 Categories (CIFAR-10)</span>
+            </div>
+            <div class="tech-item">
+                <span class="tech-label">Optimization</span>
+                <span class="tech-val">FedAvg Protocol</span>
+            </div>
+
+            <div class="mt-4 p-3" style="background: #0d0d0d; border-radius: 12px; border: 1px dashed var(--border);">
+                <p class="small text-muted mb-2">Algorithm Note:</p>
+                <p class="small text-white mb-0">Classification is performed locally using parameters synchronized during the last decentralized training round.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateFileName(input) {
+        const fileName = input.files[0].name;
+        document.getElementById('file-name').innerHTML = `<i class="bi bi-file-earmark-image me-1"></i> ${fileName}`;
+    }
+</script>
+{% endblock %}
