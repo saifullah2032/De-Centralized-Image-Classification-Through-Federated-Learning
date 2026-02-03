@@ -3,81 +3,164 @@
 {% block title %}Register - Federated Learning{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">Create Account</h2>
+<div class="register-container">
+    <div class="row align-items-center min-vh-100">
+        <div class="col-lg-5 col-md-7 mx-auto">
+            <!-- Logo & Title -->
+            <div class="text-center mb-5">
+                <div class="logo-circle mb-4">
+                    <i class="fas fa-user-plus"></i>
                 </div>
-                <div class="card-body">
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                            {% for category, message in messages %}
-                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                                    {{ message }}
-                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-                    {% endwith %}
+                <h1 class="display-5 fw-bold mb-2">Join DecentralizedAI</h1>
+                <p class="text-secondary text-opacity-75">Create your account and start collaborating</p>
+            </div>
 
-                    <form method="POST">
-                        <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" 
-                                   placeholder="Choose a username (min 3 chars)" required>
-                            <small class="form-text text-muted">Must be at least 3 characters long and unique.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" 
-                                   placeholder="Choose a password (min 6 chars)" required>
-                            <small class="form-text text-muted">Must be at least 6 characters long.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="password_confirm">Confirm Password</label>
-                            <input type="password" class="form-control" id="password_confirm" name="password_confirm" 
-                                   placeholder="Confirm your password" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="role">Role</label>
-                            <select class="form-control" id="role" name="role">
-                                <option value="client" selected>Client (Participant)</option>
-                                <option value="admin">Admin (Administrator)</option>
-                            </select>
-                            <small class="form-text text-muted">
-                                <strong>Client:</strong> Participate in federated training.<br>
-                                <strong>Admin:</strong> Monitor training and system metrics.
+            <!-- Registration Card -->
+            <div class="card auth-card mb-4">
+                <div class="card-body p-0">
+                    <form method="POST" class="p-5">
+                        <!-- Username Field -->
+                        <div class="mb-4">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0">
+                                    <i class="fas fa-user text-primary"></i>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    class="form-control border-start-0 ps-0" 
+                                    id="username" 
+                                    name="username" 
+                                    placeholder="Choose a unique username"
+                                    minlength="3"
+                                    required 
+                                >
+                            </div>
+                            <small class="text-secondary d-block mt-2">
+                                <i class="fas fa-info-circle"></i> Minimum 3 characters
                             </small>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                        <!-- Password Field -->
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0">
+                                    <i class="fas fa-lock text-primary"></i>
+                                </span>
+                                <input 
+                                    type="password" 
+                                    class="form-control border-start-0 ps-0" 
+                                    id="password" 
+                                    name="password" 
+                                    placeholder="Create a strong password"
+                                    minlength="6"
+                                    required
+                                >
+                            </div>
+                            <small class="text-secondary d-block mt-2">
+                                <i class="fas fa-info-circle"></i> Minimum 6 characters
+                            </small>
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div class="mb-4">
+                            <label for="password_confirm" class="form-label">Confirm Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-transparent border-end-0">
+                                    <i class="fas fa-check text-primary"></i>
+                                </span>
+                                <input 
+                                    type="password" 
+                                    class="form-control border-start-0 ps-0" 
+                                    id="password_confirm" 
+                                    name="password_confirm" 
+                                    placeholder="Confirm your password"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <!-- Role Selection -->
+                        <div class="mb-5">
+                            <label class="form-label">Role</label>
+                            <div class="role-selector">
+                                <div class="role-option">
+                                    <input 
+                                        type="radio" 
+                                        id="role_client" 
+                                        name="role" 
+                                        value="client" 
+                                        checked
+                                    >
+                                    <label for="role_client">
+                                        <i class="fas fa-laptop"></i>
+                                        <span>Client</span>
+                                        <small>Participate in training</small>
+                                    </label>
+                                </div>
+                                <div class="role-option">
+                                    <input 
+                                        type="radio" 
+                                        id="role_admin" 
+                                        name="role" 
+                                        value="admin"
+                                    >
+                                    <label for="role_admin">
+                                        <i class="fas fa-crown"></i>
+                                        <span>Administrator</span>
+                                        <small>Monitor system</small>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Register Button -->
+                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-4">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+
+                        <!-- Login Link -->
+                        <div class="text-center">
+                            <p class="text-secondary small">
+                                Already have an account? 
+                                <a href="{{ url_for('login') }}" class="text-primary fw-bold text-decoration-none">
+                                    Sign in
+                                </a>
+                            </p>
+                        </div>
                     </form>
-
-                    <hr class="my-4">
-
-                    <p class="text-center text-muted">
-                        Already have an account? 
-                        <a href="{{ url_for('login') }}">Log in here</a>
-                    </p>
                 </div>
             </div>
 
-            <!-- Info Box -->
-            <div class="card mt-4 bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">About This System</h5>
-                    <p class="card-text small">
-                        This is a Federated Learning platform for distributed machine learning. 
-                        Register as a <strong>Client</strong> to participate in collaborative training, 
-                        or as an <strong>Admin</strong> to monitor the overall system.
-                    </p>
+            <!-- Features Info -->
+            <div class="features-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-primary">Privacy First</h6>
+                        <p class="small text-secondary mb-0">Your data stays secure</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-primary">Collaborative</h6>
+                        <p class="small text-secondary mb-0">Train together</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-zap"></i>
+                    </div>
+                    <div>
+                        <h6 class="fw-bold text-primary">Powerful</h6>
+                        <p class="small text-secondary mb-0">Advanced ML system</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -85,24 +168,131 @@
 </div>
 
 <style>
-    .card {
-        border-radius: 10px;
-        border: none;
+    .register-container {
+        position: relative;
+        z-index: 1;
     }
-    
-    .card-header {
-        border-radius: 10px 10px 0 0;
-        padding: 1.5rem;
+
+    .logo-circle {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+        margin-right: auto;
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        font-size: 2rem;
+        color: white;
+        animation: float 3s ease-in-out infinite;
     }
-    
+
+    .auth-card {
+        border: 1px solid rgba(91, 124, 255, 0.2);
+        background: rgba(26, 31, 46, 0.6);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .input-group-text {
+        background: transparent !important;
+        border-color: rgba(51, 65, 85, 0.5) !important;
+    }
+
+    .form-control {
+        background: transparent !important;
+        border: 1px solid rgba(51, 65, 85, 0.5) !important;
+        border-radius: 10px !important;
+    }
+
     .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        border-color: #5b7cff !important;
+        box-shadow: 0 0 0 3px rgba(91, 124, 255, 0.2) !important;
     }
-    
-    .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
+
+    .role-selector {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .role-option input {
+        display: none;
+    }
+
+    .role-option label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        border: 2px solid rgba(51, 65, 85, 0.5);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        background: rgba(36, 45, 63, 0.5);
+    }
+
+    .role-option input:checked + label {
+        border-color: #5b7cff;
+        background: rgba(91, 124, 255, 0.15);
+        color: var(--text-primary);
+    }
+
+    .role-option i {
+        font-size: 1.5rem;
+        color: #5b7cff;
+    }
+
+    .role-option span {
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .role-option small {
+        font-size: 0.75rem;
+        color: var(--text-tertiary);
+    }
+
+    .features-grid {
+        display: grid;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .feature-item {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(36, 45, 63, 0.3);
+        border-radius: 12px;
+        border: 1px solid rgba(91, 124, 255, 0.1);
+        align-items: center;
+    }
+
+    .feature-icon {
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(91, 124, 255, 0.2);
+        border-radius: 10px;
+        color: var(--primary-400);
+        font-size: 1.25rem;
+        flex-shrink: 0;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(10px); }
+    }
+
+    .min-vh-100 {
+        min-height: 100vh;
     }
 </style>
 {% endblock %}
