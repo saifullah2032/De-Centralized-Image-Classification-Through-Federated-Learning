@@ -1,0 +1,294 @@
+================================================================================
+VISUAL GUIDE: FEDERATED LEARNING EXECUTION FLOW
+================================================================================
+
+TIMELINE OF EVENTS
+==================
+
+TIME    TERMINAL 1 (SERVER)         TERMINAL 2 (CLIENT 0)      TERMINAL 3 (CLIENT 1)
+----    -------------------         ----------------------      ----------------------
+0:00    START SERVER                (waiting)                   (waiting)
+        ↓
+0:05    Server initialized          
+        Listening on :8080          
+        Waiting for clients...      
+                                    
+0:10                                START CLIENT 0              (waiting)
+                                    ↓
+0:15                                Loading data...
+                                    Partitioning...
+                                    Connecting...
+                                    ↓
+0:20    Client 0 connected ✓        Connected ✓
+        Still waiting for           Waiting for Client 1...
+        Client 1...                 
+                                                                
+0:25                                                            START CLIENT 1
+                                                                ↓
+0:30                                                            Loading data...
+                                                                Partitioning...
+                                                                Connecting...
+                                                                ↓
+0:35    Client 1 connected ✓                                    Connected ✓
+        Both clients ready!         
+        Starting Round 1...         Training Round 1...         Training Round 1...
+        ↓                           ↓                           ↓
+
+ROUND 1 (2-5 minutes)
+---------------------
+        Waiting for clients         Epoch 1/3                   Epoch 1/3
+        to train...                 [████████░░] 80%            [████████░░] 80%
+                                    Epoch 2/3                   Epoch 2/3
+                                    [████████░░] 80%            [████████░░] 80%
+                                    Epoch 3/3                   Epoch 3/3
+                                    [██████████] 100%           [██████████] 100%
+                                    Sending weights →           Sending weights →
+        ↓                           ↓                           ↓
+        Received 2 client           Waiting for server...       Waiting for server...
+        updates ✓                   
+        Aggregating weights...      
+        [FedAvg Algorithm]          
+        Evaluating global model     
+        Accuracy: 45.2%             
+        Saving model_round_1.h5     
+        ← Sending global model      ← Receiving model           ← Receiving model
+        ↓                           ↓                           ↓
+
+ROUND 2 (2-5 minutes)
+---------------------
+        Starting Round 2...         Training Round 2...         Training Round 2...
+        [Same flow as Round 1]      [Same flow as Round 1]      [Same flow as Round 1]
+        Accuracy: 68.7%             
+        Saving model_round_2.h5     
+        ↓                           ↓                           ↓
+
+ROUND 3 (2-5 minutes)
+---------------------
+        Starting Round 3...         Training Round 3...         Training Round 3...
+        [Same flow as Round 1]      [Same flow as Round 1]      [Same flow as Round 1]
+        Accuracy: 78.5%             
+        Saving model_round_3.h5     
+        ↓                           ↓                           ↓
+
+COMPLETION
+----------
+        Training complete! ✓        Training complete! ✓        Training complete! ✓
+        Saving global_model.h5      Disconnecting...            Disconnecting...
+        Saving history.json         Exit                        Exit
+        Summary displayed           
+        Exit                        
+
+
+================================================================================
+ARCHITECTURE DIAGRAM
+================================================================================
+
+                            ┌─────────────────────────────┐
+                            │   FEDERATED LEARNING        │
+                            │       SERVER                │
+                            │   (Terminal 1)              │
+                            │                             │
+                            │  • Orchestrates training    │
+                            │  • Aggregates model weights │
+                            │  • Evaluates global model   │
+                            │  • Saves checkpoints        │
+                            └──────────┬──────────────────┘
+                                       │
+                     ┌─────────────────┼─────────────────┐
+                     │                 │                 │
+                     │                 │                 │
+          ┌──────────▼──────────┐     │     ┌──────────▼──────────┐
+          │   CLIENT 0          │     │     │   CLIENT 1          │
+          │   (Terminal 2)      │     │     │   (Terminal 3)      │
+          │                     │     │     │                     │
+          │  ┌───────────────┐  │     │     │  ┌───────────────┐  │
+          │  │ Local Dataset │  │     │     │  │ Local Dataset │  │
+          │  │  ~25K samples │  │     │     │  │  ~25K samples │  │
+          │  │               │  │     │     │  │               │  │
+          │  │ Non-IID Data  │  │     │     │  │ Non-IID Data  │  │
+          │  │ (Different    │  │     │     │  │ (Different    │  │
+          │  │  class mix)   │  │     │     │  │  class mix)   │  │
+          │  └───────┬───────┘  │     │     │  └───────┬───────┘  │
+          │          │          │     │     │          │          │
+          │  ┌───────▼───────┐  │     │     │  ┌───────▼───────┐  │
+          │  │ Local Model   │  │     │     │  │ Local Model   │  │
+          │  │ Training      │  │     │     │  │ Training      │  │
+          │  │ (3 epochs)    │  │     │     │  │ (3 epochs)    │  │
+          │  └───────┬───────┘  │     │     │  └───────┬───────┘  │
+          │          │          │     │     │          │          │
+          │    Sends weights    │     │     │    Sends weights    │
+          └──────────┼──────────┘     │     └──────────┼──────────┘
+                     │                │                │
+                     └────────────────┼────────────────┘
+                                      │
+                          ┌───────────▼───────────┐
+                          │   FedAvg Aggregation  │
+                          │   (Weighted Average)  │
+                          └───────────┬───────────┘
+                                      │
+                          ┌───────────▼───────────┐
+                          │   Global Model Update │
+                          └───────────┬───────────┘
+                                      │
+                                Broadcast back
+                                 to clients
+
+
+================================================================================
+DATA FLOW PER ROUND
+================================================================================
+
+STEP 1: Server sends global model to clients
+---------------------------------------------
+    SERVER  ──────────────► CLIENT 0
+            ──────────────► CLIENT 1
+
+STEP 2: Clients train locally (in parallel)
+--------------------------------------------
+    CLIENT 0                        CLIENT 1
+    ↓                               ↓
+    Load local data                 Load local data
+    (25K samples)                   (25K samples)
+    ↓                               ↓
+    Train for 3 epochs              Train for 3 epochs
+    with local data                 with local data
+    ↓                               ↓
+    Updated model weights           Updated model weights
+
+STEP 3: Clients send updates to server
+---------------------------------------
+    CLIENT 0 ──────────────► SERVER
+    CLIENT 1 ──────────────► SERVER
+
+STEP 4: Server aggregates weights (FedAvg)
+-------------------------------------------
+    SERVER performs weighted average:
+    
+    global_weights = (n₀ × weights₀ + n₁ × weights₁) / (n₀ + n₁)
+    
+    where:
+    - n₀ = number of samples in Client 0
+    - n₁ = number of samples in Client 1
+    - weights₀ = Client 0's updated weights
+    - weights₁ = Client 1's updated weights
+
+STEP 5: Server evaluates and saves model
+-----------------------------------------
+    Evaluate on test set (10,000 samples)
+    Save checkpoint: models/model_round_X.h5
+    Display metrics: accuracy, loss
+
+STEP 6: Server broadcasts updated global model
+-----------------------------------------------
+    SERVER  ──────────────► CLIENT 0
+            ──────────────► CLIENT 1
+
+REPEAT for next round
+
+
+================================================================================
+NON-IID DATA VISUALIZATION
+================================================================================
+
+Example of how data is distributed (heterogeneous):
+
+CLIENT 0 Dataset:                    CLIENT 1 Dataset:
+──────────────────                   ──────────────────
+Class 0 (airplane):  ███████  12%    Class 0 (airplane):  █  1%
+Class 1 (car):       ████████ 19%    Class 1 (car):       ██████ 15%
+Class 2 (bird):      █████ 10%       Class 2 (bird):      ████ 8%
+Class 3 (cat):       █ 2%            Class 3 (cat):       ███████ 18%
+Class 4 (deer):      ████████ 18%    Class 4 (deer):      ██ 5%
+Class 5 (dog):       █████████ 16%   Class 5 (dog):       █ 2%
+Class 6 (frog):      █ 1%            Class 6 (frog):      █████████ 28%
+Class 7 (horse):     █ 0%            Class 7 (horse):     ████ 10%
+Class 8 (ship):      ██████ 16%      Class 8 (ship):      █ 2%
+Class 9 (truck):     ████████ 17%    Class 9 (truck):     █████ 13%
+
+Notice:
+• Client 0 has mostly cars, deer, dogs, trucks
+• Client 1 has mostly frogs, cats, horses
+• This simulates real-world scenarios where different users have different data
+
+Coefficient of Variation (CV) = 0.6 > 0.3 → Confirmed Non-IID
+
+
+================================================================================
+FILE SYSTEM CHANGES DURING TRAINING
+================================================================================
+
+BEFORE training:
+----------------
+Image Classification/
+├── models/                 (empty or only test models)
+├── logs/                   (empty or minimal logs)
+└── ...
+
+AFTER Round 1:
+--------------
+Image Classification/
+├── models/
+│   └── model_round_1.h5   ← NEW (Global model after round 1)
+├── logs/
+│   └── training.log       ← UPDATED (Training events logged)
+└── ...
+
+AFTER Round 2:
+--------------
+Image Classification/
+├── models/
+│   ├── model_round_1.h5
+│   └── model_round_2.h5   ← NEW (Global model after round 2)
+└── ...
+
+AFTER Round 3 (COMPLETE):
+-------------------------
+Image Classification/
+├── models/
+│   ├── model_round_1.h5
+│   ├── model_round_2.h5
+│   ├── model_round_3.h5   ← NEW (Global model after round 3)
+│   ├── global_model.h5    ← NEW (Final model, copy of round 3)
+│   └── model_history.json ← NEW (Training metrics)
+├── logs/
+│   └── training.log       ← UPDATED (Complete training history)
+└── ...
+
+
+================================================================================
+QUICK REFERENCE: TERMINAL COMMANDS
+================================================================================
+
+Open 3 Git Bash terminals and arrange them side-by-side
+
+Terminal 1 (LEFT):
+------------------
+cd "C:\Users\rayan\Downloads\Image CLassification"
+source venv/Scripts/activate
+python run_server.py --num-rounds 3 --min-clients 2
+
+Terminal 2 (MIDDLE):
+--------------------
+cd "C:\Users\rayan\Downloads\Image CLassification"
+source venv/Scripts/activate
+python run_client.py --client-id 0 --num-clients 2
+
+Terminal 3 (RIGHT):
+-------------------
+cd "C:\Users\rayan\Downloads\Image CLassification"
+source venv/Scripts/activate
+python run_client.py --client-id 1 --num-clients 2
+
+
+================================================================================
+MONITORING TIPS
+================================================================================
+
+1. Watch accuracy improvement across rounds in Terminal 1 (Server)
+2. Notice different class distributions in Terminal 2 vs Terminal 3
+3. Observe that both clients train simultaneously (parallel training)
+4. Check that "Received 2 results" appears in Terminal 1 each round
+5. Monitor for any error messages or connection issues
+6. Time how long each round takes for your hardware
+
+================================================================================

@@ -1,0 +1,264 @@
+{% extends "base.html" %}
+
+{% block title %}Client Dashboard - Federated Learning{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h1 class="mb-4">
+                <i class="fas fa-laptop"></i> Client Training Dashboard
+            </h1>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <!-- Configuration Panel -->
+        <div class="col-md-4">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-cog"></i> Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="clientId" class="font-weight-bold">Select Dataset Partition:</label>
+                        <select class="form-control" id="clientId">
+                            <option value="0">Client 0 (10,000 images)</option>
+                            <option value="1">Client 1 (10,000 images)</option>
+                            <option value="2">Client 2 (10,000 images)</option>
+                            <option value="3">Client 3 (10,000 images)</option>
+                            <option value="4">Client 4 (10,000 images)</option>
+                            <option value="5">Client 5 (10,000 images)</option>
+                            <option value="6">Client 6 (10,000 images)</option>
+                            <option value="7">Client 7 (10,000 images)</option>
+                            <option value="8">Client 8 (10,000 images)</option>
+                            <option value="9">Client 9 (10,000 images)</option>
+                        </select>
+                        <small class="form-text text-muted">Each client has a unique data partition</small>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="form-group">
+                        <label class="font-weight-bold">Training Control:</label>
+                        <div class="btn-group btn-group-vertical w-100" role="group">
+                            <button type="button" class="btn btn-success btn-lg" id="startTraining" 
+                                    onclick="startTraining()">
+                                <i class="fas fa-play-circle"></i> Start Training
+                            </button>
+                            <button type="button" class="btn btn-danger btn-lg" id="stopTraining" 
+                                    onclick="stopTraining()" disabled>
+                                <i class="fas fa-stop-circle"></i> Stop Training
+                            </button>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <div class="alert alert-info small" role="alert">
+                        <strong>Info:</strong> This client will train locally on its assigned data partition 
+                        and communicate with the federated learning server.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metrics Panel -->
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-chart-bar"></i> Local Training Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center border-right">
+                            <h6 class="text-muted">Status</h6>
+                            <h3 id="clientStatus">
+                                <span class="badge badge-secondary">Idle</span>
+                            </h3>
+                        </div>
+                        <div class="col-md-3 text-center border-right">
+                            <h6 class="text-muted">Local Accuracy</h6>
+                            <h3 id="localAcc" class="text-success">—</h3>
+                        </div>
+                        <div class="col-md-3 text-center border-right">
+                            <h6 class="text-muted">Local Loss</h6>
+                            <h3 id="localLoss" class="text-warning">—</h3>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <h6 class="text-muted">Samples Trained</h6>
+                            <h3 id="samplesCount" class="text-info">0</h3>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+
+                    <!-- Progress Bar -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h6>Training Progress</h6>
+                            <div class="progress" style="height: 25px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" 
+                                     role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                                    <span id="progressText">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Log Panel -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="fas fa-terminal"></i> Local Training Log</h5>
+                </div>
+                <div class="card-body">
+                    <div id="clientLog" class="bg-dark text-light p-3" style="font-family: 'Courier New', monospace; 
+                         height: 300px; overflow-y: auto; border-radius: 5px;">
+                        <span class="text-muted">Training log will appear here...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let isTraining = false;
+    const logElement = document.getElementById('clientLog');
+    
+    function addLog(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        const logEntry = document.createElement('div');
+        logEntry.innerHTML = `<span class="text-info">[${timestamp}]</span> ${message}`;
+        logElement.appendChild(logEntry);
+        logElement.scrollTop = logElement.scrollHeight;
+    }
+    
+    function startTraining() {
+        if (isTraining) {
+            alert('Training is already in progress!');
+            return;
+        }
+        
+        const clientId = document.getElementById('clientId').value;
+        isTraining = true;
+        
+        document.getElementById('startTraining').disabled = true;
+        document.getElementById('stopTraining').disabled = false;
+        document.getElementById('clientId').disabled = true;
+        document.getElementById('clientStatus').innerHTML = '<span class="badge badge-warning">Training...</span>';
+        
+        logElement.innerHTML = '';
+        addLog(`Starting training for Client ${clientId}...`);
+        addLog(`Client ID: ${clientId}`);
+        addLog(`Partition size: 10,000 images`);
+        
+        // Simulate training progress
+        simulateTraining(clientId);
+    }
+    
+    function stopTraining() {
+        isTraining = false;
+        document.getElementById('startTraining').disabled = false;
+        document.getElementById('stopTraining').disabled = true;
+        document.getElementById('clientId').disabled = false;
+        document.getElementById('clientStatus').innerHTML = '<span class="badge badge-secondary">Stopped</span>';
+        document.getElementById('progressBar').style.width = '0%';
+        document.getElementById('progressText').textContent = '0%';
+        
+        addLog('Training stopped by user.');
+    }
+    
+    function simulateTraining(clientId) {
+        addLog('Initializing local model...');
+        
+        let epoch = 1;
+        let accuracy = 0.3;
+        let loss = 2.0;
+        let samples = 0;
+        
+        const interval = setInterval(() => {
+            if (!isTraining) {
+                clearInterval(interval);
+                return;
+            }
+            
+            // Simulate progress
+            samples += 2000;
+            accuracy = Math.min(0.95, accuracy + Math.random() * 0.05);
+            loss = Math.max(0.1, loss - Math.random() * 0.1);
+            
+            const progress = Math.min((samples / 10000) * 100, 100);
+            
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = Math.round(progress) + '%';
+            document.getElementById('localAcc').textContent = accuracy.toFixed(4);
+            document.getElementById('localLoss').textContent = loss.toFixed(4);
+            document.getElementById('samplesCount').textContent = Math.min(samples, 10000);
+            
+            addLog(`Epoch ${epoch}: Accuracy=${accuracy.toFixed(4)}, Loss=${loss.toFixed(4)}, Samples=${samples}`);
+            
+            if (samples >= 10000) {
+                epoch++;
+                samples = 0;
+            }
+            
+            if (accuracy >= 0.85 || epoch > 5) {
+                isTraining = false;
+                clearInterval(interval);
+                document.getElementById('clientStatus').innerHTML = '<span class="badge badge-success">Completed</span>';
+                document.getElementById('startTraining').disabled = false;
+                document.getElementById('stopTraining').disabled = true;
+                document.getElementById('clientId').disabled = false;
+                addLog('Training completed!');
+            }
+        }, 1000);
+    }
+    
+    // Initialize
+    window.addEventListener('load', () => {
+        addLog('Client dashboard loaded. Ready to start training.');
+    });
+</script>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 10px;
+    }
+    
+    .card-header {
+        border-radius: 10px 10px 0 0;
+    }
+    
+    .badge {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    #clientLog {
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+    
+    .btn-group-vertical .btn {
+        border-radius: 5px;
+        margin-bottom: 5px;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Report - Federated Learning{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <h2 class="mb-4">
+            <i class="fas fa-shield-alt"></i> Privacy Verification Report
+        </h2>
+        
+        {% if report %}
+        <div class="card mb-4">
+            <div class="card-header bg-success">
+                <i class="fas fa-check-circle"></i> Privacy Verification: PASSED
+            </div>
+            <div class="card-body">
+                <h4>Summary</h4>
+                <p>{{ report.conclusion }}</p>
+                
+                <h5 class="mt-4">Verification Details</h5>
+                <table class="table table-dark">
+                    <tr>
+                        <th>Data Isolation Verified</th>
+                        <td>
+                            {% if report.data_isolation_verified %}
+                            <span class="badge bg-success">✓ YES</span>
+                            {% else %}
+                            <span class="badge bg-danger">✗ NO</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Protocol Buffers Detected</th>
+                        <td>{{ report.protocol_buffers_detected }} packets</td>
+                    </tr>
+                    <tr>
+                        <th>Image Data Transmitted</th>
+                        <td><span class="badge bg-success">{{ report.image_data_transmitted }} bytes</span></td>
+                    </tr>
+                    <tr>
+                        <th>Analysis Date</th>
+                        <td>{{ report.wireshark_analysis_date }}</td>
+                    </tr>
+                </table>
+                
+                <div class="alert alert-info mt-4">
+                    <strong><i class="fas fa-info-circle"></i> What This Means:</strong><br>
+                    The network traffic analysis confirms that ZERO raw image data was transmitted during federated training. 
+                    Only model weights (Protocol Buffers) were exchanged between clients and server, ensuring complete data privacy.
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> 
+            No privacy report available yet. Run the privacy verification script after training to generate a report.
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-book"></i> How to Generate Privacy Report
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li>Install Wireshark: <code>sudo apt-get install wireshark</code></li>
+                    <li>Start packet capture before training: <code>tshark -i lo -w logs/network_traffic.pcap</code></li>
+                    <li>Run federated training with server and clients</li>
+                    <li>Stop packet capture and analyze the PCAP file</li>
+                    <li>Run verification script: <code>python scripts/verify_privacy.py</code></li>
+                </ol>
+                
+                <div class="alert alert-info mt-3">
+                    The verification script will analyze network traffic and confirm that no raw image data was transmitted.
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

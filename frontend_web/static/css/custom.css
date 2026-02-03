@@ -1,0 +1,588 @@
+/* ============================================================================
+   CUSTOM THEME - Federated Learning System
+   Modern dark theme with smooth animations and glassmorphism effects
+   ========================================================================== */
+
+/* Import Space Grotesk font */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* ============================================================================
+   ROOT VARIABLES
+   ========================================================================== */
+
+:root {
+    /* Colors */
+    --primary-dark: #1a1d2e;
+    --secondary-dark: #2a2d3e;
+    --accent-blue: #5b9cf7;
+    --accent-green: #4caf50;
+    --accent-red: #f44336;
+    --accent-purple: #667eea;
+    --text-light: #e0e0e0;
+    --text-muted: #9e9e9e;
+    --card-bg: #2a2d3e;
+    --border-color: #404557;
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-success: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+    --gradient-danger: linear-gradient(135deg, #f44336 0%, #da190b 100%);
+    
+    /* Typography */
+    --font-primary: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    
+    /* Transitions */
+    --transition-fast: 0.2s ease-in-out;
+    --transition-medium: 0.3s ease-in-out;
+    --transition-slow: 0.5s ease-in-out;
+}
+
+/* ============================================================================
+   GLOBAL STYLES
+   ========================================================================== */
+
+* {
+    font-family: var(--font-primary);
+}
+
+body {
+    background: linear-gradient(135deg, #0f1419 0%, #1a1d2e 50%, #16192b 100%);
+    color: var(--text-light);
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+html, body {
+    scroll-behavior: smooth;
+}
+
+/* ============================================================================
+   TYPOGRAPHY
+   ========================================================================== */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2rem;
+}
+
+h3 {
+    font-size: 1.75rem;
+}
+
+p {
+    line-height: 1.6;
+    color: var(--text-light);
+}
+
+.lead {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+a {
+    color: var(--accent-blue);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+a:hover {
+    color: lighten(#5b9cf7, 10%);
+    text-decoration: underline;
+}
+
+code {
+    background: rgba(255, 255, 255, 0.1);
+    color: #00d9ff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+/* ============================================================================
+   CARDS
+   ========================================================================== */
+
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    transition: all var(--transition-medium);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+    border-color: var(--accent-blue);
+    transform: translateY(-5px);
+    box-shadow: 0 16px 48px rgba(91, 156, 247, 0.2);
+}
+
+.card-header {
+    background: linear-gradient(135deg, rgba(91, 156, 247, 0.1), rgba(102, 126, 234, 0.1));
+    border-bottom: 1px solid var(--border-color);
+    border-radius: 12px 12px 0 0;
+    padding: 1.5rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* ============================================================================
+   BUTTONS
+   ========================================================================== */
+
+.btn {
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 0.625rem 1.5rem;
+    transition: all var(--transition-fast);
+    border: 2px solid transparent;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: var(--accent-purple);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    color: white;
+}
+
+.btn-success {
+    background: var(--gradient-success);
+    border-color: var(--accent-green);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+}
+
+.btn-danger {
+    background: var(--gradient-danger);
+    border-color: var(--accent-red);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(244, 67, 54, 0.4);
+}
+
+.btn-outline-primary {
+    color: var(--accent-blue);
+    border-color: var(--accent-blue);
+    background: transparent;
+}
+
+.btn-outline-primary:hover {
+    background: var(--accent-blue);
+    color: white;
+}
+
+.btn-lg {
+    padding: 0.875rem 2rem;
+    font-size: 1rem;
+}
+
+/* ============================================================================
+   FORMS
+   ========================================================================== */
+
+.form-control {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all var(--transition-fast);
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--accent-blue);
+    color: var(--text-light);
+    box-shadow: 0 0 0 3px rgba(91, 156, 247, 0.15);
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+}
+
+.form-label {
+    color: var(--text-light);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-text {
+    color: var(--text-muted);
+}
+
+.form-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-light);
+    border-radius: 8px;
+}
+
+.form-select:focus {
+    border-color: var(--accent-blue);
+    box-shadow: 0 0 0 3px rgba(91, 156, 247, 0.15);
+}
+
+/* ============================================================================
+   ALERTS
+   ========================================================================== */
+
+.alert {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    color: var(--text-light);
+}
+
+.alert-success {
+    background: rgba(76, 175, 80, 0.1);
+    border-color: var(--accent-green);
+    color: var(--accent-green);
+}
+
+.alert-danger {
+    background: rgba(244, 67, 54, 0.1);
+    border-color: var(--accent-red);
+    color: var(--accent-red);
+}
+
+.alert-warning {
+    background: rgba(255, 193, 7, 0.1);
+    border-color: #ffc107;
+    color: #ffc107;
+}
+
+.alert-info {
+    background: rgba(91, 156, 247, 0.1);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+/* ============================================================================
+   PROGRESS BARS
+   ========================================================================== */
+
+.progress {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    height: 10px;
+    border: 1px solid var(--border-color);
+}
+
+.progress-bar {
+    background: var(--gradient-primary);
+    box-shadow: 0 0 10px rgba(91, 156, 247, 0.5);
+    border-radius: 10px;
+}
+
+.progress-bar-striped {
+    background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 25%, transparent 25%);
+}
+
+/* ============================================================================
+   BADGES
+   ========================================================================== */
+
+.badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.badge-primary {
+    background: var(--accent-blue);
+    color: white;
+}
+
+.badge-success {
+    background: var(--accent-green);
+    color: white;
+}
+
+.badge-danger {
+    background: var(--accent-red);
+    color: white;
+}
+
+.badge-warning {
+    background: #ffc107;
+    color: black;
+}
+
+.badge-secondary {
+    background: var(--border-color);
+    color: var(--text-light);
+}
+
+/* ============================================================================
+   NAVBAR
+   ========================================================================== */
+
+.navbar {
+    background: rgba(26, 29, 46, 0.95);
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+}
+
+.navbar-brand:hover {
+    color: var(--accent-blue);
+}
+
+.nav-link {
+    color: var(--text-light) !important;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+    margin: 0 0.5rem;
+}
+
+.nav-link:hover {
+    color: var(--accent-blue) !important;
+}
+
+.nav-link.active {
+    color: var(--accent-blue) !important;
+    border-bottom: 2px solid var(--accent-blue);
+}
+
+/* ============================================================================
+   TABLES
+   ========================================================================== */
+
+.table {
+    color: var(--text-light);
+}
+
+.table thead {
+    background: rgba(91, 156, 247, 0.1);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table thead th {
+    color: var(--accent-blue);
+    font-weight: 600;
+    border: none;
+}
+
+.table tbody tr {
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background: rgba(91, 156, 247, 0.05);
+}
+
+.table-dark {
+    background: var(--secondary-dark);
+}
+
+/* ============================================================================
+   ANIMATIONS
+   ========================================================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(91, 156, 247, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(91, 156, 247, 0.8);
+    }
+}
+
+/* Apply animations */
+.card {
+    animation: fadeIn var(--transition-medium) ease-out;
+}
+
+.btn:active {
+    animation: pulse 0.3s ease-out;
+}
+
+/* ============================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-light {
+    color: var(--text-light) !important;
+}
+
+.border-color {
+    border-color: var(--border-color) !important;
+}
+
+.bg-primary-light {
+    background: rgba(91, 156, 247, 0.1);
+}
+
+.bg-success-light {
+    background: rgba(76, 175, 80, 0.1);
+}
+
+.bg-danger-light {
+    background: rgba(244, 67, 54, 0.1);
+}
+
+/* ============================================================================
+   SCROLLBAR
+   ========================================================================== */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--primary-dark);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 5px;
+    transition: background var(--transition-fast);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+}
+
+/* ============================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-lg {
+        padding: 0.625rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ============================================================================
+   DARK MODE SUPPORT (Already in use)
+   ========================================================================== */
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: linear-gradient(135deg, #0f1419 0%, #1a1d2e 50%, #16192b 100%);
+        color: var(--text-light);
+    }
+}
+
+/* ============================================================================
+   FOCUS STATES (Accessibility)
+   ========================================================================== */
+
+:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+button:focus,
+a:focus,
+input:focus {
+    outline: 2px solid var(--accent-blue);
+    outline-offset: 2px;
+}
+
+/* ============================================================================
+   LOADING STATES
+   ========================================================================== */
+
+.spinner-border {
+    color: var(--accent-blue);
+}
+
+.spinner-grow {
+    background-color: var(--accent-blue);
+}

@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}Image Prediction - Federated Learning{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <h2 class="mb-4">
+            <i class="fas fa-image"></i> Image Classification
+        </h2>
+        
+        {% if model_info.model_loaded %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> Model loaded and ready for predictions!
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i> Model not loaded. Please train the federated model first.
+        </div>
+        {% endif %}
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-upload"></i> Upload Image
+                    </div>
+                    <div class="card-body">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <!-- Drag and Drop Zone -->
+                            <div id="dropZone" class="drop-zone border-2 border-dashed rounded p-4 text-center mb-3" 
+                                 style="cursor: pointer; border-color: #ccc; background-color: #f9f9f9; transition: all 0.3s;">
+                                <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-2"></i>
+                                <p class="text-secondary mb-1">
+                                    <strong>Drag and drop your image here</strong>
+                                </p>
+                                <p class="text-muted small">or click to select a file</p>
+                                <input type="file" class="form-control" id="fileInput" accept="image/*" required style="display: none;">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-text text-center">Supported formats: JPG, PNG, GIF (max 5MB)</div>
+                            </div>
+                            
+                            <div id="imagePreview" class="mb-3" style="display: none;">
+                                <img id="previewImg" src="" alt="Preview" style="max-width: 100%; border-radius: 8px; max-height: 250px;">
+                            </div>
+                            
+                            <!-- Progress Bar -->
+                            <div id="uploadProgress" class="mb-3" style="display: none;">
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" role="progressbar" style="width: 0%"></div>
+                                </div>
+                                <small class="text-muted"><span id="progressText">0%</span> uploading...</small>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100" {% if not model_info.model_loaded %}disabled{% endif %}>
+                                <i class="fas fa-brain"></i> Classify Image
+                            </button>
+                        </form>
+                        
+                        <div id="loadingIndicator" class="text-center mt-3" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Analyzing image...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-chart-bar"></i> Prediction Results
+                    </div>
+                    <div class="card-body">
+                        <div id="resultsContainer" style="display: none;">
+                            <div class="text-center mb-4">
+                                <h3 id="predictedClass" class="text-primary"></h3>
+                                <p class="text-secondary">Confidence: <span id="confidence" class="fw-bold"></span></p>
+                            </div>
+                            
+                            <h5 class="mb-3">All Class Probabilities:</h5>
+                            <canvas id="probabilityChart"></canvas>
+                        </div>
+                        
+                        <div id="noResults" class="text-center text-secondary py-5">
+                            <i class="fas fa-image fa-3x mb-3 opacity-50"></i>
+                            <p>Upload an image to see predictions</p>
+                        </div>
+                        
+                        <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let chart = null;
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    
+    // Click to select file
+    dropZone.addEventListener('click', function() {
+        fileInput.click();
+    });
+    
+    // Drag over
+    dropZone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = '#007bff';
+        dropZone.style.backgroundColor = '#e7f3ff';
+        dropZone.classList.add('drag-over');
+    });
+    
+    // Drag leave
+    dropZone.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = '#ccc';
+        dropZone.style.backgroundColor = '#f9f9f9';
+        dropZone.classList.remove('drag-over');
+    });
+    
+    // Drop
+    dropZone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        dropZone.style.borderColor = '#ccc';
+        dropZone.style.backgroundColor = '#f9f9f9';
+        dropZone.classList.remove('drag-over');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileSelect(files[0]);
+        }
+    });
+    
+    // Image preview
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            handleFileSelect(file);
+        }
+    });
+    
+    function handleFileSelect(file) {
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
+        
+        // Validate file size (5MB)
+        if (file.size > 5 * 1024 * 1024) {
+            alert('File size exceeds 5MB limit');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+    
+    // Form submission
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Please select an image file');
+            return;
+        }
+        
+        // Show loading
+        document.getElementById('loadingIndicator').style.display = 'block';
+        document.getElementById('resultsContainer').style.display = 'none';
+        document.getElementById('noResults').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('uploadProgress').style.display = 'block';
+        
+        // Create form data
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        try {
+            // Send prediction request
+            const response = await fetch('/predict', {
+                method: 'POST',
+                body: formData
+            });
+            
+            // Hide loading and progress
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('uploadProgress').style.display = 'none';
+            
+            if (response.ok) {
+                // Redirect to results page
+                window.location.href = response.url;
+            } else {
+                // Show error
+                const data = await response.json().catch(() => null);
+                const errorMsg = data?.error || `HTTP ${response.status}`;
+                document.getElementById('errorMessage').textContent = errorMsg;
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        } catch (error) {
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('uploadProgress').style.display = 'none';
+            document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
+            document.getElementById('errorMessage').style.display = 'block';
+        }
+    });
+    
+    function displayResults(result) {
+        // Show predicted class
+        document.getElementById('predictedClass').textContent = result.predicted_class.toUpperCase();
+        document.getElementById('confidence').textContent = (result.confidence * 100).toFixed(2) + '%';
+        
+        // Show results container
+        document.getElementById('resultsContainer').style.display = 'block';
+        
+        // Prepare chart data
+        const labels = result.all_predictions.map(p => p.class_name);
+        const probabilities = result.all_predictions.map(p => p.probability * 100);
+        
+        // Destroy existing chart
+        if (chart) {
+            chart.destroy();
+        }
+        
+        // Create bar chart
+        const ctx = document.getElementById('probabilityChart').getContext('2d');
+        chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Probability (%)',
+                    data: probabilities,
+                    backgroundColor: 'rgba(88, 166, 255, 0.6)',
+                    borderColor: 'rgba(88, 166, 255, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+<style>
+    #dropZone {
+        border-width: 2px !important;
+        transition: all 0.3s ease;
+    }
+    
+    #dropZone:hover {
+        border-color: #007bff !important;
+        background-color: #e7f3ff !important;
+    }
+    
+    .drag-over {
+        border-color: #007bff !important;
+        background-color: #e7f3ff !important;
+        box-shadow: 0 0 10px rgba(0, 123, 255, 0.2) !important;
+    }
+</style>
+{% endblock %}

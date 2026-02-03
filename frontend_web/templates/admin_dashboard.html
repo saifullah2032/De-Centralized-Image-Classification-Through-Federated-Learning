@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - Federated Learning{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-chart-line"></i> Training Monitor Dashboard
+        </h2>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Status Cards -->
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-label">Current Round</div>
+            <div class="stat-value text-primary" id="currentRound">-</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-label">Global Accuracy</div>
+            <div class="stat-value text-success" id="globalAccuracy">-</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-label">Global Loss</div>
+            <div class="stat-value text-warning" id="globalLoss">-</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-label">Status</div>
+            <div class="stat-value">
+                <span id="statusBadge" class="badge bg-secondary">Idle</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- Training Progress Chart -->
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-chart-line"></i> Training Progress
+            </div>
+            <div class="card-body">
+                <canvas id="trainingChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Real-time Logs -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-terminal"></i> Live Training Log
+                <span id="connectionStatus" class="badge bg-secondary float-end">Disconnected</span>
+            </div>
+            <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                <div id="liveLog" style="font-family: monospace; font-size: 0.85rem;">
+                    <div class="text-secondary">Waiting for training events...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-info-circle"></i> System Information
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <strong>Training Rounds:</strong> <span id="totalRounds">10</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Number of Clients:</strong> <span id="numClients">5</span>
+                    </div>
+                    <div class="col-md-4">
+                        <strong>Model Architecture:</strong> MobileNetV2
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let trainingChart = null;
+    let eventSource = null;
+    
+    // Initialize chart
+    function initChart() {
+        const ctx = document.getElementById('trainingChart').getContext('2d');
+        trainingChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [
+                    {
+                        label: 'Accuracy',
+                        data: [],
+                        borderColor: 'rgb(63, 185, 80)',
+                        backgroundColor: 'rgba(63, 185, 80, 0.1)',
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Loss',
+                        data: [],
+                        borderColor: 'rgb(210, 153, 34)',
+                        backgroundColor: 'rgba(210, 153, 34, 0.1)',
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Accuracy'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Loss'
+                        },
+                        grid: {
+                            drawOnChartArea: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // Fetch and update metrics
+    async function updateMetrics() {
+        try {
+            const response = await fetch('/api/metrics');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success && data.data) {
+                    const history = data.data;
+                    
+                    // Update chart
+                    trainingChart.data.labels = history.rounds;
+                    trainingChart.data.datasets[0].data = history.accuracies.map(a => a * 100);
+                    trainingChart.data.datasets[1].data = history.losses;
+                    trainingChart.update();
+                    
+                    // Update stats
+                    if (history.rounds.length > 0) {
+                        const lastIdx = history.rounds.length - 1;
+                        document.getElementById('currentRound').textContent = history.rounds[lastIdx];
+                        document.getElementById('globalAccuracy').textContent = 
+                            (history.accuracies[lastIdx] * 100).toFixed(2) + '%';
+                        document.getElementById('globalLoss').textContent = 
+                            history.losses[lastIdx].toFixed(4);
+                        document.getElementById('statusBadge').textContent = 'Training';
+                        document.getElementById('statusBadge').className = 'badge bg-success';
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching metrics:', error);
+        }
+    }
+    
+    // Connect to SSE for live updates
+    function connectToEventStream() {
+        eventSource = new EventSource('/admin/events');
+        
+        eventSource.onopen = function() {
+            document.getElementById('connectionStatus').textContent = 'Connected';
+            document.getElementById('connectionStatus').className = 'badge bg-success float-end';
+        };
+        
+        eventSource.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            
+            // Add to log
+            const logEntry = document.createElement('div');
+            logEntry.className = 'mb-1';
+            
+            if (data.type === 'log') {
+                logEntry.innerHTML = `<small class="text-secondary">${new Date().toLocaleTimeString()}</small> ${data.message}`;
+            } else if (data.type === 'heartbeat') {
+                // Heartbeat - update metrics
+                updateMetrics();
+                return; // Don't add to log
+            }
+            
+            const logContainer = document.getElementById('liveLog');
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        };
+        
+        eventSource.onerror = function() {
+            document.getElementById('connectionStatus').textContent = 'Disconnected';
+            document.getElementById('connectionStatus').className = 'badge bg-danger float-end';
+            
+            // Try to reconnect after 5 seconds
+            setTimeout(() => {
+                if (eventSource.readyState === EventSource.CLOSED) {
+                    connectToEventStream();
+                }
+            }, 5000);
+        };
+    }
+    
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+        initChart();
+        updateMetrics();
+        connectToEventStream();
+        
+        // Refresh metrics every 5 seconds
+        setInterval(updateMetrics, 5000);
+    });
+    
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', function() {
+        if (eventSource) {
+            eventSource.close();
+        }
+    });
+</script>
+{% endblock %}

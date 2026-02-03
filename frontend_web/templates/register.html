@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Federated Learning{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Create Account</h2>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+
+                    <form method="POST">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" 
+                                   placeholder="Choose a username (min 3 chars)" required>
+                            <small class="form-text text-muted">Must be at least 3 characters long and unique.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" 
+                                   placeholder="Choose a password (min 6 chars)" required>
+                            <small class="form-text text-muted">Must be at least 6 characters long.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password_confirm">Confirm Password</label>
+                            <input type="password" class="form-control" id="password_confirm" name="password_confirm" 
+                                   placeholder="Confirm your password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="role">Role</label>
+                            <select class="form-control" id="role" name="role">
+                                <option value="client" selected>Client (Participant)</option>
+                                <option value="admin">Admin (Administrator)</option>
+                            </select>
+                            <small class="form-text text-muted">
+                                <strong>Client:</strong> Participate in federated training.<br>
+                                <strong>Admin:</strong> Monitor training and system metrics.
+                            </small>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <p class="text-center text-muted">
+                        Already have an account? 
+                        <a href="{{ url_for('login') }}">Log in here</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Info Box -->
+            <div class="card mt-4 bg-light">
+                <div class="card-body">
+                    <h5 class="card-title">About This System</h5>
+                    <p class="card-text small">
+                        This is a Federated Learning platform for distributed machine learning. 
+                        Register as a <strong>Client</strong> to participate in collaborative training, 
+                        or as an <strong>Admin</strong> to monitor the overall system.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 10px;
+        border: none;
+    }
+    
+    .card-header {
+        border-radius: 10px 10px 0 0;
+        padding: 1.5rem;
+    }
+    
+    .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+</style>
+{% endblock %}

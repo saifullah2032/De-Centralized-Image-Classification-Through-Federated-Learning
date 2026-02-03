@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Internal Server Error{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="error-page">
+                <h1 class="display-1 text-danger font-weight-bold mb-3">
+                    <i class="fas fa-exclamation-triangle"></i> 500
+                </h1>
+                
+                <h2 class="mb-3">Internal Server Error</h2>
+                
+                <p class="lead text-muted mb-4">
+                    Something went wrong on our end. Our team has been notified and is working to fix it.
+                </p>
+
+                <div class="alert alert-warning" role="alert">
+                    <strong>What you can do:</strong>
+                    <ul class="mb-0 mt-2">
+                        <li>Try refreshing the page</li>
+                        <li>Check your internet connection</li>
+                        <li>Try again in a few moments</li>
+                        <li>Contact support if the problem persists</li>
+                    </ul>
+                </div>
+
+                <div class="mt-5 mb-4">
+                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                        <i class="fas fa-home"></i> Go to Home
+                    </a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-chart-line"></i> Go to Dashboard
+                    </a>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="text-muted small">
+                    <p class="mb-1">Error logged at: <strong>{{ timestamp }}</strong></p>
+                    <p class="mb-0">If the problem persists, please contact <strong>support@federated-learning.local</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-page {
+        animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .display-1 {
+        font-size: 6rem;
+        line-height: 1;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        border-color: #ffc107;
+    }
+
+    .btn-lg {
+        padding: 0.75rem 2rem;
+        margin: 0.5rem;
+        font-weight: 500;
+    }
+</style>
+{% endblock %}
