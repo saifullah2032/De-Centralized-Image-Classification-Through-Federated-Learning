@@ -641,6 +641,112 @@
     }
 
     // ========================================================================
+    // 6. MOBILE MENU ENHANCEMENTS
+    // ========================================================================
+    
+    class MobileMenu {
+        constructor() {
+            this.init();
+        }
+
+        init() {
+            this.createBackdrop();
+            this.setupMenuToggle();
+            this.setupMenuClose();
+        }
+
+        createBackdrop() {
+            // Create backdrop element
+            const backdrop = document.createElement('div');
+            backdrop.className = 'mobile-backdrop';
+            backdrop.id = 'mobile-backdrop';
+            document.body.appendChild(backdrop);
+
+            // Close menu when backdrop is clicked
+            backdrop.addEventListener('click', () => {
+                this.closeMenu();
+            });
+        }
+
+        setupMenuToggle() {
+            const toggler = document.querySelector('.navbar-toggler');
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+
+            if (!toggler || !navbarCollapse) return;
+
+            toggler.addEventListener('click', () => {
+                const isOpen = navbarCollapse.classList.contains('show');
+                
+                if (isOpen) {
+                    this.closeMenu();
+                } else {
+                    this.openMenu();
+                }
+            });
+        }
+
+        setupMenuClose() {
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            if (!navbarCollapse) return;
+
+            // Close on navigation link click
+            const navLinks = navbarCollapse.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    setTimeout(() => this.closeMenu(), 200);
+                });
+            });
+
+            // Close button (using CSS ::before pseudo-element)
+            navbarCollapse.addEventListener('click', (e) => {
+                const rect = navbarCollapse.getBoundingClientRect();
+                const closeButtonArea = {
+                    left: rect.right - 70,
+                    top: rect.top,
+                    right: rect.right - 10,
+                    bottom: rect.top + 70
+                };
+
+                if (e.clientX >= closeButtonArea.left &&
+                    e.clientX <= closeButtonArea.right &&
+                    e.clientY >= closeButtonArea.top &&
+                    e.clientY <= closeButtonArea.bottom) {
+                    this.closeMenu();
+                }
+            });
+
+            // Close on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && navbarCollapse.classList.contains('show')) {
+                    this.closeMenu();
+                }
+            });
+        }
+
+        openMenu() {
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            const backdrop = document.getElementById('mobile-backdrop');
+            
+            if (navbarCollapse && backdrop) {
+                navbarCollapse.classList.add('show');
+                backdrop.style.display = 'block';
+                document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            }
+        }
+
+        closeMenu() {
+            const navbarCollapse = document.querySelector('.navbar-collapse');
+            const backdrop = document.getElementById('mobile-backdrop');
+            
+            if (navbarCollapse && backdrop) {
+                navbarCollapse.classList.remove('show');
+                backdrop.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        }
+    }
+
+    // ========================================================================
     // INITIALIZE ALL FEATURES
     // ========================================================================
     
@@ -651,6 +757,7 @@
         new Microinteractions();
         new LoadingStates();
         new PageTransitions();
+        new MobileMenu();
         
         console.log('✅ Federated Learning UI Enhancements Initialized');
     });
