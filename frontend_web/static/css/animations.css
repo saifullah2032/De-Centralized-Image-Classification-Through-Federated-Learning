@@ -1,0 +1,421 @@
+/* ============================================================================
+   JAVASCRIPT ENHANCEMENTS - ADDITIONAL STYLES
+   Ripple Effects | Skeleton Loaders | Animations
+   ============================================================================ */
+
+/* Ripple effect for buttons */
+.btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(0);
+    animation: ripple-animation 0.6s ease-out;
+    pointer-events: none;
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Skeleton loader animations */
+.skeleton-loader {
+    padding: 2rem;
+}
+
+.skeleton-line {
+    background: linear-gradient(
+        90deg,
+        var(--bg-tertiary) 0%,
+        var(--bg-card) 50%,
+        var(--bg-tertiary) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+/* Toast notification animations */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Card tilt effect - smooth transition */
+.card {
+    transition: transform 0.1s ease-out, box-shadow 0.3s ease !important;
+}
+
+/* Navbar hide/show transition */
+.navbar {
+    transition: transform 0.3s ease, background 0.4s ease, padding 0.4s ease;
+}
+
+/* Loading state for elements */
+.loading {
+    position: relative;
+}
+
+/* Custom scrollbar for better UX */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bg-card);
+    border-radius: 10px;
+    transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary);
+}
+
+/* Page transition loader bar */
+.page-transition-loader {
+    box-shadow: 0 0 10px var(--primary);
+}
+
+/* Input focus animations */
+.form-label {
+    transition: all 0.3s ease;
+}
+
+/* Animated elements - initial state */
+.fade-in,
+.fade-in-up,
+.fade-in-down,
+.fade-in-left,
+.fade-in-right,
+.slide-up,
+.slide-down,
+.slide-left,
+.slide-right,
+.scale-in,
+.bounce-in,
+.rotate-in,
+.stagger-1,
+.stagger-2,
+.stagger-3,
+.stagger-4,
+.stagger-5,
+.stagger-6 {
+    transition: none !important;
+}
+
+/* After animation is triggered */
+.animated {
+    animation-fill-mode: both !important;
+}
+
+/* Theme toggle button styles */
+#theme-toggle {
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: var(--transition);
+}
+
+#theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    color: var(--primary) !important;
+}
+
+/* Light theme specific adjustments */
+[data-theme="light"] {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --bg-card: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #495057;
+    --text-tertiary: #6c757d;
+    --text-muted: #adb5bd;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 12px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* Smooth body transitions for theme changes */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom tooltip styles */
+.custom-tooltip {
+    animation: tooltipFadeIn 0.2s ease;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Counter animation */
+[data-count] {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Loading spinner overlay */
+#page-loader {
+    backdrop-filter: blur(10px);
+}
+
+.loader-content {
+    text-align: center;
+}
+
+/* Parallax elements */
+.parallax {
+    will-change: transform;
+}
+
+/* Improved button loading state */
+.btn.loading {
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+/* Card interaction states */
+.card:active {
+    transform: scale(0.98) !important;
+}
+
+/* Enhanced alert animations */
+.alert {
+    animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Badge pulse animation for notifications */
+.badge.pulse {
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+    }
+}
+
+/* Form validation animations */
+.form-control.is-invalid {
+    animation: shake 0.5s;
+}
+
+.form-control.is-valid {
+    animation: successPulse 0.5s;
+}
+
+@keyframes successPulse {
+    0%, 100% {
+        border-color: var(--success);
+    }
+    50% {
+        border-color: var(--success);
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.2);
+    }
+}
+
+/* Hover effects for interactive elements */
+a, button {
+    transition: var(--transition);
+}
+
+/* Image loading placeholder */
+img[data-src] {
+    background: linear-gradient(
+        90deg,
+        var(--bg-tertiary) 0%,
+        var(--bg-card) 50%,
+        var(--bg-tertiary) 100%
+    );
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+}
+
+img[data-src].loaded {
+    animation: none;
+    background: none;
+}
+
+/* Progress indicator for page loading */
+.progress-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+    z-index: 99999;
+}
+
+.progress-indicator.active {
+    transform: scaleX(1);
+}
+
+/* Enhanced card reveal animation */
+.card.reveal {
+    animation: cardReveal 0.6s ease both;
+}
+
+@keyframes cardReveal {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Floating action button */
+.fab {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-xl);
+    cursor: pointer;
+    transition: var(--transition);
+    z-index: 1000;
+}
+
+.fab:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 30px rgba(99, 102, 241, 0.5);
+}
+
+.fab:active {
+    transform: scale(0.95);
+}
+
+/* Notification dot */
+.notification-dot {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 12px;
+    height: 12px;
+    background: var(--danger);
+    border-radius: 50%;
+    border: 2px solid var(--bg-primary);
+    animation: pulse 2s infinite;
+}
+
+/* Code block animations */
+pre, code {
+    transition: var(--transition);
+}
+
+pre:hover, code:hover {
+    background: var(--bg-card) !important;
+}
+
+/* Smooth transitions for all interactive elements */
+button, a, input, select, textarea {
+    transition: var(--transition);
+}
+
+/* Enhanced focus states */
+button:focus,
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+/* END OF JAVASCRIPT ENHANCEMENT STYLES */
