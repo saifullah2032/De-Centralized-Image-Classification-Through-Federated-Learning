@@ -13,7 +13,7 @@
 
 <div class="row g-4 mb-4">
     <!-- Status Cards -->
-    <div class="col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="card">
             <div class="card-body text-center py-4">
                 <div class="text-secondary small fw-bold text-uppercase mb-2">Current Round</div>
@@ -21,7 +21,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="card">
             <div class="card-body text-center py-4">
                 <div class="text-secondary small fw-bold text-uppercase mb-2">Global Accuracy</div>
@@ -29,7 +29,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="card">
             <div class="card-body text-center py-4">
                 <div class="text-secondary small fw-bold text-uppercase mb-2">Global Loss</div>
@@ -37,7 +37,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-12 col-sm-6 col-lg-3">
         <div class="card">
             <div class="card-body text-center py-4">
                 <div class="text-secondary small fw-bold text-uppercase mb-2">Status</div>
@@ -51,20 +51,22 @@
 
 <div class="row g-4 mb-4">
     <!-- Training Progress Chart -->
-    <div class="col-md-8">
+    <div class="col-12 col-lg-8">
         <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="fas fa-chart-line me-2"></i>Training Progress</span>
                 <span class="badge bg-primary-transparent text-primary">Live Data</span>
             </div>
             <div class="card-body">
-                <canvas id="trainingChart"></canvas>
+                <div class="chart-container" style="position: relative; height: 400px; max-height: 400px;">
+                    <canvas id="trainingChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
     
     <!-- Real-time Logs -->
-    <div class="col-md-4">
+    <div class="col-12 col-lg-4">
         <div class="card h-100">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="fas fa-terminal me-2"></i>Live Log</span>
@@ -154,7 +156,8 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
+                aspectRatio: 2,
                 interaction: {
                     mode: 'index',
                     intersect: false
@@ -328,5 +331,41 @@
         border: 1px solid rgba(99, 102, 241, 0.2);
     }
     .fw-black { font-weight: 900; }
+    
+    /* Chart container fixes */
+    .chart-container {
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .chart-container canvas {
+        max-width: 100%;
+        height: auto !important;
+    }
+    
+    /* Responsive card grid adjustments */
+    @media (max-width: 575px) {
+        /* Mobile: 1 card per row (full width) */
+        .row.g-4 > [class*="col-"] {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+    
+    @media (min-width: 576px) and (max-width: 991px) {
+        /* Tablet: 2 cards per row */
+        .row.g-4 > [class*="col-sm-"] {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+    }
+    
+    @media (min-width: 992px) {
+        /* Desktop: 4 cards per row */
+        .row.g-4 > [class*="col-lg-3"] {
+            flex: 0 0 25%;
+            max-width: 25%;
+        }
+    }
 </style>
 {% endblock %}
