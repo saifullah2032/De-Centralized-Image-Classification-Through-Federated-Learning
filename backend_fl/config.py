@@ -340,7 +340,7 @@ MODEL_PATH = os.getenv("MODEL_PATH", "models/global_model.h5")
 MODEL_HISTORY_PATH = "models/model_history.json"
 
 # Upload Configuration
-UPLOAD_FOLDER = "uploads"
+UPLOAD_FOLDER = os.path.abspath("uploads")  # Use absolute path for send_from_directory
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg"}
 MAX_CONTENT_LENGTH = int(os.getenv("MAX_UPLOAD_SIZE", 5 * 1024 * 1024))  # 5 MB
 

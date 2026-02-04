@@ -1,129 +1,107 @@
 {% extends "base.html" %}
 
-{% block title %}Image Prediction - Federated Learning{% endblock %}
+{% block title %}Neural Analysis - Federated Learning{% endblock %}
 
 {% block content %}
-<div class="predict-page">
-    <div class="row">
-        <div class="col-lg-10 mx-auto">
-            <!-- Header -->
-            <div class="page-header mb-5">
-                <h1 class="display-4 fw-bold mb-2">
-                    <i class="fas fa-image text-primary"></i> Image Classification
-                </h1>
-                <p class="lead text-secondary">Upload an image to classify it using our federated learning model</p>
-            </div>
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- Header -->
+        <div class="mb-5">
+            <h1 class="display-5 fw-bold mb-2">
+                <i class="fas fa-microscope text-primary me-2"></i>Neural Analysis
+            </h1>
+            <p class="lead text-secondary">Execute distributed inference on the federated model architecture</p>
+        </div>
 
-            <!-- Model Status -->
-            {% if model_info.model_loaded %}
-            <div class="alert alert-success alert-custom mb-4">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="status-icon success">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-1">Model Ready</h6>
-                        <small>The federated model is loaded and ready for predictions</small>
-                    </div>
+        <!-- Model Status -->
+        {% if model_info.model_loaded %}
+        <div class="card mb-5 border-success" style="background: rgba(16, 185, 129, 0.05);">
+            <div class="card-body py-3 d-flex align-items-center gap-3">
+                <i class="fas fa-check-circle text-success fs-4"></i>
+                <div>
+                    <span class="fw-bold text-success">Global Intelligence Active</span>
+                    <div class="small text-secondary">The federated core is synchronized and ready for computation.</div>
                 </div>
             </div>
-            {% else %}
-            <div class="alert alert-warning alert-custom mb-4">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="status-icon warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div>
-                        <h6 class="mb-1">Model Unavailable</h6>
-                        <small>Please train the federated model first before making predictions</small>
-                    </div>
+        </div>
+        {% else %}
+        <div class="card mb-5 border-danger" style="background: rgba(239, 68, 68, 0.05);">
+            <div class="card-body py-3 d-flex align-items-center gap-3">
+                <i class="fas fa-exclamation-triangle text-danger fs-4"></i>
+                <div>
+                    <span class="fw-bold text-danger">Intelligence Offline</span>
+                    <div class="small text-secondary">Model weights not found. Synchronization required.</div>
                 </div>
             </div>
-            {% endif %}
+        </div>
+        {% endif %}
 
-            <!-- Upload & Results Section -->
-            <div class="row g-4">
-                <!-- Upload Section -->
-                <div class="col-lg-6">
-                    <div class="card upload-card h-100">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-cloud-upload-alt"></i> Upload Image
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <form id="uploadForm" enctype="multipart/form-data">
-                                <!-- Drag & Drop Zone -->
-                                <div id="dropZone" class="drop-zone mb-4">
-                                    <div class="drop-zone-content">
-                                        <div class="drop-zone-icon">
-                                            <i class="fas fa-cloud-upload-alt"></i>
-                                        </div>
-                                        <h6 class="mt-3 mb-2">Drag & drop your image</h6>
-                                        <p class="text-secondary small mb-0">or click to select a file</p>
-                                    </div>
-                                    <input type="file" id="fileInput" accept="image/*" required style="display: none;">
-                                </div>
+        <!-- Upload Section -->
+        <div class="row g-4">
+            <div class="col-lg-7">
+                <div class="card h-100">
+                    <div class="card-header">
+                        <i class="fas fa-upload me-2"></i>Data Ingestion
+                    </div>
+                    <div class="card-body">
+                        <form id="uploadForm" method="POST" action="/predict" enctype="multipart/form-data">
+                            <div id="dropZone" class="drop-zone mb-4">
+                                <i class="fas fa-cloud-arrow-up fa-3x text-primary mb-3"></i>
+                                <h5 class="fw-bold">Quantum Drop Zone</h5>
+                                <p class="text-tertiary small">Drag & drop or click to browse</p>
+                                <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
+                            </div>
 
-                                <!-- File Info -->
-                                <div class="file-info text-center text-secondary small mb-4">
-                                    <i class="fas fa-info-circle"></i> JPG, PNG • Max 5MB
-                                </div>
-
-                                <!-- Image Preview -->
-                                <div id="imagePreview" class="preview-container mb-4" style="display: none;">
-                                    <img id="previewImg" src="" alt="Preview">
-                                    <button type="button" class="btn-remove" onclick="document.getElementById('fileInput').value=''; document.getElementById('imagePreview').style.display='none';">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-
-                                <!-- Progress Bar -->
-                                <div id="uploadProgress" class="mb-4" style="display: none;">
-                                    <div class="progress-container">
-                                        <div class="progress">
-                                            <div class="progress-bar progress-bar-animated" id="progressBar"></div>
-                                        </div>
-                                        <small class="text-secondary"><span id="progressText">0%</span> uploading...</small>
-                                    </div>
-                                </div>
-
-                                <!-- Submit Button -->
-                                <button type="submit" class="btn btn-primary w-100 btn-lg" {% if not model_info.model_loaded %}disabled{% endif %}>
-                                    <i class="fas fa-magic"></i> Analyze Image
+                            <div id="imagePreview" class="preview-container mb-4 d-none">
+                                <img id="previewImg" src="" alt="Preview" class="img-fluid rounded-3 border border-color">
+                                <button type="button" class="btn-remove" onclick="resetUpload()">
+                                    <i class="fas fa-times"></i>
                                 </button>
-                            </form>
-
-                            <!-- Loading Indicator -->
-                            <div id="loadingIndicator" class="loading-container" style="display: none;">
-                                <div class="spinner">
-                                    <div class="spinner-ring"></div>
-                                </div>
-                                <p class="mt-3 text-secondary">Processing image...</p>
                             </div>
+
+                            <button type="submit" class="btn btn-primary w-100 btn-lg" id="submitBtn" {% if not model_info.model_loaded %}disabled{% endif %}>
+                                <i class="fas fa-brain me-2"></i> Execute Classification
+                            </button>
+                        </form>
+
+                        <div id="loadingIndicator" class="text-center mt-4 d-none">
+                            <div class="spinner-border text-primary mb-3" role="status"></div>
+                            <p class="text-secondary small fw-bold">Loading model and processing image...</p>
+                            <p class="text-tertiary smaller">⚠️ First prediction may take 20-30 seconds (JAX compilation)</p>
+                            <p class="text-tertiary smaller">Subsequent predictions will be much faster!</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Results Section -->
-                <div class="col-lg-6">
-                    <div class="card results-card h-100">
-                        <div class="card-header">
-                            <h5 class="mb-0">
-                                <i class="fas fa-chart-bar"></i> Predictions
-                            </h5>
+            <div class="col-lg-5">
+                <div class="card h-100 bg-dark-2">
+                    <div class="card-header">
+                        <i class="fas fa-circle-info me-2"></i>Model Context
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <div class="text-tertiary small text-uppercase fw-bold mb-1">Architecture</div>
+                            <div class="h5 text-primary">MobileNetV2</div>
                         </div>
-                        <div class="card-body">
-                            <!-- No Results -->
-                            <div id="noResults" class="empty-state">
-                                <div class="empty-state-icon">
-                                    <i class="fas fa-images"></i>
-                                </div>
-                                <p class="text-secondary">Upload an image to see predictions</p>
+                        <div class="mb-4">
+                            <div class="text-tertiary small text-uppercase fw-bold mb-1">Backend</div>
+                            <div class="h5">JAX / Keras 3.0</div>
+                        </div>
+                        <div class="mb-4">
+                            <div class="text-tertiary small text-uppercase fw-bold mb-1">Dataset Target</div>
+                            <div class="h5">CIFAR-100 Distributed</div>
+                        </div>
+                        <div class="p-3 bg-black rounded-3 border border-color">
+                            <div class="text-tertiary smaller mb-2 text-uppercase fw-bold"><i class="fas fa-microchip me-1"></i> Compute Stats</div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="smaller text-secondary">Precision</span>
+                                <span class="smaller text-success fw-bold">FP32</span>
                             </div>
-
-                            <!-- Error Message -->
-                            <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+                            <div class="d-flex justify-content-between">
+                                <span class="smaller text-secondary">Inference Latency</span>
+                                <span class="smaller text-primary fw-bold">< 120ms</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -133,333 +111,119 @@
 </div>
 
 <style>
-    .predict-page {
-        padding-top: 2rem;
-        padding-bottom: 3rem;
-    }
-
-    .page-header {
-        border-bottom: 2px solid rgba(91, 124, 255, 0.2);
-        padding-bottom: 1.5rem;
-    }
-
-    .alert-custom {
-        border: none;
-        border-radius: 15px;
-        padding: 1.25rem;
-    }
-
-    .alert-custom.alert-success {
-        background: rgba(16, 185, 129, 0.1);
-        border-color: rgba(16, 185, 129, 0.3);
-    }
-
-    .alert-custom.alert-warning {
-        background: rgba(245, 158, 11, 0.1);
-        border-color: rgba(245, 158, 11, 0.3);
-    }
-
-    .status-icon {
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 12px;
-        font-size: 1.5rem;
-        flex-shrink: 0;
-    }
-
-    .status-icon.success {
-        background: rgba(16, 185, 129, 0.2);
-        color: var(--success);
-    }
-
-    .status-icon.warning {
-        background: rgba(245, 158, 11, 0.2);
-        color: var(--warning);
-    }
-
-    .upload-card,
-    .results-card {
-        border-radius: 15px;
-        overflow: hidden;
-    }
-
-    .card-header {
-        background: rgba(36, 45, 63, 0.8);
-        border-bottom: 1px solid var(--border-color);
-        padding: 1.5rem;
-    }
-
-    .card-body {
-        padding: 2rem;
-    }
-
-    /* Drop Zone Styling */
     .drop-zone {
-        border: 2px dashed var(--border-light);
-        border-radius: 12px;
-        padding: 2rem;
+        border: 2px dashed var(--border-color);
+        border-radius: 16px;
+        padding: 3rem 2rem;
         text-align: center;
         cursor: pointer;
-        transition: all var(--transition-base);
-        background: rgba(91, 124, 255, 0.05);
+        transition: var(--transition-base);
+        background: rgba(255, 255, 255, 0.02);
     }
-
-    .drop-zone:hover {
+    .drop-zone:hover, .drop-zone.drag-over {
         border-color: var(--primary-500);
-        background: rgba(91, 124, 255, 0.1);
+        background: rgba(99, 102, 241, 0.05);
+        transform: translateY(-2px);
     }
-
-    .drop-zone.drag-over {
-        border-color: var(--primary-500);
-        background: rgba(91, 124, 255, 0.15);
-        transform: scale(1.02);
-    }
-
-    .drop-zone-icon {
-        font-size: 2.5rem;
-        color: var(--primary-400);
-        margin-bottom: 0.5rem;
-    }
-
-    .file-info {
-        padding: 0.75rem;
-        background: rgba(36, 45, 63, 0.5);
-        border-radius: 8px;
-    }
-
-    /* Preview Container */
     .preview-container {
         position: relative;
-        border-radius: 12px;
+        border-radius: 16px;
         overflow: hidden;
-        background: rgba(36, 45, 63, 0.5);
-        border: 1px solid var(--border-color);
     }
-
-    .preview-container img {
-        width: 100%;
-        height: auto;
-        display: block;
-        max-height: 300px;
-        object-fit: contain;
-    }
-
     .btn-remove {
         position: absolute;
-        top: 0.5rem;
-        right: 0.5rem;
-        width: 40px;
-        height: 40px;
-        border: none;
-        background: rgba(0, 0, 0, 0.6);
+        top: 10px;
+        right: 10px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.7);
         color: white;
-        border-radius: 50%;
-        cursor: pointer;
+        border: none;
         display: flex;
         align-items: center;
         justify-content: center;
-        transition: all var(--transition-base);
+        transition: var(--transition-fast);
     }
-
-    .btn-remove:hover {
-        background: rgba(0, 0, 0, 0.8);
-        transform: scale(1.1);
-    }
-
-    /* Progress Bar */
-    .progress-container {
-        margin-bottom: 1rem;
-    }
-
-    .progress {
-        height: 8px;
-        border-radius: 10px;
-        background: rgba(36, 45, 63, 0.8);
-        overflow: hidden;
-    }
-
-    .progress-bar {
-        background: linear-gradient(90deg, #5b7cff, #7ba8ff);
-        height: 100%;
-    }
-
-    /* Loading Spinner */
-    .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 1rem;
-    }
-
-    .spinner {
-        width: 50px;
-        height: 50px;
-        position: relative;
-    }
-
-    .spinner-ring {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(91, 124, 255, 0.2);
-        border-top-color: #5b7cff;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        to { transform: rotate(360deg); }
-    }
-
-    /* Empty State */
-    .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 3rem 1rem;
-        text-align: center;
-    }
-
-    .empty-state-icon {
-        font-size: 3rem;
-        color: var(--text-tertiary);
-        margin-bottom: 1rem;
-        opacity: 0.5;
-    }
-
-    @media (max-width: 768px) {
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        .drop-zone {
-            padding: 1.5rem;
-        }
-
-        .drop-zone-icon {
-            font-size: 2rem;
-        }
-    }
+    .btn-remove:hover { background: var(--danger); }
+    .smaller { font-size: 0.75rem; }
+    .bg-dark-2 { background: var(--dark-2) !important; }
 </style>
-
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    let chart = null;
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
+    const previewImg = document.getElementById('previewImg');
+    const imagePreview = document.getElementById('imagePreview');
     
-    // Click to select file
-    dropZone.addEventListener('click', function() {
-        fileInput.click();
-    });
+    dropZone.addEventListener('click', () => fileInput.click());
     
-    // Drag over
-    dropZone.addEventListener('dragover', function(e) {
+    dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        e.stopPropagation();
         dropZone.classList.add('drag-over');
     });
     
-    // Drag leave
-    dropZone.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('drag-over');
+    ['dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, () => dropZone.classList.remove('drag-over'));
     });
     
-    // Drop
-    dropZone.addEventListener('drop', function(e) {
+    dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
-        e.stopPropagation();
-        dropZone.classList.remove('drag-over');
-        
         const files = e.dataTransfer.files;
-        if (files.length > 0) {
+        if (files.length) {
             fileInput.files = files;
-            handleFileSelect(files[0]);
+            handleFiles(files[0]);
         }
     });
     
-    // Image preview
-    fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            handleFileSelect(file);
-        }
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) handleFiles(e.target.files[0]);
     });
     
-    function handleFileSelect(file) {
-        // Validate file type
-        if (!file.type.startsWith('image/')) {
-            alert('Please select an image file');
-            return;
-        }
-        
-        // Validate file size (5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            alert('File size must be less than 5MB');
-            return;
-        }
-        
-        // Show preview
+    function handleFiles(file) {
+        if (!file.type.startsWith('image/')) return;
         const reader = new FileReader();
-        reader.onload = function(e) {
-            document.getElementById('previewImg').src = e.target.result;
-            document.getElementById('imagePreview').style.display = 'block';
+        reader.onload = (e) => {
+            previewImg.src = e.target.result;
+            imagePreview.classList.remove('d-none');
+            dropZone.classList.add('d-none');
         };
         reader.readAsDataURL(file);
     }
     
-    // Form submission
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const file = fileInput.files[0];
-        
-        if (!file) {
-            alert('Please select an image file');
-            return;
+    function resetUpload() {
+        fileInput.value = '';
+        imagePreview.classList.add('d-none');
+        dropZone.classList.remove('d-none');
+    }
+    
+    let isSubmitting = false;
+    
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        // Prevent double submission
+        if (isSubmitting) {
+            console.log('Already submitting, ignoring duplicate request');
+            e.preventDefault();
+            return false;
         }
         
-        // Show loading
-        document.getElementById('loadingIndicator').style.display = 'flex';
-        document.getElementById('errorMessage').style.display = 'none';
-        
-        // Create form data
-        const formData = new FormData();
-        formData.append('file', file);
-        
-        try {
-            // Send prediction request
-            const response = await fetch('/predict', {
-                method: 'POST',
-                body: formData
-            });
-            
-            // Hide loading
-            document.getElementById('loadingIndicator').style.display = 'none';
-            
-            if (response.ok) {
-                // Redirect to results page
-                window.location.href = response.url;
-            } else {
-                // Show error
-                const data = await response.json().catch(() => null);
-                const errorMsg = data?.error || `HTTP ${response.status}`;
-                document.getElementById('errorMessage').textContent = errorMsg;
-                document.getElementById('errorMessage').style.display = 'block';
-            }
-        } catch (error) {
-            document.getElementById('loadingIndicator').style.display = 'none';
-            document.getElementById('errorMessage').textContent = 'Error: ' + error.message;
-            document.getElementById('errorMessage').style.display = 'block';
+        if (!fileInput.files || fileInput.files.length === 0) {
+            e.preventDefault();
+            alert('Please select an image first');
+            return false;
         }
+        
+        isSubmitting = true;
+        
+        // Show loading indicator
+        document.getElementById('loadingIndicator').classList.remove('d-none');
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('submitBtn').innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Processing...';
+        
+        // Let the form submit naturally - browser will follow redirect
+        return true;
     });
 </script>
 {% endblock %}

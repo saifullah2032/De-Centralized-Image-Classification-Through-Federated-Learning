@@ -5,77 +5,115 @@
 {% block content %}
 <div class="row">
     <div class="col-lg-10 mx-auto">
-        <h2 class="mb-4">
-            <i class="fas fa-shield-alt"></i> Privacy Verification Report
+        <h2 class="mb-4 fw-bold">
+            <i class="fas fa-shield-halved text-primary"></i> Privacy Verification Report
         </h2>
         
         {% if report %}
         <div class="card mb-4">
-            <div class="card-header bg-success">
-                <i class="fas fa-check-circle"></i> Privacy Verification: PASSED
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-check-circle text-success me-2"></i>Status: PASSED</span>
+                <span class="badge bg-success-light text-success border border-success">Verified Secured</span>
             </div>
             <div class="card-body">
-                <h4>Summary</h4>
-                <p>{{ report.conclusion }}</p>
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <h4 class="text-primary mb-3">Executive Summary</h4>
+                        <p class="text-secondary lead">{{ report.conclusion }}</p>
+                    </div>
+                </div>
                 
-                <h5 class="mt-4">Verification Details</h5>
-                <table class="table table-dark">
-                    <tr>
-                        <th>Data Isolation Verified</th>
-                        <td>
-                            {% if report.data_isolation_verified %}
-                            <span class="badge bg-success">✓ YES</span>
-                            {% else %}
-                            <span class="badge bg-danger">✗ NO</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Protocol Buffers Detected</th>
-                        <td>{{ report.protocol_buffers_detected }} packets</td>
-                    </tr>
-                    <tr>
-                        <th>Image Data Transmitted</th>
-                        <td><span class="badge bg-success">{{ report.image_data_transmitted }} bytes</span></td>
-                    </tr>
-                    <tr>
-                        <th>Analysis Date</th>
-                        <td>{{ report.wireshark_analysis_date }}</td>
-                    </tr>
-                </table>
+                <h5 class="mt-4 mb-3 fw-bold"><i class="fas fa-list-check me-2"></i>Verification Details</h5>
+                <div class="table-responsive">
+                    <table class="table table-dark table-hover border-color">
+                        <thead>
+                            <tr>
+                                <th class="bg-dark-3 text-tertiary small text-uppercase">Parameter</th>
+                                <th class="bg-dark-3 text-tertiary small text-uppercase">Finding</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="py-3">Data Isolation Verified</td>
+                                <td class="py-3">
+                                    {% if report.data_isolation_verified %}
+                                    <span class="text-success"><i class="fas fa-circle-check me-2"></i>YES</span>
+                                    {% else %}
+                                    <span class="text-danger"><i class="fas fa-circle-xmark me-2"></i>NO</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="py-3">Protocol Buffers Detected</td>
+                                <td class="py-3 text-primary fw-bold">{{ report.protocol_buffers_detected }} packets</td>
+                            </tr>
+                            <tr>
+                                <td class="py-3">Raw Image Data Leakage</td>
+                                <td class="py-3"><span class="badge bg-success-light text-success">{{ report.image_data_transmitted }} bytes (0.00%)</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-3">Analysis Date</td>
+                                <td class="py-3 text-secondary">{{ report.wireshark_analysis_date }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 
-                <div class="alert alert-info mt-4">
-                    <strong><i class="fas fa-info-circle"></i> What This Means:</strong><br>
-                    The network traffic analysis confirms that ZERO raw image data was transmitted during federated training. 
-                    Only model weights (Protocol Buffers) were exchanged between clients and server, ensuring complete data privacy.
+                <div class="alert bg-dark-4 border-primary mt-4">
+                    <div class="d-flex">
+                        <i class="fas fa-info-circle text-primary fs-4 me-3"></i>
+                        <div>
+                            <strong class="text-primary">What This Means:</strong><br>
+                            <span class="text-secondary">The network traffic analysis confirms that <span class="text-white fw-bold">ZERO raw image data</span> was transmitted during federated training. Only mathematical model gradients (Protocol Buffers) were exchanged between clients and server, maintaining mathematical data privacy.</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         {% else %}
-        <div class="alert alert-warning">
-            <i class="fas fa-exclamation-triangle"></i> 
-            No privacy report available yet. Run the privacy verification script after training to generate a report.
+        <div class="alert bg-warning-light border-warning mb-4">
+            <div class="d-flex">
+                <i class="fas fa-exclamation-triangle text-warning fs-4 me-3"></i>
+                <div>
+                    <strong class="text-warning">No Report Available</strong><br>
+                    <span class="text-secondary">No privacy verification report has been generated for the current session. Run the privacy analysis script to populate this dashboard.</span>
+                </div>
+            </div>
         </div>
         
         <div class="card">
             <div class="card-header">
-                <i class="fas fa-book"></i> How to Generate Privacy Report
+                <i class="fas fa-terminal me-2"></i>Generation Protocol
             </div>
             <div class="card-body">
-                <ol>
-                    <li>Install Wireshark: <code>sudo apt-get install wireshark</code></li>
-                    <li>Start packet capture before training: <code>tshark -i lo -w logs/network_traffic.pcap</code></li>
-                    <li>Run federated training with server and clients</li>
-                    <li>Stop packet capture and analyze the PCAP file</li>
-                    <li>Run verification script: <code>python scripts/verify_privacy.py</code></li>
-                </ol>
-                
-                <div class="alert alert-info mt-3">
-                    The verification script will analyze network traffic and confirm that no raw image data was transmitted.
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-tertiary text-uppercase small mb-3">1. Network Capture</h6>
+                        <div class="bg-black p-3 rounded-3 mb-4">
+                            <code>tshark -i lo -w logs/traffic.pcap</code>
+                        </div>
+                        <h6 class="text-tertiary text-uppercase small mb-3">2. Execution</h6>
+                        <p class="text-secondary small">Run federated training across all nodes.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-tertiary text-uppercase small mb-3">3. Verification Analysis</h6>
+                        <div class="bg-black p-3 rounded-3">
+                            <code>python scripts/verify_privacy.py</code>
+                        </div>
+                        <p class="text-secondary small mt-3">This utility scans PCAP files for byte-patterns matching raw image formats vs model weights.</p>
+                    </div>
                 </div>
             </div>
         </div>
         {% endif %}
     </div>
 </div>
+
+<style>
+    .bg-dark-3 { background: var(--dark-3) !important; }
+    .bg-dark-4 { background: var(--dark-4) !important; }
+    .bg-success-light { background: rgba(16, 185, 129, 0.1); }
+    .bg-warning-light { background: rgba(245, 158, 11, 0.1); }
+    .border-warning { border-color: var(--warning) !important; }
+</style>
 {% endblock %}

@@ -3,296 +3,115 @@
 {% block title %}Register - Federated Learning{% endblock %}
 
 {% block content %}
-<div class="register-container">
-    <div class="row align-items-center min-vh-100">
-        <div class="col-lg-5 col-md-7 mx-auto">
-            <!-- Logo & Title -->
-            <div class="text-center mb-5">
-                <div class="logo-circle mb-4">
-                    <i class="fas fa-user-plus"></i>
-                </div>
-                <h1 class="display-5 fw-bold mb-2">Join DecentralizedAI</h1>
-                <p class="text-secondary text-opacity-75">Create your account and start collaborating</p>
+<div class="row justify-content-center align-items-center py-5">
+    <div class="col-lg-5 col-md-7">
+        <!-- Logo & Title -->
+        <div class="text-center mb-5">
+            <div class="mb-4">
+                <i class="fas fa-user-plus text-primary fa-4x shadow-glow pulse"></i>
             </div>
+            <h1 class="display-5 fw-bold mb-2">Initialize Node</h1>
+            <p class="text-secondary">Register a new computational entity in the network</p>
+        </div>
 
-            <!-- Registration Card -->
-            <div class="card auth-card mb-4">
-                <div class="card-body p-0">
-                    <form method="POST" class="p-5">
-                        <!-- Username Field -->
-                        <div class="mb-4">
-                            <label for="username" class="form-label">Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-transparent border-end-0">
-                                    <i class="fas fa-user text-primary"></i>
-                                </span>
-                                <input 
-                                    type="text" 
-                                    class="form-control border-start-0 ps-0" 
-                                    id="username" 
-                                    name="username" 
-                                    placeholder="Choose a unique username"
-                                    minlength="3"
-                                    required 
-                                >
+        <!-- Registration Card -->
+        <div class="card bg-dark-2 border-color mb-4">
+            <div class="card-body p-4">
+                <form method="POST">
+                    <!-- Username Field -->
+                    <div class="mb-4">
+                        <label for="username" class="form-label small text-uppercase fw-bold text-tertiary">Entity Identifier</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            placeholder="Choose a unique ID"
+                            minlength="3"
+                            required 
+                        >
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="mb-4">
+                        <label for="password" class="form-label small text-uppercase fw-bold text-tertiary">Secure Key</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            placeholder="••••••••"
+                            minlength="6"
+                            required
+                        >
+                    </div>
+
+                    <!-- Confirm Password Field -->
+                    <div class="mb-4">
+                        <label for="password_confirm" class="form-label small text-uppercase fw-bold text-tertiary">Verify Key</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password_confirm" 
+                            name="password_confirm" 
+                            placeholder="••••••••"
+                            required
+                        >
+                    </div>
+
+                    <!-- Role Selection -->
+                    <div class="mb-5">
+                        <label class="form-label small text-uppercase fw-bold text-tertiary">Node Protocol</label>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="role" id="role_client" value="client" checked>
+                                <label class="btn btn-outline-secondary w-100 py-3" for="role_client">
+                                    <i class="fas fa-microchip mb-2 d-block fs-4"></i>
+                                    <span class="smaller fw-bold">CLIENT</span>
+                                </label>
                             </div>
-                            <small class="text-secondary d-block mt-2">
-                                <i class="fas fa-info-circle"></i> Minimum 3 characters
-                            </small>
-                        </div>
-
-                        <!-- Password Field -->
-                        <div class="mb-4">
-                            <label for="password" class="form-label">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-transparent border-end-0">
-                                    <i class="fas fa-lock text-primary"></i>
-                                </span>
-                                <input 
-                                    type="password" 
-                                    class="form-control border-start-0 ps-0" 
-                                    id="password" 
-                                    name="password" 
-                                    placeholder="Create a strong password"
-                                    minlength="6"
-                                    required
-                                >
-                            </div>
-                            <small class="text-secondary d-block mt-2">
-                                <i class="fas fa-info-circle"></i> Minimum 6 characters
-                            </small>
-                        </div>
-
-                        <!-- Confirm Password Field -->
-                        <div class="mb-4">
-                            <label for="password_confirm" class="form-label">Confirm Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-transparent border-end-0">
-                                    <i class="fas fa-check text-primary"></i>
-                                </span>
-                                <input 
-                                    type="password" 
-                                    class="form-control border-start-0 ps-0" 
-                                    id="password_confirm" 
-                                    name="password_confirm" 
-                                    placeholder="Confirm your password"
-                                    required
-                                >
-                            </div>
-                        </div>
-
-                        <!-- Role Selection -->
-                        <div class="mb-5">
-                            <label class="form-label">Role</label>
-                            <div class="role-selector">
-                                <div class="role-option">
-                                    <input 
-                                        type="radio" 
-                                        id="role_client" 
-                                        name="role" 
-                                        value="client" 
-                                        checked
-                                    >
-                                    <label for="role_client">
-                                        <i class="fas fa-laptop"></i>
-                                        <span>Client</span>
-                                        <small>Participate in training</small>
-                                    </label>
-                                </div>
-                                <div class="role-option">
-                                    <input 
-                                        type="radio" 
-                                        id="role_admin" 
-                                        name="role" 
-                                        value="admin"
-                                    >
-                                    <label for="role_admin">
-                                        <i class="fas fa-crown"></i>
-                                        <span>Administrator</span>
-                                        <small>Monitor system</small>
-                                    </label>
-                                </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="role" id="role_admin" value="admin">
+                                <label class="btn btn-outline-secondary w-100 py-3" for="role_admin">
+                                    <i class="fas fa-shield-halved mb-2 d-block fs-4"></i>
+                                    <span class="smaller fw-bold">ADMIN</span>
+                                </label>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Register Button -->
-                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-4">
-                            <i class="fas fa-user-plus me-2"></i>Create Account
-                        </button>
+                    <!-- Register Button -->
+                    <button type="submit" class="btn btn-primary w-100 btn-lg mb-4">
+                        <i class="fas fa-plus-circle me-2"></i> Provision Node
+                    </button>
 
-                        <!-- Login Link -->
-                        <div class="text-center">
-                            <p class="text-secondary small">
-                                Already have an account? 
-                                <a href="{{ url_for('login') }}" class="text-primary fw-bold text-decoration-none">
-                                    Sign in
-                                </a>
-                            </p>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Features Info -->
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-shield-alt"></i>
+                    <div class="text-center">
+                        <p class="text-secondary small">
+                            Existing entity? 
+                            <a href="{{ url_for('login') }}" class="text-primary fw-bold text-decoration-none">
+                                Authenticate
+                            </a>
+                        </p>
                     </div>
-                    <div>
-                        <h6 class="fw-bold text-primary">Privacy First</h6>
-                        <p class="small text-secondary mb-0">Your data stays secure</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div>
-                        <h6 class="fw-bold text-primary">Collaborative</h6>
-                        <p class="small text-secondary mb-0">Train together</p>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">
-                        <i class="fas fa-zap"></i>
-                    </div>
-                    <div>
-                        <h6 class="fw-bold text-primary">Powerful</h6>
-                        <p class="small text-secondary mb-0">Advanced ML system</p>
-                    </div>
-                </div>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <style>
-    .register-container {
-        position: relative;
-        z-index: 1;
-    }
-
-    .logo-circle {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: auto;
-        margin-right: auto;
-        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-        font-size: 2rem;
-        color: white;
-        animation: float 3s ease-in-out infinite;
-    }
-
-    .auth-card {
-        border: 1px solid rgba(91, 124, 255, 0.2);
-        background: rgba(26, 31, 46, 0.6);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    .input-group-text {
-        background: transparent !important;
-        border-color: rgba(51, 65, 85, 0.5) !important;
-    }
-
-    .form-control {
-        background: transparent !important;
-        border: 1px solid rgba(51, 65, 85, 0.5) !important;
-        border-radius: 10px !important;
-    }
-
-    .form-control:focus {
-        border-color: #5b7cff !important;
-        box-shadow: 0 0 0 3px rgba(91, 124, 255, 0.2) !important;
-    }
-
-    .role-selector {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    .role-option input {
-        display: none;
-    }
-
-    .role-option label {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 1rem;
-        border: 2px solid rgba(51, 65, 85, 0.5);
-        border-radius: 12px;
-        cursor: pointer;
-        transition: all 0.25s ease;
-        background: rgba(36, 45, 63, 0.5);
-    }
-
-    .role-option input:checked + label {
-        border-color: #5b7cff;
-        background: rgba(91, 124, 255, 0.15);
-        color: var(--text-primary);
-    }
-
-    .role-option i {
-        font-size: 1.5rem;
-        color: #5b7cff;
-    }
-
-    .role-option span {
-        font-weight: 600;
-        font-size: 0.95rem;
-    }
-
-    .role-option small {
-        font-size: 0.75rem;
+    .bg-dark-2 { background: var(--dark-2) !important; }
+    .shadow-glow { filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.4)); }
+    .border-color { border-color: var(--border-color) !important; }
+    .smaller { font-size: 0.75rem; }
+    .btn-outline-secondary {
+        border-color: var(--border-color);
         color: var(--text-tertiary);
     }
-
-    .features-grid {
-        display: grid;
-        gap: 1rem;
-        margin-top: 2rem;
-    }
-
-    .feature-item {
-        display: flex;
-        gap: 1rem;
-        padding: 1rem;
-        background: rgba(36, 45, 63, 0.3);
-        border-radius: 12px;
-        border: 1px solid rgba(91, 124, 255, 0.1);
-        align-items: center;
-    }
-
-    .feature-icon {
-        width: 48px;
-        height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(91, 124, 255, 0.2);
-        border-radius: 10px;
-        color: var(--primary-400);
-        font-size: 1.25rem;
-        flex-shrink: 0;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(10px); }
-    }
-
-    .min-vh-100 {
-        min-height: 100vh;
+    .btn-check:checked + .btn-outline-secondary {
+        background: rgba(99, 102, 241, 0.1) !important;
+        border-color: var(--primary-500) !important;
+        color: var(--primary-500) !important;
     }
 </style>
 {% endblock %}

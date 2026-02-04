@@ -3,236 +3,94 @@
 {% block title %}Login - Federated Learning{% endblock %}
 
 {% block content %}
-<div class="login-container">
-    <div class="row align-items-center min-vh-100">
-        <div class="col-lg-5 col-md-7 mx-auto">
-            <!-- Logo & Title -->
-            <div class="text-center mb-5">
-                <div class="logo-circle mb-4">
-                    <i class="fas fa-network-wired"></i>
-                </div>
-                <h1 class="display-5 fw-bold mb-2">Welcome Back</h1>
-                <p class="text-secondary text-opacity-75">Sign in to your DecentralizedAI account</p>
+<div class="row justify-content-center align-items-center py-5">
+    <div class="col-lg-5 col-md-7">
+        <!-- Logo & Title -->
+        <div class="text-center mb-5">
+            <div class="mb-4">
+                <i class="fas fa-network-wired text-primary fa-4x shadow-glow pulse"></i>
             </div>
+            <h1 class="display-5 fw-black mb-2">Access Network</h1>
+            <p class="text-secondary">Enterprise Federated Intelligence Portal</p>
+        </div>
 
-            <!-- Login Card -->
-            <div class="card auth-card mb-4">
-                <div class="card-body p-0">
-                    <form method="POST" action="{{ url_for('login') }}" class="p-5">
-                        <!-- Username Field -->
-                        <div class="mb-4">
-                            <label for="username" class="form-label">Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-transparent border-end-0">
-                                    <i class="fas fa-user text-primary"></i>
-                                </span>
-                                <input 
-                                    type="text" 
-                                    class="form-control border-start-0 ps-0" 
-                                    id="username" 
-                                    name="username" 
-                                    placeholder="Enter your username"
-                                    required 
-                                    autofocus
-                                >
+        <!-- Login Card -->
+        <div class="card bg-dark-2 border-color mb-4">
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('login') }}">
+                    <!-- Username Field -->
+                    <div class="mb-4">
+                        <label for="username" class="form-label small text-uppercase fw-bold text-tertiary">Username</label>
+                        <input 
+                            type="text" 
+                            class="form-control" 
+                            id="username" 
+                            name="username" 
+                            placeholder="admin"
+                            required 
+                            autofocus
+                        >
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="mb-4">
+                        <label for="password" class="form-label small text-uppercase fw-bold text-tertiary">Access Key</label>
+                        <input 
+                            type="password" 
+                            class="form-control" 
+                            id="password" 
+                            name="password" 
+                            placeholder="••••••••"
+                            required
+                        >
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="btn btn-primary w-100 btn-lg mb-4">
+                        <i class="fas fa-key me-2"></i> Authenticate
+                    </button>
+
+                    <!-- Demo Credentials -->
+                    <div class="p-3 bg-black rounded-xl border border-color mb-4">
+                        <div class="text-center small text-tertiary mb-3 text-uppercase fw-bold">Demo Access</div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-secondary w-100 py-2 small" onclick="setCredentials('admin', 'admin123')">
+                                    <i class="fas fa-shield-halved me-1"></i> Admin
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-secondary w-100 py-2 small" onclick="setCredentials('client', 'client123')">
+                                    <i class="fas fa-microchip me-1"></i> Client
+                                </button>
                             </div>
                         </div>
+                    </div>
 
-                        <!-- Password Field -->
-                        <div class="mb-4">
-                            <label for="password" class="form-label">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text bg-transparent border-end-0">
-                                    <i class="fas fa-lock text-primary"></i>
-                                </span>
-                                <input 
-                                    type="password" 
-                                    class="form-control border-start-0 ps-0" 
-                                    id="password" 
-                                    name="password" 
-                                    placeholder="Enter your password"
-                                    required
-                                >
-                            </div>
-                        </div>
-
-                        <!-- Remember & Forgot -->
-                        <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="remember" name="remember">
-                                <label class="form-check-label text-secondary small" for="remember">
-                                    Remember me
-                                </label>
-                            </div>
-                            <a href="#" class="text-primary small text-decoration-none">Forgot password?</a>
-                        </div>
-
-                        <!-- Login Button -->
-                        <button type="submit" class="btn btn-primary w-100 btn-lg mb-4">
-                            <i class="fas fa-sign-in-alt me-2"></i>Sign In
-                        </button>
-
-                        <!-- Divider -->
-                        <div class="divider-or mb-4">
-                            <span>Or try demo account</span>
-                        </div>
-
-                        <!-- Demo Credentials -->
-                        <div class="demo-creds mb-4">
-                            <div class="row g-2">
-                                <div class="col-6">
-                                    <div class="demo-card p-3 text-center rounded-lg cursor-pointer" onclick="setCredentials('admin', 'admin123')">
-                                        <i class="fas fa-crown text-warning mb-2" style="font-size: 1.5rem; display: block;"></i>
-                                        <small class="text-secondary">Admin</small>
-                                        <div class="text-primary fw-bold small mt-1">admin123</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="demo-card p-3 text-center rounded-lg cursor-pointer" onclick="setCredentials('client', 'client123')">
-                                        <i class="fas fa-user text-info mb-2" style="font-size: 1.5rem; display: block;"></i>
-                                        <small class="text-secondary">Client</small>
-                                        <div class="text-primary fw-bold small mt-1">client123</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Register Link -->
-                        <div class="text-center">
-                            <p class="text-secondary small">
-                                Don't have an account? 
-                                <a href="{{ url_for('register') }}" class="text-primary fw-bold text-decoration-none">
-                                    Register now
-                                </a>
-                            </p>
-                        </div>
-                    </form>
-                </div>
+                    <div class="text-center">
+                        <span class="text-secondary small">Unauthorized access is logged.</span>
+                    </div>
+                </form>
             </div>
+        </div>
 
-            <!-- Footer Note -->
-            <div class="text-center">
-                <p class="text-secondary small text-opacity-75">
-                    <i class="fas fa-shield-alt"></i> Your data is encrypted and secure
-                </p>
-            </div>
+        <!-- Register Link -->
+        <div class="text-center">
+            <p class="text-secondary small">
+                New node? 
+                <a href="{{ url_for('register') }}" class="text-primary fw-bold text-decoration-none">
+                    Register Entity
+                </a>
+            </p>
         </div>
     </div>
 </div>
 
 <style>
-    .login-container {
-        position: relative;
-        z-index: 1;
-    }
-
-    .logo-circle {
-        width: 80px;
-        height: 80px;
-        background: linear-gradient(135deg, #5b7cff 0%, #7ba8ff 100%);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-left: auto;
-        margin-right: auto;
-        box-shadow: 0 8px 25px rgba(91, 124, 255, 0.3);
-        font-size: 2rem;
-        color: white;
-        animation: float 3s ease-in-out infinite;
-    }
-
-    .auth-card {
-        border: 1px solid rgba(91, 124, 255, 0.2);
-        background: rgba(26, 31, 46, 0.6);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-    }
-
-    .input-group-text {
-        background: transparent !important;
-        border-color: rgba(51, 65, 85, 0.5) !important;
-    }
-
-    .form-control {
-        background: transparent !important;
-        border: 1px solid rgba(51, 65, 85, 0.5) !important;
-        border-radius: 10px !important;
-    }
-
-    .form-control:focus {
-        border-color: #5b7cff !important;
-        box-shadow: 0 0 0 3px rgba(91, 124, 255, 0.2) !important;
-    }
-
-    .form-check-input {
-        background-color: rgba(36, 45, 63, 0.5);
-        border-color: rgba(51, 65, 85, 0.5);
-    }
-
-    .form-check-input:checked {
-        background-color: #5b7cff;
-        border-color: #5b7cff;
-    }
-
-    .divider-or {
-        position: relative;
-        text-align: center;
-        margin-top: 2rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .divider-or::before,
-    .divider-or::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        width: 45%;
-        height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(91, 124, 255, 0.3), transparent);
-    }
-
-    .divider-or::before {
-        left: 0;
-    }
-
-    .divider-or::after {
-        right: 0;
-    }
-
-    .divider-or span {
-        position: relative;
-        background: var(--dark-2);
-        padding: 0 1rem;
-        color: var(--text-tertiary);
-        font-size: 0.85rem;
-    }
-
-    .demo-card {
-        background: rgba(36, 45, 63, 0.5);
-        border: 1px solid rgba(91, 124, 255, 0.2);
-        cursor: pointer;
-        transition: all 0.25s ease;
-    }
-
-    .demo-card:hover {
-        background: rgba(91, 124, 255, 0.1);
-        border-color: #5b7cff;
-        transform: translateY(-2px);
-    }
-
-    .cursor-pointer {
-        cursor: pointer;
-    }
-
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(10px); }
-    }
-
-    .min-vh-100 {
-        min-height: 100vh;
-    }
+    .fw-black { font-weight: 900; }
+    .bg-dark-2 { background: var(--dark-2); }
+    .shadow-glow { filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.4)); }
+    .border-color { border-color: var(--border-color) !important; }
 </style>
 
 <script>

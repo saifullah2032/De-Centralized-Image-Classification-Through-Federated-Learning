@@ -84,6 +84,12 @@ def allowed_file(filename):
 # ============================================================================
 
 
+@app.route("/favicon.ico")
+def favicon():
+    """Handle favicon requests to avoid 404s"""
+    return "", 204
+
+
 @app.route("/")
 def index():
     """Landing page"""
@@ -188,59 +194,112 @@ def predict():
     return render_template("predict.html", model_info=model_info)
 
 
+@app.route("/results")
+@login_required
+def show_results():
+    """Display prediction results"""
+    # Get results from session
+    results = session.get("prediction_results")
+
+    if not results:
+        flash("No prediction results found. Please upload an image first.", "warning")
+        return redirect(url_for("predict"))
+
+    return render_template("results.html", **results)
+
+
+@app.route("/temp_image/<filename>")
+@login_required
+def serve_temp_image(filename):
+    """Serve temporary uploaded image"""
+    from flask import send_from_directory
+
+    app.logger.info(f"Request for temp image: {filename}")
+
+    # Security: only serve if this filename is in the user's session
+    results = session.get("prediction_results", {})
+    session_filename = results.get("temp_image_file")
+
+    app.logger.info(f"Session has filename: {session_filename}")
+
+    if session_filename != filename:
+        app.logger.warning(f"Unauthorized access attempt - session mismatch")
+        return "Unauthorized", 403
+
+    filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+    app.logger.info(f"Looking for file at: {filepath}")
+
+    if not os.path.exists(filepath):
+        app.logger.error(f"File not found: {filepath}")
+        return "Image not found", 404
+
+    app.logger.info(f"Serving image: {filename}")
+    return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
+
+
 @app.route("/predict", methods=["POST"])
 @login_required
 def predict_image():
     """Handle image upload and prediction"""
     import base64
 
+    # Clear old prediction results from session
+    session.pop("prediction_results", None)
+
     # Check if file is in request
     if "file" not in request.files:
-        flash("No file provided", "danger")
+        app.logger.warning("No file in request")
+        flash("No file uploaded. Please select an image.", "danger")
         return redirect(url_for("predict"))
 
     file = request.files["file"]
 
     # Check if file is selected
     if file.filename == "":
-        flash("No file selected", "danger")
+        app.logger.warning("Empty filename")
+        flash("No file selected. Please choose an image.", "danger")
         return redirect(url_for("predict"))
 
     # Check if file is allowed
     if not allowed_file(file.filename):
-        flash(f"Invalid file type. Allowed: {', '.join(ALLOWED_EXTENSIONS)}", "danger")
+        app.logger.warning(f"Invalid file type: {file.filename}")
+        flash(
+            f"Invalid file type. Allowed formats: {', '.join(ALLOWED_EXTENSIONS)}",
+            "danger",
+        )
         return redirect(url_for("predict"))
 
+    filepath = None
     try:
         # Save file
         filename = secure_filename(file.filename)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"{timestamp}_{filename}"
         filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+
+        app.logger.info(f"Saving uploaded file to: {filepath}")
         file.save(filepath)
 
-        # Make prediction
+        # Verify file was saved
+        if not os.path.exists(filepath):
+            raise Exception(f"Failed to save file to {filepath}")
+
+        # Make prediction (this is the slow part - 20-30s on first call)
+        app.logger.info(f"Loading classifier for prediction...")
         classifier = get_classifier()
+
+        app.logger.info(f"Running inference on {filename}...")
         result = classifier.predict(filepath)
 
-        # Read image for display (convert to base64)
-        image_data = ""
-        try:
-            with open(filepath, "rb") as img_file:
-                image_data = base64.b64encode(img_file.read()).decode()
-        except:
-            pass
+        # Save image temporarily (don't delete yet, needed for results page)
+        # We'll store the filename in session instead of base64 data
+        temp_image_filename = filename
 
-        # Delete uploaded file
-        try:
-            os.remove(filepath)
-        except:
-            pass
-
+        # Check if prediction was successful
         if not result.get("success"):
-            flash(
-                f"Prediction failed: {result.get('error', 'Unknown error')}", "danger"
-            )
+            error_msg = result.get("error", "Unknown error occurred during prediction")
+            app.logger.error(f"Prediction failed: {error_msg}")
+            flash(f"Prediction failed: {error_msg}", "danger")
             return redirect(url_for("predict"))
 
         # Get model info for display
@@ -256,16 +315,17 @@ def predict_image():
                     if history.get("rounds"):
                         rounds_completed = history["rounds"][-1]
                         current_accuracy = history["accuracies"][-1] * 100
-            except:
-                pass
+            except Exception as history_err:
+                app.logger.warning(f"Failed to load model history: {history_err}")
 
-        # Prepare data for template
+        # Prepare data for template (store only essential data, not image)
         template_data = {
-            "image_data": image_data,
+            "temp_image_file": temp_image_filename,  # Store filename, not base64
             "predicted_class": result["predicted_class"],
             "confidence_percent": int(result["confidence"] * 100),
             "probabilities": [
-                (p["class_name"], p["probability"]) for p in result["all_predictions"]
+                (p["class_name"], p["probability"])
+                for p in result["all_predictions"][:10]  # Top 10 only
             ],
             "model_arch": model_info.get("model_path", "Unknown"),
             "model_params": f"{model_info.get('total_params', 0):,}"
@@ -275,10 +335,25 @@ def predict_image():
             "current_accuracy": f"{current_accuracy:.2f}",
         }
 
-        return render_template("results.html", **template_data)
+        app.logger.info(
+            f"Prediction successful: {result['predicted_class']} ({result['confidence']:.2%})"
+        )
+
+        # Store results in session and redirect
+        session["prediction_results"] = template_data
+        return redirect(url_for("show_results"))
 
     except Exception as e:
+        app.logger.error(f"Error processing image: {str(e)}", exc_info=True)
         flash(f"Error processing image: {str(e)}", "danger")
+
+        # Clean up file if it exists
+        if filepath and os.path.exists(filepath):
+            try:
+                os.remove(filepath)
+            except:
+                pass
+
         return redirect(url_for("predict"))
 
 

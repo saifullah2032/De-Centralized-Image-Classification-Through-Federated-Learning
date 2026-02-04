@@ -1,82 +1,48 @@
 {% extends "base.html" %}
 
-{% block title %}500 - Internal Server Error{% endblock %}
+{% block title %}500 - Intelligence Failure{% endblock %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <div class="error-page">
-                <h1 class="display-1 text-danger font-weight-bold mb-3">
-                    <i class="fas fa-exclamation-triangle"></i> 500
-                </h1>
-                
-                <h2 class="mb-3">Internal Server Error</h2>
-                
-                <p class="lead text-muted mb-4">
-                    Something went wrong on our end. Our team has been notified and is working to fix it.
-                </p>
+<div class="row align-items-center justify-content-center py-5">
+    <div class="col-lg-8 text-center">
+        <div class="mb-5">
+            <i class="fas fa-microchip text-danger fa-6x" style="filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.4));"></i>
+        </div>
+        
+        <h1 class="display-1 fw-black text-danger mb-3">500</h1>
+        <h2 class="fw-bold mb-4">Core Intelligence Failure</h2>
+        
+        <p class="lead text-secondary mb-5">
+            The neural aggregator encountered a critical exception during computation. The internal circuit has been temporarily isolated.
+        </p>
 
-                <div class="alert alert-warning" role="alert">
-                    <strong>What you can do:</strong>
-                    <ul class="mb-0 mt-2">
-                        <li>Try refreshing the page</li>
-                        <li>Check your internet connection</li>
-                        <li>Try again in a few moments</li>
-                        <li>Contact support if the problem persists</li>
+        <div class="row justify-content-center mb-5">
+            <div class="col-md-6">
+                <div class="p-4 bg-dark-2 rounded-3 border border-danger">
+                    <h6 class="text-danger fw-bold text-uppercase mb-3">Recovery Protocol</h6>
+                    <ul class="text-secondary small text-start mb-0">
+                        <li class="mb-2">Re-synchronize your session (Refresh)</li>
+                        <li class="mb-2">Verify network gateway connectivity</li>
+                        <li class="mb-2">Check aggregator server status logs</li>
+                        <li>Contact system architect if persistent</li>
                     </ul>
                 </div>
-
-                <div class="mt-5 mb-4">
-                    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-home"></i> Go to Home
-                    </a>
-                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-lg">
-                        <i class="fas fa-chart-line"></i> Go to Dashboard
-                    </a>
-                </div>
-
-                <hr class="my-4">
-
-                <div class="text-muted small">
-                    <p class="mb-1">Error logged at: <strong>{{ timestamp }}</strong></p>
-                    <p class="mb-0">If the problem persists, please contact <strong>support@federated-learning.local</strong></p>
-                </div>
             </div>
+        </div>
+
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-home me-2"></i> Home
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-terminal me-2"></i> Dashboard
+            </a>
         </div>
     </div>
 </div>
 
 <style>
-    .error-page {
-        animation: fadeIn 0.5s ease-in;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .display-1 {
-        font-size: 6rem;
-        line-height: 1;
-    }
-
-    .alert-warning {
-        background-color: #fff3cd;
-        border-color: #ffc107;
-    }
-
-    .btn-lg {
-        padding: 0.75rem 2rem;
-        margin: 0.5rem;
-        font-weight: 500;
-    }
+    .fw-black { font-weight: 900; }
+    .bg-dark-2 { background: var(--dark-2) !important; }
 </style>
 {% endblock %}
