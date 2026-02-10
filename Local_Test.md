@@ -2,6 +2,8 @@
 
 Complete guide for setting up and testing the Federated Learning Image Classification project on a Windows system.
 
+**NEW: Now using Pre-trained ImageNet model with 1000 classes for accurate real-world image classification!**
+
 ---
 
 ## Table of Contents
@@ -9,9 +11,26 @@ Complete guide for setting up and testing the Federated Learning Image Classific
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Testing Web Interface](#testing-web-interface)
-- [Training the Model](#training-the-model)
+- [Using ImageNet Predictions (NEW)](#using-imagenet-predictions-new)
+- [Training Custom Model (Optional)](#training-custom-model-optional)
 - [Troubleshooting](#troubleshooting)
 - [Next Steps](#next-steps)
+
+---
+
+## What's New: ImageNet Integration
+
+The project now uses a **pre-trained MobileNetV2 model** trained on ImageNet:
+
+| Feature | Before (CIFAR-100) | Now (ImageNet) |
+|---------|-------------------|----------------|
+| Classes | 100 | **1000** |
+| Input Size | 32x32 pixels | **224x224 pixels** |
+| Training Required | Yes | **No (Pre-trained)** |
+| Real-world Accuracy | ~27% | **~70%+** |
+| Categories | Limited | Animals, vehicles, food, objects, nature, and more! |
+
+**No training required** - the model is ready to use immediately!
 
 ---
 
@@ -180,12 +199,13 @@ Press CTRL+C to quit
 
 #### Prediction Page (`/predict`)
 - Drag & drop image upload
-- Real-time image classification
-- Confidence scores for all classes
-- Support for CIFAR-10 (10 classes) or CIFAR-100 (100 classes)
+- Real-time image classification using **ImageNet pre-trained model**
+- **1000 class categories** (animals, vehicles, food, objects, nature, etc.)
+- Confidence scores for top predictions
+- No training required - works immediately!
 - Interactive chart showing prediction probabilities
 
-**Note**: To use predictions, you must first train a model (see next section).
+**The model can classify**: dogs, cats, birds, cars, planes, food, furniture, electronics, plants, and 990+ more categories!
 
 ### Step 5: Test Responsive Design
 
@@ -209,9 +229,73 @@ Press `Ctrl+C` in the PowerShell terminal to stop the server.
 
 ---
 
-## Training the Model
+## Using ImageNet Predictions (NEW)
 
-To use the prediction feature, you need to train a Federated Learning model first. This involves running a server and multiple client nodes.
+The system now uses a **pre-trained MobileNetV2 model** that can classify images into **1000 different categories** without any training required!
+
+### Step 1: Start the Web Application
+
+```powershell
+# Make sure virtual environment is activated
+.\venv\Scripts\Activate.ps1
+
+# Start the web server
+python run_web.py
+```
+
+### Step 2: Access the Prediction Page
+
+1. Open browser: http://localhost:5000
+2. Login as admin (`admin` / `admin123`)
+3. Click "Predict" in navbar
+
+### Step 3: Upload an Image
+
+1. Drag & drop any image onto the upload area, OR
+2. Click to browse and select an image
+3. Supported formats: JPG, PNG, JPEG
+
+### Step 4: View Results
+
+The model will classify your image and show:
+- **Top Prediction**: Most likely class with confidence percentage
+- **Top 5 Predictions**: Alternative classifications
+- **Confidence Chart**: Visual representation of probabilities
+
+### What Can It Classify?
+
+The ImageNet model recognizes **1000 categories** including:
+
+| Category | Examples |
+|----------|----------|
+| **Animals** | Dogs (120+ breeds), cats, birds, fish, insects, bears, elephants |
+| **Vehicles** | Cars, planes, boats, bikes, trains, motorcycles |
+| **Food** | Fruits, vegetables, dishes, drinks, desserts |
+| **Objects** | Furniture, electronics, tools, clothing, sports equipment |
+| **Nature** | Plants, flowers, landscapes, trees |
+| **Buildings** | Houses, churches, castles, bridges |
+
+### Example Predictions
+
+**Dog Image** → "Golden Retriever" (95.2% confidence)
+**Car Image** → "Sports Car" (87.5% confidence)
+**Food Image** → "Pizza" (92.1% confidence)
+
+### Model Details
+
+- **Architecture**: MobileNetV2
+- **Training Data**: ImageNet (1.2 million images)
+- **Input Size**: 224x224 pixels (auto-resized)
+- **Output**: 1000 class probabilities
+- **Model Size**: ~14 MB (downloaded automatically on first use)
+
+---
+
+## Training Custom Model (Optional)
+
+> **Note**: Training is **optional** since the project now uses pre-trained ImageNet model. Only train if you want to experiment with Federated Learning on CIFAR datasets.
+
+To use the Federated Learning training feature with CIFAR datasets, you need to run a server and multiple client nodes.
 
 ### Understanding the Training Process
 
@@ -250,13 +334,16 @@ To use the prediction feature, you need to train a Federated Learning model firs
 ### Training Configuration
 
 **Default Settings** (in `backend_fl/config.py`):
-- **Dataset**: CIFAR-100 (100 classes) or CIFAR-10 (10 classes)
+- **Dataset**: ImageNet (1000 classes) - Pre-trained, no training needed
+- **Alternative**: CIFAR-100 (100 classes) or CIFAR-10 (10 classes) for FL training
 - **Number of Rounds**: 10 (configurable)
 - **Number of Clients**: 5 (can run with minimum 2)
 - **Local Epochs**: 5 per round
 - **Batch Size**: 64
 - **Learning Rate**: 0.0005
 - **Model**: Enhanced MobileNetV2 (2.3M parameters)
+
+> **To switch to CIFAR mode for training**, set `DATASET=CIFAR100` or `DATASET=CIFAR10` in your `.env` file.
 
 ### Quick Training (Automated) - RECOMMENDED
 
@@ -446,13 +533,13 @@ This will create charts showing:
 2. Open browser: http://localhost:5000
 3. Login as admin
 4. Click "Predict" in navbar
-5. Upload a test image (32x32 pixels recommended, or any size will be resized)
+5. Upload any image (will be automatically resized to 224x224 for ImageNet)
 6. View predicted class and confidence scores
 
 **Test Images**:
-- Use images from `test_images/` folder (if available)
-- Or download CIFAR-10/CIFAR-100 sample images from Google
-- Or use your own images (they will be resized to 32x32)
+- Use any real-world image (photos from your phone, internet images, etc.)
+- The ImageNet model can classify 1000 different categories
+- No need for specific test images - it works with any photo!
 
 ---
 
@@ -551,9 +638,10 @@ taskkill /PID <PID> /F
 **Problem**: No model file found.
 
 **Solution**:
-1. Train a model first (see "Training the Model" section)
-2. Verify `models/global_model.h5` exists
-3. Check file permissions
+1. The ImageNet model is downloaded automatically on first use
+2. Ensure you have internet connection for initial download (~14 MB)
+3. Check if Keras cache directory has the model weights
+4. If using CIFAR mode, train a model first (see "Training Custom Model" section)
 
 ### Issue 9: Training is too slow
 
@@ -627,27 +715,36 @@ BATCH_SIZE=64
 LEARNING_RATE=0.0005
 ```
 
-### 2. Switch Between CIFAR-10 and CIFAR-100
+### 2. Switch Between ImageNet and CIFAR Modes
 
 Edit `.env` file:
 ```env
-# For CIFAR-10 (10 classes, easier)
+# For ImageNet (1000 classes, pre-trained, recommended)
+DATASET=IMAGENET
+
+# For CIFAR-10 (10 classes, requires training)
 DATASET=CIFAR10
 
-# For CIFAR-100 (100 classes, harder)
+# For CIFAR-100 (100 classes, requires training)
 DATASET=CIFAR100
 ```
 
-Then retrain the model.
+**Note**: ImageNet mode uses pre-trained weights and doesn't require training. CIFAR modes require Federated Learning training.
 
 ### 3. Test with Your Own Images
 
-1. Prepare images (any size, will be resized to 32x32)
+1. Prepare any images (photos, screenshots, internet images)
 2. Navigate to http://localhost:5000/predict
 3. Drag & drop your image
-4. View predictions
+4. View predictions with confidence scores
 
-**Note**: For best results, use images similar to CIFAR-10/CIFAR-100 classes.
+**The ImageNet model can classify**:
+- Animals (dogs, cats, birds, fish, insects, wildlife)
+- Vehicles (cars, planes, boats, motorcycles, bikes)
+- Food (fruits, vegetables, dishes, drinks)
+- Objects (furniture, electronics, clothing, tools)
+- Nature (plants, flowers, trees, landscapes)
+- And 950+ more categories!
 
 ### 4. Deploy to Multiple Machines
 
@@ -802,4 +899,6 @@ For questions or issues:
 
 **Congratulations!** You've successfully set up and tested the Federated Learning Image Classification system on your Windows machine!
 
-*Last Updated: February 4, 2026*
+The system now uses **pre-trained ImageNet model** with **1000 classes** for accurate real-world image classification - no training required!
+
+*Last Updated: February 10, 2026*

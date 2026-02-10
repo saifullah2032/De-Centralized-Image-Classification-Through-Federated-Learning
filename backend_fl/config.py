@@ -13,9 +13,18 @@ os.environ["KERAS_BACKEND"] = "jax"
 load_dotenv()
 
 # Dataset Configuration
-DATASET = os.getenv("DATASET", "CIFAR100")  # CIFAR10 or CIFAR100
-INPUT_SHAPE = (32, 32, 3)  # CIFAR image dimensions
-NUM_CLASSES = 100 if DATASET == "CIFAR100" else 10  # 100 for CIFAR-100, 10 for CIFAR-10
+DATASET = os.getenv("DATASET", "IMAGENET")  # CIFAR10, CIFAR100, or IMAGENET
+USE_IMAGENET_PRETRAINED = os.getenv("USE_IMAGENET_PRETRAINED", "true").lower() == "true"
+
+# Input shape based on dataset
+if DATASET == "IMAGENET" or USE_IMAGENET_PRETRAINED:
+    INPUT_SHAPE = (224, 224, 3)  # ImageNet image dimensions
+    NUM_CLASSES = 1000  # ImageNet classes
+else:
+    INPUT_SHAPE = (32, 32, 3)  # CIFAR image dimensions
+    NUM_CLASSES = (
+        100 if DATASET == "CIFAR100" else 10
+    )  # 100 for CIFAR-100, 10 for CIFAR-10
 
 # CIFAR-10 Labels (10 classes)
 CIFAR10_LABELS = [
@@ -284,7 +293,11 @@ CIFAR100_FINE_TO_COARSE = {
 }
 
 # Use appropriate labels based on dataset
-LABELS = CIFAR100_FINE_LABELS if DATASET == "CIFAR100" else CIFAR10_LABELS
+# For ImageNet, labels are loaded dynamically from Keras
+if DATASET == "IMAGENET" or USE_IMAGENET_PRETRAINED:
+    LABELS = None  # Will be loaded from keras.applications.imagenet_utils
+else:
+    LABELS = CIFAR100_FINE_LABELS if DATASET == "CIFAR100" else CIFAR10_LABELS
 
 # Training Hyperparameters
 NUM_ROUNDS = int(os.getenv("NUM_ROUNDS", 10))  # Number of federated learning rounds
