@@ -1,7 +1,9 @@
 """
 Model Inference Module
-Handles image classification predictions using pre-trained ImageNet model (MobileNetV2)
-This enables classification of ANY image into 1000 ImageNet categories
+Handles image classification predictions using MobileNetV2
+Supports switching between:
+  - ImageNet pre-trained model (1000 classes)
+  - Custom CIFAR-100 trained model (100 classes)
 """
 
 import os
@@ -20,40 +22,82 @@ from backend_fl.config import (
     NUM_CLASSES,
     DATASET,
     USE_IMAGENET_PRETRAINED,
+    AVAILABLE_MODELS,
+    CIFAR100_MODEL_PATH,
+    CIFAR100_FINE_LABELS,
+    CIFAR100_COARSE_LABELS,
+    CIFAR100_FINE_TO_COARSE,
 )
 
 
 class ImageClassifier:
     """
-    Image classifier using pre-trained MobileNetV2 on ImageNet
-    Can classify any image into 1000 different categories
+    Image classifier using MobileNetV2
+    Supports switching between:
+      - ImageNet pre-trained model (1000 classes)
+      - Custom CIFAR-100 trained model (100 classes)
     """
 
-    def __init__(self, model_path=MODEL_PATH, use_pretrained_imagenet=True):
+    def __init__(self, model_type="imagenet"):
         """
         Initialize the classifier
 
         Args:
-            model_path: Path to custom trained model file (.h5) - used for CIFAR mode
-            use_pretrained_imagenet: If True, use pre-trained ImageNet model (default)
+            model_type: "imagenet" or "cifar100"
         """
-        self.model_path = model_path
         self.model = None
         self.model_loaded = False
-        self.use_imagenet = (
-            use_pretrained_imagenet or USE_IMAGENET_PRETRAINED or DATASET == "IMAGENET"
-        )
+        self.current_model_type = model_type
 
-        # ImageNet input size
-        self.input_size = (224, 224)
+        # Model configuration
+        self.model_config = AVAILABLE_MODELS.get(
+            model_type, AVAILABLE_MODELS["imagenet"]
+        )
+        self.input_size = self.model_config["input_size"]
 
         # Try to load model
         self.load_model()
 
+    def switch_model(self, model_type):
+        """
+        Switch to a different model type
+
+        Args:
+            model_type: "imagenet" or "cifar100"
+
+        Returns:
+            bool: True if switch was successful
+        """
+        if model_type not in AVAILABLE_MODELS:
+            print(f"[X] Unknown model type: {model_type}")
+            return False
+
+        if model_type == self.current_model_type and self.model_loaded:
+            print(f"[i] Already using {model_type} model")
+            return True
+
+        print(
+            f"\n[*] Switching model from {self.current_model_type} to {model_type}..."
+        )
+
+        # Update configuration
+        self.current_model_type = model_type
+        self.model_config = AVAILABLE_MODELS[model_type]
+        self.input_size = self.model_config["input_size"]
+
+        # Clear existing model
+        self.model = None
+        self.model_loaded = False
+
+        # Load new model
+        self.load_model()
+
+        return self.model_loaded
+
     def load_model(self):
-        """Load the model - either pre-trained ImageNet or custom trained"""
+        """Load the model based on current_model_type"""
         try:
-            if self.use_imagenet:
+            if self.current_model_type == "imagenet":
                 print("Loading pre-trained MobileNetV2 model with ImageNet weights...")
                 # Load MobileNetV2 with ImageNet weights - includes the top classification layer
                 self.model = MobileNetV2(
@@ -67,21 +111,29 @@ class ImageClassifier:
                 print(f"    - Model: MobileNetV2")
                 print(f"    - Classes: 1000 (ImageNet categories)")
                 print(f"    - Input size: 224x224")
-            else:
-                # Fall back to custom trained model (CIFAR)
-                if os.path.exists(self.model_path):
-                    print(f"Loading custom model from {self.model_path}...")
-                    self.model = keras.models.load_model(self.model_path)
+
+            elif self.current_model_type == "cifar100":
+                model_path = CIFAR100_MODEL_PATH
+                if os.path.exists(model_path):
+                    print(f"Loading CIFAR-100 model from {model_path}...")
+                    self.model = keras.models.load_model(model_path)
                     self.model_loaded = True
-                    print("[OK] Custom model loaded successfully")
+                    print("[OK] CIFAR-100 model loaded successfully")
+                    print(f"    - Model: Custom MobileNetV2")
+                    print(f"    - Classes: 100 (CIFAR-100 categories)")
+                    print(f"    - Accuracy: ~64.23%")
                 else:
-                    print(f"[!] Model not found at {self.model_path}")
-                    print("  Using pre-trained ImageNet model instead...")
+                    print(f"[!] CIFAR-100 model not found at {model_path}")
+                    print("  Falling back to ImageNet model...")
                     self._load_imagenet_fallback()
+            else:
+                print(f"[!] Unknown model type: {self.current_model_type}")
+                self._load_imagenet_fallback()
 
         except Exception as e:
             print(f"[X] Error loading model: {e}")
             print("  Attempting to load pre-trained ImageNet model as fallback...")
+            self._load_imagenet_fallback()
             self._load_imagenet_fallback()
 
     def _load_imagenet_fallback(self):
@@ -93,7 +145,9 @@ class ImageClassifier:
                 weights="imagenet",
                 classes=1000,
             )
-            self.use_imagenet = True
+            self.current_model_type = "imagenet"
+            self.model_config = AVAILABLE_MODELS["imagenet"]
+            self.input_size = (224, 224)
             self.model_loaded = True
             print("[OK] Fallback to pre-trained ImageNet model successful")
         except Exception as e:
@@ -108,18 +162,21 @@ class ImageClassifier:
             image_path: Path to the image file
 
         Returns:
-            Preprocessed image as NumPy array with shape (1, 224, 224, 3)
+            Preprocessed image as NumPy array
         """
         try:
             # Open and convert to RGB
             img = Image.open(image_path).convert("RGB")
 
-            # Resize to ImageNet dimensions (224x224) or CIFAR (32x32)
-            target_size = (
-                self.input_size
-                if self.use_imagenet
-                else (INPUT_SHAPE[0], INPUT_SHAPE[1])
-            )
+            # For CIFAR-100 model, we need to resize to the model's expected input
+            # The CIFAR-100 model was trained on images upscaled to 224x224
+            if self.current_model_type == "cifar100":
+                # CIFAR-100 model expects 224x224 (trained with upscaled images)
+                target_size = (224, 224)
+            else:
+                # ImageNet model expects 224x224
+                target_size = (224, 224)
+
             img = img.resize(target_size, Image.Resampling.LANCZOS)
 
             # Convert to numpy array
@@ -129,11 +186,11 @@ class ImageClassifier:
             img_array = np.expand_dims(img_array, axis=0)
 
             # Apply appropriate preprocessing
-            if self.use_imagenet:
+            if self.current_model_type == "imagenet":
                 # MobileNetV2 specific preprocessing (scales to [-1, 1])
                 img_array = preprocess_input(img_array)
             else:
-                # Simple normalization for CIFAR models
+                # Simple normalization for CIFAR models (same as training)
                 img_array = img_array / 255.0
 
             return img_array
@@ -174,7 +231,7 @@ class ImageClassifier:
                 return {"success": False, "error": "Model not initialized"}
             predictions = self.model.predict(img_array, verbose=0)
 
-            if self.use_imagenet:
+            if self.current_model_type == "imagenet":
                 # Use Keras decode_predictions for ImageNet labels
                 # Returns list of (class_id, class_name, probability) tuples
                 decoded = decode_predictions(predictions, top=10)[0]
@@ -215,27 +272,18 @@ class ImageClassifier:
                     "total_classes": 1000,
                 }
             else:
-                # CIFAR mode (kept for backward compatibility)
-                from backend_fl.config import (
-                    LABELS,
-                    CIFAR100_COARSE_LABELS,
-                    CIFAR100_FINE_TO_COARSE,
-                )
-
+                # CIFAR-100 mode - use our trained model
                 predicted_class_id = int(np.argmax(predictions[0]))
                 predicted_class = (
-                    LABELS[predicted_class_id]
-                    if LABELS
+                    CIFAR100_FINE_LABELS[predicted_class_id]
+                    if predicted_class_id < len(CIFAR100_FINE_LABELS)
                     else f"Class {predicted_class_id}"
                 )
                 confidence = float(predictions[0][predicted_class_id])
 
                 # Get superclass for CIFAR-100
                 superclass = None
-                if (
-                    DATASET == "CIFAR100"
-                    and predicted_class_id in CIFAR100_FINE_TO_COARSE
-                ):
+                if predicted_class_id in CIFAR100_FINE_TO_COARSE:
                     superclass_id = CIFAR100_FINE_TO_COARSE[predicted_class_id]
                     superclass = CIFAR100_COARSE_LABELS[superclass_id]
 
@@ -243,7 +291,9 @@ class ImageClassifier:
                 all_predictions = [
                     {
                         "class_id": i,
-                        "class_name": LABELS[i] if LABELS else f"Class {i}",
+                        "class_name": CIFAR100_FINE_LABELS[i]
+                        if i < len(CIFAR100_FINE_LABELS)
+                        else f"Class {i}",
                         "probability": float(predictions[0][i]),
                     }
                     for i in range(len(predictions[0]))
@@ -254,15 +304,17 @@ class ImageClassifier:
 
                 return {
                     "success": True,
-                    "predicted_class": predicted_class,
+                    "predicted_class": predicted_class.replace("_", " ").title(),
                     "predicted_class_id": predicted_class_id,
                     "confidence": confidence,
                     "confidence_percent": f"{confidence * 100:.2f}%",
-                    "superclass": superclass,
+                    "superclass": superclass.replace("_", " ").title()
+                    if superclass
+                    else None,
                     "all_predictions": all_predictions[:10],
                     "top_5": all_predictions[:5],
-                    "model_type": f"CIFAR ({DATASET})",
-                    "total_classes": NUM_CLASSES,
+                    "model_type": "CIFAR-100 (Custom Trained)",
+                    "total_classes": 100,
                 }
 
         except Exception as e:
@@ -279,28 +331,31 @@ class ImageClassifier:
         Returns:
             Dictionary containing model information
         """
+        is_imagenet = self.current_model_type == "imagenet"
+
         info = {
             "model_loaded": self.model_loaded,
-            "model_path": self.model_path
-            if not self.use_imagenet
-            else "Pre-trained (ImageNet)",
+            "model_path": "Pre-trained (ImageNet)"
+            if is_imagenet
+            else CIFAR100_MODEL_PATH,
             "model_type": "MobileNetV2 (ImageNet)"
-            if self.use_imagenet
-            else f"Custom ({DATASET})",
+            if is_imagenet
+            else "MobileNetV2 (CIFAR-100)",
+            "current_model": self.current_model_type,
+            "model_config": self.model_config,
         }
 
         if self.model_loaded and self.model is not None:
             info["total_params"] = self.model.count_params()
-            info["input_shape"] = (
-                "(224, 224, 3)" if self.use_imagenet else str(INPUT_SHAPE)
-            )
-            info["num_classes"] = 1000 if self.use_imagenet else NUM_CLASSES
-            info["dataset"] = "ImageNet" if self.use_imagenet else DATASET
+            info["input_shape"] = "(224, 224, 3)"
+            info["num_classes"] = 1000 if is_imagenet else 100
+            info["dataset"] = "ImageNet" if is_imagenet else "CIFAR-100"
 
-            if self.use_imagenet:
+            if is_imagenet:
                 info["description"] = (
                     "Pre-trained on 1.2M images, can classify 1000 different objects"
                 )
+                info["accuracy"] = "~71% Top-1 (ImageNet benchmark)"
                 info["categories_include"] = [
                     "Animals (dogs, cats, birds, fish, insects...)",
                     "Vehicles (cars, planes, boats, bikes...)",
@@ -308,6 +363,19 @@ class ImageClassifier:
                     "Objects (furniture, electronics, tools...)",
                     "Nature (plants, landscapes...)",
                     "And many more!",
+                ]
+            else:
+                info["description"] = (
+                    "Custom trained on CIFAR-100, 100 common object classes"
+                )
+                info["accuracy"] = "64.23% Top-1 (Your trained model)"
+                info["categories_include"] = [
+                    "Animals (dog, cat, bear, lion, elephant...)",
+                    "Vehicles (bicycle, bus, motorcycle, train...)",
+                    "Nature (forest, mountain, sea, cloud...)",
+                    "Food (apple, orange, mushroom, sweet pepper...)",
+                    "Household items (bed, chair, table, lamp...)",
+                    "And 95 more classes!",
                 ]
 
         return info
@@ -337,6 +405,52 @@ def reset_classifier():
     """
     global _classifier_instance
     _classifier_instance = None
+
+
+def switch_model(model_type):
+    """
+    Switch the global classifier to a different model type
+
+    Args:
+        model_type: "imagenet" or "cifar100"
+
+    Returns:
+        dict: Result with success status and model info
+    """
+    global _classifier_instance
+
+    if model_type not in AVAILABLE_MODELS:
+        return {
+            "success": False,
+            "error": f"Unknown model type: {model_type}. Available: {list(AVAILABLE_MODELS.keys())}",
+        }
+
+    # If we have an existing classifier, switch it
+    if _classifier_instance is not None:
+        success = _classifier_instance.switch_model(model_type)
+    else:
+        # Create new classifier with the requested model type
+        _classifier_instance = ImageClassifier(model_type=model_type)
+        success = _classifier_instance.model_loaded
+
+    if success:
+        return {
+            "success": True,
+            "model_type": model_type,
+            "model_info": _classifier_instance.get_model_info(),
+        }
+    else:
+        return {"success": False, "error": f"Failed to load {model_type} model"}
+
+
+def get_available_models():
+    """
+    Get list of available models for switching
+
+    Returns:
+        dict: Available models with their configurations
+    """
+    return AVAILABLE_MODELS
 
 
 if __name__ == "__main__":

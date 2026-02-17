@@ -8,19 +8,19 @@
         <!-- Logo & Title -->
         <div class="text-center mb-5">
             <div class="mb-4">
-                <i class="fas fa-network-wired text-primary fa-4x shadow-glow pulse"></i>
+                <i class="fas fa-network-wired" style="font-size: 4rem; color: var(--accent-cyan);"></i>
             </div>
-            <h1 class="display-5 fw-black mb-2">Access Network</h1>
+            <h1 class="mb-2">Access Network</h1>
             <p class="text-secondary">Enterprise Federated Intelligence Portal</p>
         </div>
 
         <!-- Login Card -->
-        <div class="card bg-dark-2 border-color mb-4">
+        <div class="card mb-4">
             <div class="card-body p-4">
                 <form method="POST" action="{{ url_for('login') }}">
                     <!-- Username Field -->
                     <div class="mb-4">
-                        <label for="username" class="form-label small text-uppercase fw-bold text-tertiary">Username</label>
+                        <label for="username" class="form-label small text-uppercase fw-bold">Username</label>
                         <input 
                             type="text" 
                             class="form-control" 
@@ -34,7 +34,7 @@
 
                     <!-- Password Field -->
                     <div class="mb-4">
-                        <label for="password" class="form-label small text-uppercase fw-bold text-tertiary">Access Key</label>
+                        <label for="password" class="form-label small text-uppercase fw-bold">Access Key</label>
                         <input 
                             type="password" 
                             class="form-control" 
@@ -51,16 +51,16 @@
                     </button>
 
                     <!-- Demo Credentials -->
-                    <div class="p-3 bg-black rounded-xl border border-color mb-4">
-                        <div class="text-center small text-tertiary mb-3 text-uppercase fw-bold">Demo Access</div>
+                    <div class="p-3 rounded mb-4" style="background: var(--bg-tertiary); border: 3px solid var(--border-color);">
+                        <div class="text-center small fw-bold mb-3">Demo Access</div>
                         <div class="row g-2">
                             <div class="col-6">
-                                <button type="button" class="btn btn-outline-secondary w-100 py-2 small" onclick="setCredentials('admin', 'admin123')">
-                                    <i class="fas fa-shield-halved me-1"></i> Admin
+                                <button type="button" class="btn btn-outline-primary w-100 py-2" onclick="setCredentials('admin', 'admin123')">
+                                    <i class="fas fa-shield-alt me-1"></i> Admin
                                 </button>
                             </div>
                             <div class="col-6">
-                                <button type="button" class="btn btn-outline-secondary w-100 py-2 small" onclick="setCredentials('client', 'client123')">
+                                <button type="button" class="btn btn-outline-primary w-100 py-2" onclick="setCredentials('client', 'client123')">
                                     <i class="fas fa-microchip me-1"></i> Client
                                 </button>
                             </div>
@@ -68,7 +68,7 @@
                     </div>
 
                     <div class="text-center">
-                        <span class="text-secondary small">Unauthorized access is logged.</span>
+                        <span class="text-muted small">Unauthorized access is logged.</span>
                     </div>
                 </form>
             </div>
@@ -78,7 +78,7 @@
         <div class="text-center">
             <p class="text-secondary small">
                 New node? 
-                <a href="{{ url_for('register') }}" class="text-primary fw-bold text-decoration-none">
+                <a href="{{ url_for('register') }}" class="fw-bold" style="color: var(--primary);">
                     Register Entity
                 </a>
             </p>
@@ -88,9 +88,6 @@
 
 <style>
     .fw-black { font-weight: 900; }
-    .bg-dark-2 { background: var(--dark-2); }
-    .shadow-glow { filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.4)); }
-    .border-color { border-color: var(--border-color) !important; }
 </style>
 
 <script>

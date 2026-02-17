@@ -39,7 +39,7 @@ from backend_fl.config import (
 )
 from frontend_web.models import db, init_db, authenticate_user, get_user_by_id
 from frontend_web.auth import admin_required
-from frontend_web.inference import get_classifier
+from frontend_web.inference import get_classifier, switch_model, get_available_models
 
 
 # Initialize Flask app
@@ -191,7 +191,13 @@ def predict():
     """Prediction page"""
     classifier = get_classifier()
     model_info = classifier.get_model_info()
-    return render_template("predict.html", model_info=model_info)
+    available_models = get_available_models()
+    return render_template(
+        "predict.html",
+        model_info=model_info,
+        available_models=available_models,
+        current_model=classifier.current_model_type,
+    )
 
 
 @app.route("/results")
@@ -242,47 +248,73 @@ def serve_temp_image(filename):
 def predict_image():
     """Handle image upload and prediction"""
     import base64
+    import io
+    from PIL import Image
 
     # Clear old prediction results from session
     session.pop("prediction_results", None)
 
-    # Check if file is in request
-    if "file" not in request.files:
-        app.logger.warning("No file in request")
-        flash("No file uploaded. Please select an image.", "danger")
-        return redirect(url_for("predict"))
-
-    file = request.files["file"]
-
-    # Check if file is selected
-    if file.filename == "":
-        app.logger.warning("Empty filename")
-        flash("No file selected. Please choose an image.", "danger")
-        return redirect(url_for("predict"))
-
-    # Check if file is allowed
-    if not allowed_file(file.filename):
-        app.logger.warning(f"Invalid file type: {file.filename}")
-        flash(
-            f"Invalid file type. Allowed formats: {', '.join(ALLOWED_EXTENSIONS)}",
-            "danger",
-        )
-        return redirect(url_for("predict"))
-
+    # Check if file is in request (upload method)
     filepath = None
+    filename = None
+
+    if "file" in request.files and request.files["file"].filename:
+        file = request.files["file"]
+    elif request.form.get("file"):
+        # Handle base64 captured image
+        try:
+            img_data = request.form.get("file")
+            if img_data.startswith("data:image"):
+                img_data = img_data.split(",")[1]
+
+            img_bytes = base64.b64decode(img_data)
+            img = Image.open(io.BytesIO(img_bytes))
+
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"{timestamp}_captured.jpg"
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            img.save(filepath, "JPEG")
+
+            file = None
+        except Exception as e:
+            app.logger.error(f"Error processing captured image: {str(e)}")
+            flash(f"Error processing captured image: {str(e)}", "danger")
+            return redirect(url_for("predict"))
+    else:
+        app.logger.warning("No file in request")
+        flash("No image provided. Please upload or capture an image.", "danger")
+        return redirect(url_for("predict"))
+
     try:
-        # Save file
-        filename = secure_filename(file.filename)
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{timestamp}_{filename}"
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        # Handle file upload method
+        if file:
+            # Check if file is selected
+            if file.filename == "":
+                app.logger.warning("Empty filename")
+                flash("No file selected. Please choose an image.", "danger")
+                return redirect(url_for("predict"))
 
-        app.logger.info(f"Saving uploaded file to: {filepath}")
-        file.save(filepath)
+            # Check if file is allowed
+            if not allowed_file(file.filename):
+                app.logger.warning(f"Invalid file type: {file.filename}")
+                flash(
+                    f"Invalid file type. Allowed formats: {', '.join(ALLOWED_EXTENSIONS)}",
+                    "danger",
+                )
+                return redirect(url_for("predict"))
 
-        # Verify file was saved
-        if not os.path.exists(filepath):
-            raise Exception(f"Failed to save file to {filepath}")
+            # Save file
+            filename = secure_filename(file.filename)
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"{timestamp}_{filename}"
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+
+            app.logger.info(f"Saving uploaded file to: {filepath}")
+            file.save(filepath)
+
+            # Verify file was saved
+            if not os.path.exists(filepath):
+                raise Exception(f"Failed to save file to {filepath}")
 
         # Make prediction (this is the slow part - 20-30s on first call)
         app.logger.info(f"Loading classifier for prediction...")
@@ -406,6 +438,57 @@ def api_metrics():
         return jsonify({"success": True, "data": history})
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@app.route("/api/models")
+@login_required
+def api_available_models():
+    """Get list of available models"""
+    models = get_available_models()
+    classifier = get_classifier()
+    current_model = classifier.current_model_type if classifier else "imagenet"
+
+    return jsonify({"success": True, "models": models, "current_model": current_model})
+
+
+@app.route("/api/switch_model", methods=["POST"])
+@login_required
+def api_switch_model():
+    """Switch to a different model"""
+    data = request.get_json()
+
+    if not data or "model_type" not in data:
+        return jsonify(
+            {"success": False, "error": "Missing 'model_type' in request body"}
+        ), 400
+
+    model_type = data["model_type"]
+    app.logger.info(f"Switching model to: {model_type}")
+
+    result = switch_model(model_type)
+
+    if result["success"]:
+        app.logger.info(f"Successfully switched to {model_type} model")
+        return jsonify(result)
+    else:
+        app.logger.error(f"Failed to switch model: {result.get('error')}")
+        return jsonify(result), 500
+
+
+@app.route("/api/current_model")
+@login_required
+def api_current_model():
+    """Get current model info"""
+    classifier = get_classifier()
+    model_info = classifier.get_model_info()
+
+    return jsonify(
+        {
+            "success": True,
+            "current_model": classifier.current_model_type,
+            "model_info": model_info,
+        }
+    )
 
 
 # ============================================================================

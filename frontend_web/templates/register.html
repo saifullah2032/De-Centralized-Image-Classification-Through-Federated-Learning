@@ -8,19 +8,19 @@
         <!-- Logo & Title -->
         <div class="text-center mb-5">
             <div class="mb-4">
-                <i class="fas fa-user-plus text-primary fa-4x shadow-glow pulse"></i>
+                <i class="fas fa-user-plus" style="font-size: 4rem; color: var(--accent-cyan);"></i>
             </div>
-            <h1 class="display-5 fw-bold mb-2">Initialize Node</h1>
+            <h1 class="mb-2">Initialize Node</h1>
             <p class="text-secondary">Register a new computational entity in the network</p>
         </div>
 
         <!-- Registration Card -->
-        <div class="card bg-dark-2 border-color mb-4">
+        <div class="card mb-4">
             <div class="card-body p-4">
                 <form method="POST">
                     <!-- Username Field -->
                     <div class="mb-4">
-                        <label for="username" class="form-label small text-uppercase fw-bold text-tertiary">Entity Identifier</label>
+                        <label for="username" class="form-label small text-uppercase fw-bold">Entity Identifier</label>
                         <input 
                             type="text" 
                             class="form-control" 
@@ -34,7 +34,7 @@
 
                     <!-- Password Field -->
                     <div class="mb-4">
-                        <label for="password" class="form-label small text-uppercase fw-bold text-tertiary">Secure Key</label>
+                        <label for="password" class="form-label small text-uppercase fw-bold">Secure Key</label>
                         <input 
                             type="password" 
                             class="form-control" 
@@ -48,7 +48,7 @@
 
                     <!-- Confirm Password Field -->
                     <div class="mb-4">
-                        <label for="password_confirm" class="form-label small text-uppercase fw-bold text-tertiary">Verify Key</label>
+                        <label for="password_confirm" class="form-label small text-uppercase fw-bold">Verify Key</label>
                         <input 
                             type="password" 
                             class="form-control" 
@@ -61,20 +61,20 @@
 
                     <!-- Role Selection -->
                     <div class="mb-5">
-                        <label class="form-label small text-uppercase fw-bold text-tertiary">Node Protocol</label>
+                        <label class="form-label small text-uppercase fw-bold">Node Protocol</label>
                         <div class="row g-3">
                             <div class="col-6">
                                 <input type="radio" class="btn-check" name="role" id="role_client" value="client" checked>
-                                <label class="btn btn-outline-secondary w-100 py-3" for="role_client">
-                                    <i class="fas fa-microchip mb-2 d-block fs-4"></i>
-                                    <span class="smaller fw-bold">CLIENT</span>
+                                <label class="btn w-100 py-3" for="role_client" style="border: 3px solid var(--border-color); background: var(--bg-tertiary);">
+                                    <i class="fas fa-microchip mb-2 d-block" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">CLIENT</span>
                                 </label>
                             </div>
                             <div class="col-6">
                                 <input type="radio" class="btn-check" name="role" id="role_admin" value="admin">
-                                <label class="btn btn-outline-secondary w-100 py-3" for="role_admin">
-                                    <i class="fas fa-shield-halved mb-2 d-block fs-4"></i>
-                                    <span class="smaller fw-bold">ADMIN</span>
+                                <label class="btn w-100 py-3" for="role_admin" style="border: 3px solid var(--border-color); background: var(--bg-tertiary);">
+                                    <i class="fas fa-shield-alt mb-2 d-block" style="font-size: 1.5rem;"></i>
+                                    <span class="fw-bold">ADMIN</span>
                                 </label>
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                     <div class="text-center">
                         <p class="text-secondary small">
                             Existing entity? 
-                            <a href="{{ url_for('login') }}" class="text-primary fw-bold text-decoration-none">
+                            <a href="{{ url_for('login') }}" class="fw-bold" style="color: var(--primary);">
                                 Authenticate
                             </a>
                         </p>
@@ -100,18 +100,9 @@
 </div>
 
 <style>
-    .bg-dark-2 { background: var(--dark-2) !important; }
-    .shadow-glow { filter: drop-shadow(0 0 10px rgba(99, 102, 241, 0.4)); }
-    .border-color { border-color: var(--border-color) !important; }
-    .smaller { font-size: 0.75rem; }
-    .btn-outline-secondary {
-        border-color: var(--border-color);
-        color: var(--text-tertiary);
-    }
-    .btn-check:checked + .btn-outline-secondary {
-        background: rgba(99, 102, 241, 0.1) !important;
-        border-color: var(--primary-500) !important;
-        color: var(--primary-500) !important;
+    .btn-check:checked + label {
+        background: var(--primary) !important;
+        color: white !important;
     }
 </style>
 {% endblock %}
