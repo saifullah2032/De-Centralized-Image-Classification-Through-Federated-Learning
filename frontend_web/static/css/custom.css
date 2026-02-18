@@ -70,6 +70,9 @@
     
     /* Dot Pattern */
     --dot-color: #1d3557;
+    
+    /* Bubble colors for light mode */
+    --bubble-color: rgba(255, 255, 255, 0.2);
 }
 
 /* 🌙 DARK MODE */
@@ -80,11 +83,11 @@
     --bg-tertiary: #2d4f5e;
     --bg-card: #264653;
     
-    /* Text - White or Pale Cyan */
-    --text-primary: #edf6f9;
-    --text-secondary: #b8d8e0;
-    --text-tertiary: #8fb8c5;
-    --text-muted: #6a9aab;
+    /* Text - Soft Cream for readability */
+    --text-primary: #ffffff;
+    --text-secondary: #FDF5E6;
+    --text-tertiary: #E6E6FA;
+    --text-muted: #B8C5D0;
     
     /* Borders - Light Sky Blue */
     --border-color: #83c5be;
@@ -96,6 +99,9 @@
     
     /* Dot Pattern */
     --dot-color: #83c5be;
+    
+    /* Bubble colors for dark mode */
+    --bubble-color: rgba(0, 109, 119, 0.15);
     
     --error: #ff6b6b;
     --error-bg: #4a2020;
@@ -128,7 +134,141 @@ body {
     line-height: 1.6;
     min-height: 100vh;
     transition: var(--transition);
+    position: relative;
+    overflow-x: hidden;
 }
+
+/* 🌊 FLOATING BUBBLES - The Living Ocean */
+.ocean-bubbles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bubble {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), rgba(255,255,255,0.05));
+    animation: floatUp linear infinite;
+}
+
+[data-theme="dark"] .bubble {
+    background: radial-gradient(circle at 30% 30%, rgba(0,109,119,0.3), rgba(0,109,119,0.05));
+}
+
+/* Bubble sizes and positions */
+.bubble:nth-child(1) {
+    width: 80px;
+    height: 80px;
+    left: 5%;
+    bottom: -100px;
+    animation-duration: 18s;
+    animation-delay: 0s;
+    opacity: 0.4;
+}
+
+.bubble:nth-child(2) {
+    width: 120px;
+    height: 120px;
+    left: 20%;
+    bottom: -150px;
+    animation-duration: 22s;
+    animation-delay: 2s;
+    opacity: 0.3;
+}
+
+.bubble:nth-child(3) {
+    width: 60px;
+    height: 60px;
+    left: 40%;
+    bottom: -80px;
+    animation-duration: 16s;
+    animation-delay: 4s;
+    opacity: 0.5;
+}
+
+.bubble:nth-child(4) {
+    width: 100px;
+    height: 100px;
+    left: 60%;
+    bottom: -120px;
+    animation-duration: 20s;
+    animation-delay: 1s;
+    opacity: 0.35;
+}
+
+.bubble:nth-child(5) {
+    width: 70px;
+    height: 70px;
+    left: 75%;
+    bottom: -90px;
+    animation-duration: 19s;
+    animation-delay: 3s;
+    opacity: 0.45;
+}
+
+.bubble:nth-child(6) {
+    width: 90px;
+    height: 90px;
+    left: 85%;
+    bottom: -110px;
+    animation-duration: 21s;
+    animation-delay: 5s;
+    opacity: 0.25;
+}
+
+.bubble:nth-child(7) {
+    width: 50px;
+    height: 50px;
+    left: 30%;
+    bottom: -70px;
+    animation-duration: 15s;
+    animation-delay: 2.5s;
+    opacity: 0.4;
+}
+
+.bubble:nth-child(8) {
+    width: 110px;
+    height: 110px;
+    left: 50%;
+    bottom: -140px;
+    animation-duration: 23s;
+    animation-delay: 0.5s;
+    opacity: 0.3;
+}
+
+/* 🌊 FLOAT UP ANIMATION */
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0;
+    }
+    10% {
+        opacity: var(--bubble-opacity, 0.4);
+    }
+    90% {
+        opacity: var(--bubble-opacity, 0.4);
+    }
+    100% {
+        transform: translateY(-120vh) translateX(50px) scale(0.8);
+        opacity: 0;
+    }
+}
+
+/* Set opacity variables */
+.bubble:nth-child(1) { --bubble-opacity: 0.4; }
+.bubble:nth-child(2) { --bubble-opacity: 0.3; }
+.bubble:nth-child(3) { --bubble-opacity: 0.5; }
+.bubble:nth-child(4) { --bubble-opacity: 0.35; }
+.bubble:nth-child(5) { --bubble-opacity: 0.45; }
+.bubble:nth-child(6) { --bubble-opacity: 0.25; }
+.bubble:nth-child(7) { --bubble-opacity: 0.4; }
+.bubble:nth-child(8) { --bubble-opacity: 0.3; }
 
 /* 🎬 PAGE LOAD FADE UP ANIMATION */
 .main-content {
