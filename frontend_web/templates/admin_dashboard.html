@@ -11,36 +11,36 @@
     </div>
 </div>
 
-<div class="row g-4 mb-4">
+<div class="row g-3 mb-4">
     <!-- Status Cards -->
-    <div class="col-12 col-sm-6 col-lg-3">
+    <div class="col-3">
         <div class="card">
             <div class="card-body text-center py-4">
-                <div class="text-secondary small fw-bold text-uppercase mb-2">Current Round</div>
+                <div class="small fw-bold text-uppercase mb-2" style="color: var(--text-primary);">Current Round</div>
                 <div class="h2 mb-0 fw-black text-primary" id="currentRound">-</div>
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-lg-3">
+    <div class="col-3">
         <div class="card">
             <div class="card-body text-center py-4">
-                <div class="text-secondary small fw-bold text-uppercase mb-2">Global Accuracy</div>
+                <div class="small fw-bold text-uppercase mb-2" style="color: var(--text-primary);">Global Accuracy</div>
                 <div class="h2 mb-0 fw-black text-success" id="globalAccuracy">-</div>
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-lg-3">
+    <div class="col-3">
         <div class="card">
             <div class="card-body text-center py-4">
-                <div class="text-secondary small fw-bold text-uppercase mb-2">Global Loss</div>
+                <div class="small fw-bold text-uppercase mb-2" style="color: var(--text-primary);">Global Loss</div>
                 <div class="h2 mb-0 fw-black text-warning" id="globalLoss">-</div>
             </div>
         </div>
     </div>
-    <div class="col-12 col-sm-6 col-lg-3">
+    <div class="col-3">
         <div class="card">
             <div class="card-body text-center py-4">
-                <div class="text-secondary small fw-bold text-uppercase mb-2">Status</div>
+                <div class="small fw-bold text-uppercase mb-2" style="color: var(--text-primary);">Status</div>
                 <div class="h2 mb-0">
                     <span id="statusBadge" class="badge bg-secondary">Idle</span>
                 </div>
@@ -84,25 +84,31 @@
     </div>
 </div>
 
-<div class="row g-4">
+<div class="row g-3">
     <div class="col-12">
         <div class="card">
             <div class="card-header">
                 <i class="fas fa-info-circle me-2"></i>System Architecture
             </div>
-            <div class="card-body">
-                <div class="row text-center g-3">
-                    <div class="col-md-4 border-end border-color py-3">
-                        <div class="text-tertiary small text-uppercase">Rounds</div>
-                        <div class="h4 mb-0" id="totalRounds">10</div>
+            <div class="card-body p-0">
+                <div class="row text-center g-0">
+                    <div class="col-4 border-end" style="border-color: var(--border-color) !important;">
+                        <div class="py-3">
+                            <div class="small text-uppercase fw-bold" style="color: var(--text-primary);">Rounds</div>
+                            <div class="h4 mb-0" id="totalRounds">10</div>
+                        </div>
                     </div>
-                    <div class="col-md-4 border-end border-color py-3">
-                        <div class="text-tertiary small text-uppercase">Nodes</div>
-                        <div class="h4 mb-0" id="numClients">5</div>
+                    <div class="col-4 border-end" style="border-color: var(--border-color) !important;">
+                        <div class="py-3">
+                            <div class="small text-uppercase fw-bold" style="color: var(--text-primary);">Nodes</div>
+                            <div class="h4 mb-0" id="numClients">5</div>
+                        </div>
                     </div>
-                    <div class="col-md-4 py-3">
-                        <div class="text-tertiary small text-uppercase">Engine</div>
-                        <div class="h4 mb-0">MobileNetV2 / JAX</div>
+                    <div class="col-4">
+                        <div class="py-3">
+                            <div class="small text-uppercase fw-bold" style="color: var(--text-primary);">Engine</div>
+                            <div class="h4 mb-0">MobileNetV2 / JAX</div>
+                        </div>
                     </div>
                 </div>
             </div>

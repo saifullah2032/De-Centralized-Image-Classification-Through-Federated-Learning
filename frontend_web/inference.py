@@ -126,6 +126,20 @@ class ImageClassifier:
                     print(f"[!] CIFAR-100 model not found at {model_path}")
                     print("  Falling back to ImageNet model...")
                     self._load_imagenet_fallback()
+
+            elif self.current_model_type == "custom":
+                model_path = "models/custom_model_best.h5"
+                if os.path.exists(model_path):
+                    print(f"Loading custom model from {model_path}...")
+                    self.model = keras.models.load_model(model_path)
+                    self.model_loaded = True
+                    print("[OK] Custom model loaded successfully")
+                    print(f"    - Model: Custom MobileNetV2")
+                    print(f"    - Classes: 12 (Your images)")
+                else:
+                    print(f"[!] Custom model not found at {model_path}")
+                    print("  Falling back to ImageNet model...")
+                    self._load_imagenet_fallback()
             else:
                 print(f"[!] Unknown model type: {self.current_model_type}")
                 self._load_imagenet_fallback()
@@ -170,8 +184,8 @@ class ImageClassifier:
 
             # For CIFAR-100 model, we need to resize to the model's expected input
             # The CIFAR-100 model was trained on images upscaled to 224x224
-            if self.current_model_type == "cifar100":
-                # CIFAR-100 model expects 224x224 (trained with upscaled images)
+            if self.current_model_type in ["cifar100", "custom"]:
+                # CIFAR-100 and Custom models expect 224x224 (trained with upscaled images)
                 target_size = (224, 224)
             else:
                 # ImageNet model expects 224x224
@@ -190,7 +204,7 @@ class ImageClassifier:
                 # MobileNetV2 specific preprocessing (scales to [-1, 1])
                 img_array = preprocess_input(img_array)
             else:
-                # Simple normalization for CIFAR models (same as training)
+                # Simple normalization for CIFAR and Custom models (same as training)
                 img_array = img_array / 255.0
 
             return img_array
@@ -272,39 +286,94 @@ class ImageClassifier:
                     "total_classes": 1000,
                 }
             else:
-                # CIFAR-100 mode - use our trained model
+                # CIFAR-100 or Custom mode - use our trained model
                 predicted_class_id = int(np.argmax(predictions[0]))
-                predicted_class = (
-                    CIFAR100_FINE_LABELS[predicted_class_id]
-                    if predicted_class_id < len(CIFAR100_FINE_LABELS)
-                    else f"Class {predicted_class_id}"
-                )
+
+                # Get custom labels based on model type
+                if self.current_model_type == "custom":
+                    custom_labels = [
+                        "airplane",
+                        "bus",
+                        "cat",
+                        "chair",
+                        "cinema",
+                        "deer",
+                        "dog",
+                        "flower",
+                        "fruit",
+                        "horse",
+                        "library",
+                        "truck",
+                    ]
+                    predicted_class = (
+                        custom_labels[predicted_class_id]
+                        if predicted_class_id < len(custom_labels)
+                        else f"Class {predicted_class_id}"
+                    )
+                    model_type_name = "Custom (Your Images)"
+                    total_classes = 12
+                    superclass = None
+                else:
+                    predicted_class = (
+                        CIFAR100_FINE_LABELS[predicted_class_id]
+                        if predicted_class_id < len(CIFAR100_FINE_LABELS)
+                        else f"Class {predicted_class_id}"
+                    )
+                    model_type_name = "CIFAR-100 (Custom Trained)"
+                    total_classes = 100
+                    superclass = None
+                    if predicted_class_id in CIFAR100_FINE_TO_COARSE:
+                        superclass_id = CIFAR100_FINE_TO_COARSE[predicted_class_id]
+                        superclass = CIFAR100_COARSE_LABELS[superclass_id]
+
                 confidence = float(predictions[0][predicted_class_id])
 
-                # Get superclass for CIFAR-100
-                superclass = None
-                if predicted_class_id in CIFAR100_FINE_TO_COARSE:
-                    superclass_id = CIFAR100_FINE_TO_COARSE[predicted_class_id]
-                    superclass = CIFAR100_COARSE_LABELS[superclass_id]
-
                 # Get all class probabilities
-                all_predictions = [
-                    {
-                        "class_id": i,
-                        "class_name": CIFAR100_FINE_LABELS[i]
-                        if i < len(CIFAR100_FINE_LABELS)
-                        else f"Class {i}",
-                        "probability": float(predictions[0][i]),
-                    }
-                    for i in range(len(predictions[0]))
-                ]
+                if self.current_model_type == "custom":
+                    custom_labels = [
+                        "airplane",
+                        "bus",
+                        "cat",
+                        "chair",
+                        "cinema",
+                        "deer",
+                        "dog",
+                        "flower",
+                        "fruit",
+                        "horse",
+                        "library",
+                        "truck",
+                    ]
+                    all_predictions = [
+                        {
+                            "class_id": i,
+                            "class_name": custom_labels[i]
+                            if i < len(custom_labels)
+                            else f"Class {i}",
+                            "probability": float(predictions[0][i]),
+                        }
+                        for i in range(len(predictions[0]))
+                    ]
+                else:
+                    all_predictions = [
+                        {
+                            "class_id": i,
+                            "class_name": CIFAR100_FINE_LABELS[i]
+                            if i < len(CIFAR100_FINE_LABELS)
+                            else f"Class {i}",
+                            "probability": float(predictions[0][i]),
+                        }
+                        for i in range(len(predictions[0]))
+                    ]
 
                 # Sort by probability (descending)
                 all_predictions.sort(key=lambda x: x["probability"], reverse=True)
 
                 return {
                     "success": True,
-                    "predicted_class": predicted_class.replace("_", " ").title(),
+                    "predicted_class": predicted_class.replace("_", " ").title()
+                    if isinstance(predicted_class, str)
+                    else predicted_class,
                     "predicted_class_id": predicted_class_id,
                     "confidence": confidence,
                     "confidence_percent": f"{confidence * 100:.2f}%",
@@ -313,8 +382,8 @@ class ImageClassifier:
                     else None,
                     "all_predictions": all_predictions[:10],
                     "top_5": all_predictions[:5],
-                    "model_type": "CIFAR-100 (Custom Trained)",
-                    "total_classes": 100,
+                    "model_type": model_type_name,
+                    "total_classes": total_classes,
                 }
 
         except Exception as e:

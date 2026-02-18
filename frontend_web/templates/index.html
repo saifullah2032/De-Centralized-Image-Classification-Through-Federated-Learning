@@ -44,45 +44,43 @@
 </div>
 
 <!-- Features Section -->
-<div class="row g-4 mb-5 pb-4" style="border-bottom: 3px solid var(--border-color);">
-    <div class="col-12 col-lg-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="mb-3">
-                    <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--accent-green);"></i>
+<div class="card mb-5 pb-4" style="border-bottom: 3px solid var(--border-color);">
+    <div class="card-body p-0">
+        <div class="row text-center g-0">
+            <div class="col-4 border-end" style="border-color: var(--border-color) !important;">
+                <div class="p-4" style="min-height: 180px;">
+                    <div class="mb-3">
+                        <i class="fas fa-shield-alt" style="font-size: 3rem; color: var(--accent-green);"></i>
+                    </div>
+                    <h5 class="mb-2" style="color: var(--text-primary);">Privacy First</h5>
+                    <p class="mb-0" style="color: var(--text-secondary);">
+                        Your data never leaves your device
+                    </p>
                 </div>
-                <h4 class="card-title">Privacy First</h4>
-                <p class="card-text">
-                    Your data never leaves your device. Only encrypted model updates are shared, ensuring complete data sovereignty and compliance with privacy regulations.
-                </p>
             </div>
-        </div>
-    </div>
 
-    <div class="col-12 col-lg-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="mb-3">
-                    <i class="fas fa-bolt" style="font-size: 2.5rem; color: var(--accent-yellow);"></i>
+            <div class="col-4 border-end" style="border-color: var(--border-color) !important;">
+                <div class="p-4" style="min-height: 180px;">
+                    <div class="mb-3">
+                        <i class="fas fa-bolt" style="font-size: 3rem; color: var(--accent-yellow);"></i>
+                    </div>
+                    <h5 class="mb-2" style="color: var(--text-primary);">High Performance</h5>
+                    <p class="mb-0" style="color: var(--text-secondary);">
+                        Powered by JAX and Keras 3
+                    </p>
                 </div>
-                <h4 class="card-title">High Performance</h4>
-                <p class="card-text">
-                    Powered by JAX and Keras 3 for lightning-fast training. Distributed architecture scales efficiently across multiple nodes and devices.
-                </p>
             </div>
-        </div>
-    </div>
 
-    <div class="col-12 col-lg-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="mb-3">
-                    <i class="fas fa-chart-line" style="font-size: 2.5rem; color: var(--accent-magenta);"></i>
+            <div class="col-4">
+                <div class="p-4" style="min-height: 180px;">
+                    <div class="mb-3">
+                        <i class="fas fa-chart-line" style="font-size: 3rem; color: var(--accent-magenta);"></i>
+                    </div>
+                    <h5 class="mb-2" style="color: var(--text-primary);">Real-Time Analytics</h5>
+                    <p class="mb-0" style="color: var(--text-secondary);">
+                        Live dashboards and metrics
+                    </p>
                 </div>
-                <h4 class="card-title">Real-Time Analytics</h4>
-                <p class="card-text">
-                    Monitor training progress with live dashboards. Track global model performance, accuracy metrics, and node contributions in real-time.
-                </p>
             </div>
         </div>
     </div>
@@ -93,52 +91,52 @@
     <div class="card-header">
         <h3 class="mb-0"><i class="fas fa-cogs me-2"></i> How Federated Learning Works</h3>
     </div>
-    <div class="card-body">
-        <div class="row text-center g-4">
-            <div class="col-12 col-lg-3">
-                <div class="p-4 rounded h-100" style="background: var(--bg-tertiary); border: 2px solid var(--border-color);">
+    <div class="card-body p-0">
+        <div class="row text-center g-0">
+            <div class="col-3 border-end" style="border-color: var(--border-color) !important;">
+                <div class="p-4" style="min-height: 160px;">
                     <div class="mb-3">
-                        <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.75rem 1rem;">1</span>
+                        <span class="badge badge-primary" style="font-size: 1.5rem; padding: 0.6rem 0.9rem;">1</span>
                     </div>
-                    <h5 class="mb-3">Initialize</h5>
-                    <p class="text-secondary mb-0">
-                        Server broadcasts global model to all participating client nodes
+                    <h6 class="mb-2" style="color: var(--text-primary);">Initialize</h6>
+                    <p class="mb-0" style="color: var(--text-secondary);">
+                        Server broadcasts global model
                     </p>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-3">
-                <div class="p-4 rounded h-100" style="background: var(--bg-tertiary); border: 2px solid var(--border-color);">
+            <div class="col-3 border-end" style="border-color: var(--border-color) !important;">
+                <div class="p-4" style="min-height: 160px;">
                     <div class="mb-3">
-                        <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.75rem 1rem;">2</span>
+                        <span class="badge badge-primary" style="font-size: 1.5rem; padding: 0.6rem 0.9rem;">2</span>
                     </div>
-                    <h5 class="mb-3">Local Training</h5>
-                    <p class="text-secondary mb-0">
-                        Each client trains on local data without sharing raw information
+                    <h6 class="mb-2" style="color: var(--text-primary);">Local Training</h6>
+                    <p class="mb-0" style="color: var(--text-secondary);">
+                        Clients train on local data
                     </p>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-3">
-                <div class="p-4 rounded h-100" style="background: var(--bg-tertiary); border: 2px solid var(--border-color);">
+            <div class="col-3 border-end" style="border-color: var(--border-color) !important;">
+                <div class="p-4" style="min-height: 160px;">
                     <div class="mb-3">
-                        <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.75rem 1rem;">3</span>
+                        <span class="badge badge-primary" style="font-size: 1.5rem; padding: 0.6rem 0.9rem;">3</span>
                     </div>
-                    <h5 class="mb-3">Share Updates</h5>
-                    <p class="text-secondary mb-0">
-                        Clients send encrypted model weights back to central server
+                    <h6 class="mb-2" style="color: var(--text-primary);">Share Updates</h6>
+                    <p class="mb-0" style="color: var(--text-secondary);">
+                        Send encrypted weights
                     </p>
                 </div>
             </div>
 
-            <div class="col-12 col-lg-3">
-                <div class="p-4 rounded h-100" style="background: var(--bg-tertiary); border: 2px solid var(--border-color);">
+            <div class="col-3">
+                <div class="p-4" style="min-height: 160px;">
                     <div class="mb-3">
-                        <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.75rem 1rem;">4</span>
+                        <span class="badge badge-primary" style="font-size: 1.5rem; padding: 0.6rem 0.9rem;">4</span>
                     </div>
-                    <h5 class="mb-3">Aggregate</h5>
-                    <p class="text-secondary mb-0">
-                        Server combines updates using FedAvg to improve global model
+                    <h6 class="mb-2" style="color: var(--text-primary);">Aggregate</h6>
+                    <p class="mb-0" style="color: var(--text-secondary);">
+                        Combine via FedAvg
                     </p>
                 </div>
             </div>

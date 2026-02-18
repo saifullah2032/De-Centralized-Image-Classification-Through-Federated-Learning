@@ -144,6 +144,12 @@
                                         id="btn-cifar100">
                                     CIFAR-100
                                 </button>
+                                <button type="button" 
+                                        class="btn btn-sm {% if current_model == 'custom' %}btn-primary{% else %}btn-outline-secondary{% endif %}" 
+                                        onclick="switchModel('custom')"
+                                        id="btn-custom">
+                                    Custom
+                                </button>
                             </div>
                         </div>
                         
@@ -248,10 +254,12 @@
         const loadingEl = document.getElementById('model-switch-loading');
         const btnImagenet = document.getElementById('btn-imagenet');
         const btnCifar100 = document.getElementById('btn-cifar100');
+        const btnCustom = document.getElementById('btn-custom');
         
         loadingEl.classList.remove('d-none');
         btnImagenet.disabled = true;
         btnCifar100.disabled = true;
+        if (btnCustom) btnCustom.disabled = true;
         
         try {
             const response = await fetch('/api/switch_model', {
@@ -275,12 +283,14 @@
             loadingEl.classList.add('d-none');
             btnImagenet.disabled = false;
             btnCifar100.disabled = false;
+            if (btnCustom) btnCustom.disabled = false;
         }
     }
     
     function updateModelUI(modelType) {
         const btnImagenet = document.getElementById('btn-imagenet');
         const btnCifar100 = document.getElementById('btn-cifar100');
+        const btnCustom = document.getElementById('btn-custom');
         const modelName = document.getElementById('current-model-name');
         const modelClasses = document.getElementById('current-model-classes');
         const modelAccuracy = document.getElementById('current-model-accuracy');
@@ -290,15 +300,30 @@
             btnImagenet.classList.add('btn-primary');
             btnCifar100.classList.remove('btn-primary');
             btnCifar100.classList.add('btn-outline-secondary');
+            btnCustom.classList.remove('btn-primary');
+            btnCustom.classList.add('btn-outline-secondary');
             
             modelName.textContent = 'ImageNet (MobileNetV2)';
             modelClasses.textContent = '1000 categories';
             modelAccuracy.textContent = '~71%';
+        } else if (modelType === 'custom') {
+            btnCustom.classList.remove('btn-outline-secondary');
+            btnCustom.classList.add('btn-primary');
+            btnImagenet.classList.remove('btn-primary');
+            btnImagenet.classList.add('btn-outline-secondary');
+            btnCifar100.classList.remove('btn-primary');
+            btnCifar100.classList.add('btn-outline-secondary');
+            
+            modelName.textContent = 'Custom (Your Images)';
+            modelClasses.textContent = '12 classes';
+            modelAccuracy.textContent = '~81%';
         } else {
             btnCifar100.classList.remove('btn-outline-secondary');
             btnCifar100.classList.add('btn-primary');
             btnImagenet.classList.remove('btn-primary');
             btnImagenet.classList.add('btn-outline-secondary');
+            btnCustom.classList.remove('btn-primary');
+            btnCustom.classList.add('btn-outline-secondary');
             
             modelName.textContent = 'CIFAR-100';
             modelClasses.textContent = '100 classes';

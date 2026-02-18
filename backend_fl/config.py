@@ -350,7 +350,49 @@ FLASK_SECRET_KEY = os.getenv("FLASK_SECRET_KEY", "dev-secret-key-change-in-produ
 
 # Model Paths
 MODEL_PATH = os.getenv("MODEL_PATH", "models/global_model.h5")
+CIFAR100_MODEL_PATH = os.getenv(
+    "CIFAR100_MODEL_PATH", "models/cifar100_mobilenetv2_best.h5"
+)
 MODEL_HISTORY_PATH = "models/model_history.json"
+
+# Available models for switching
+AVAILABLE_MODELS = {
+    "imagenet": {
+        "name": "ImageNet (MobileNetV2)",
+        "description": "Pre-trained on 1.2M images, 1000 classes",
+        "classes": 1000,
+        "path": None,  # Uses Keras pre-trained weights
+        "input_size": (224, 224),
+    },
+    "cifar100": {
+        "name": "CIFAR-100 (Custom Trained)",
+        "description": "Your trained model - 100 common object classes",
+        "classes": 100,
+        "path": CIFAR100_MODEL_PATH,
+        "input_size": (32, 32),  # Model handles upscaling internally
+    },
+    "custom": {
+        "name": "Custom (Your Images)",
+        "description": "Trained on your test images - 12 classes",
+        "classes": 12,
+        "path": "models/custom_model_best.h5",
+        "input_size": (224, 224),
+        "labels": [
+            "airplane",
+            "bus",
+            "cat",
+            "chair",
+            "cinema",
+            "deer",
+            "dog",
+            "flower",
+            "fruit",
+            "horse",
+            "library",
+            "truck",
+        ],
+    },
+}
 
 # Upload Configuration
 UPLOAD_FOLDER = os.path.abspath("uploads")  # Use absolute path for send_from_directory

@@ -46,9 +46,9 @@
     --bg-card: #12122a;
     
     --text-primary: #e8e8e8;
-    --text-secondary: #a0a0a0;
-    --text-tertiary: #707070;
-    --text-muted: #505050;
+    --text-secondary: #c0c0c0;
+    --text-tertiary: #a0a0a0;
+    --text-muted: #808080;
     
     --primary: #cc4477;
     --primary-dark: #aa2248;
@@ -339,8 +339,14 @@ p {
 
 .badge-primary {
     background: #3a1a4a;
-    color: #c084fc;
+    color: #f5d0ff;
     border-color: #a855f7;
+}
+
+[data-theme="dark"] .badge-primary {
+    background: #4a2a6a;
+    color: #f0d9ff;
+    border-color: #c084fc;
 }
 
 .badge-warning {
@@ -472,6 +478,14 @@ p {
 .text-center { text-align: center; }
 .text-white { color: var(--text-primary) !important; }
 .text-muted { color: var(--text-muted) !important; }
+
+[data-theme="dark"] .text-muted {
+    color: #b0b0b0 !important;
+}
+
+[data-theme="dark"] .text-secondary {
+    color: #d0d0d0 !important;
+}
 .mb-3 { margin-bottom: 1rem; }
 .mb-4 { margin-bottom: 1.5rem; }
 .mb-5 { margin-bottom: 3rem; }
