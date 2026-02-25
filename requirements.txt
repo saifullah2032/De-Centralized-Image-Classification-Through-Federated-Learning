@@ -1,6 +1,14 @@
 # Federated Learning
 flwr>=1.7.0
 
+# VLM & LoRA (PyTorch-based)
+torch>=2.1.0
+torchvision>=0.16.0
+transformers>=4.36.0
+peft>=0.8.0
+accelerate>=0.25.0
+einops>=0.7.0
+
 # Machine Learning
 # Note: TensorFlow not available for Python 3.14 on Windows yet
 # Using Keras 3 with JAX backend as alternative

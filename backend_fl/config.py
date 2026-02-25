@@ -357,19 +357,29 @@ MODEL_HISTORY_PATH = "models/model_history.json"
 
 # Available models for switching
 AVAILABLE_MODELS = {
+    "vlm": {
+        "name": "VLM (Multimodal)",
+        "description": "Vision-Language Model - 5-point structured descriptions",
+        "classes": "unlimited",
+        "path": "models/global_lora_weights",
+        "input_size": (224, 224),
+        "type": "vlm",
+    },
     "imagenet": {
         "name": "ImageNet (MobileNetV2)",
         "description": "Pre-trained on 1.2M images, 1000 classes",
         "classes": 1000,
-        "path": None,  # Uses Keras pre-trained weights
+        "path": None,
         "input_size": (224, 224),
+        "type": "cnn",
     },
     "cifar100": {
         "name": "CIFAR-100 (Custom Trained)",
         "description": "Your trained model - 100 common object classes",
         "classes": 100,
         "path": CIFAR100_MODEL_PATH,
-        "input_size": (32, 32),  # Model handles upscaling internally
+        "input_size": (32, 32),
+        "type": "cnn",
     },
     "custom": {
         "name": "Custom (Your Images)",
@@ -377,6 +387,7 @@ AVAILABLE_MODELS = {
         "classes": 12,
         "path": "models/custom_model_best.h5",
         "input_size": (224, 224),
+        "type": "cnn",
         "labels": [
             "airplane",
             "bus",
@@ -393,6 +404,19 @@ AVAILABLE_MODELS = {
         ],
     },
 }
+
+# VLM Model Configuration
+VLM_MODEL_NAME = os.getenv("VLM_MODEL", "blip")
+VLM_MODEL_OPTIONS = ["blip"]
+
+# LoRA Configuration
+LORA_RANK = int(os.getenv("LORA_RANK", 8))
+LORA_ALPHA = int(os.getenv("LORA_ALPHA", 16))
+LORA_DROPOUT = float(os.getenv("LORA_DROPOUT", 0.05))
+LORA_TARGET_MODULES = ["q_proj", "k_proj", "v_proj", "o_proj"]
+
+# FedLoRA Paths
+LORA_WEIGHTS_DIR = os.path.join("models", "global_lora_weights")
 
 # Upload Configuration
 UPLOAD_FOLDER = os.path.abspath("uploads")  # Use absolute path for send_from_directory

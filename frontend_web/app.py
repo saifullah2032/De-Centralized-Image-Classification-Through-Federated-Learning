@@ -351,13 +351,14 @@ def predict_image():
                 app.logger.warning(f"Failed to load model history: {history_err}")
 
         # Prepare data for template (store only essential data, not image)
+        is_vlm = result.get("is_vlm", False)
         template_data = {
-            "temp_image_file": temp_image_filename,  # Store filename, not base64
-            "predicted_class": result["predicted_class"],
-            "confidence_percent": int(result["confidence"] * 100),
+            "temp_image_file": temp_image_filename,
+            "predicted_class": result.get("predicted_class", "Unknown"),
+            "confidence_percent": int(result.get("confidence", 0) * 100),
             "probabilities": [
                 (p["class_name"], p["probability"])
-                for p in result["all_predictions"][:10]  # Top 10 only
+                for p in result.get("all_predictions", [])[:10]
             ],
             "model_arch": model_info.get("model_path", "Unknown"),
             "model_params": f"{model_info.get('total_params', 0):,}"
@@ -365,7 +366,12 @@ def predict_image():
             else "Unknown",
             "rounds_completed": rounds_completed,
             "current_accuracy": f"{current_accuracy:.2f}",
+            "is_vlm": is_vlm,
         }
+
+        if is_vlm:
+            template_data["vlm_description"] = result.get("vlm_description", {})
+            template_data["raw_output"] = result.get("raw_output", "")
 
         app.logger.info(
             f"Prediction successful: {result['predicted_class']} ({result['confidence']:.2%})"

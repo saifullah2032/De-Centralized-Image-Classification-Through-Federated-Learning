@@ -1,9 +1,11 @@
 """
 Model Inference Module
 Handles image classification predictions using MobileNetV2
+AND VLM model for multimodal visual descriptions
 Supports switching between:
-  - ImageNet pre-trained model (1000 classes)
-  - Custom CIFAR-100 trained model (100 classes)
+   - ImageNet pre-trained model (1000 classes)
+   - Custom CIFAR-100 trained model (100 classes)
+   - VLM Model (Multimodal Visual Assistant - 5-point descriptions)
 """
 
 import os
@@ -27,7 +29,100 @@ from backend_fl.config import (
     CIFAR100_FINE_LABELS,
     CIFAR100_COARSE_LABELS,
     CIFAR100_FINE_TO_COARSE,
+    LORA_WEIGHTS_DIR,
+    VLM_MODEL_NAME,
 )
+
+
+class VLMInferenceWrapper:
+    """Wrapper for VLM model inference."""
+
+    def __init__(self):
+        self.vlm_model = None
+        self.model_loaded = False
+        self.model_name = VLM_MODEL_NAME
+
+    def load(self):
+        """Load VLM model."""
+        if self.model_loaded:
+            return True
+
+        try:
+            from backend_fl.vlm_model import VLMModel
+
+            print(f"Loading VLM model: {self.model_name}")
+            self.vlm_model = VLMModel(model_name=self.model_name)
+            self.vlm_model.load_base_model()
+
+            # Try to load LoRA weights if available
+            lora_path = os.path.join(LORA_WEIGHTS_DIR, "latest")
+            if os.path.exists(lora_path):
+                self.vlm_model.load_lora_weights(lora_path)
+                print("Loaded LoRA weights")
+
+            self.model_loaded = True
+            print("[OK] VLM model loaded successfully")
+            return True
+
+        except ImportError as e:
+            print(f"[X] VLM dependencies not installed: {e}")
+            return False
+        except Exception as e:
+            print(f"[X] Error loading VLM model: {e}")
+            return False
+
+    def predict(self, image_path):
+        """
+        Generate 5-point description for image.
+
+        Args:
+            image_path: Path to image file
+
+        Returns:
+            Dictionary with structured description
+        """
+        if not self.model_loaded:
+            self.load()
+
+        if not self.model_loaded:
+            return {"success": False, "error": "VLM model not loaded"}
+
+        try:
+            image = Image.open(image_path).convert("RGB")
+
+            raw_output = self.vlm_model.generate_description(
+                image=image,
+                max_new_tokens=75,
+            )
+
+            parsed = self.vlm_model.parse_five_point_description(raw_output)
+
+            return {
+                "success": True,
+                "raw_output": raw_output,
+                "structured": parsed,
+                "model_type": f"VLM ({self.model_name})",
+            }
+
+        except Exception as e:
+            print(f"[X] VLM prediction error: {e}")
+            return {"success": False, "error": str(e)}
+
+    def get_model_info(self):
+        """Get VLM model information."""
+        return {
+            "model_loaded": self.model_loaded,
+            "model_type": "VLM (Multimodal)",
+            "model_name": self.model_name,
+            "description": "Lightweight BLIP for generating structured 5-point descriptions",
+            "capabilities": [
+                "Generate detailed image descriptions",
+                "Identify object classes",
+                "Explain purpose and context",
+                "Provide origin/setting info",
+                "FedLoRA trainable (federated learning)",
+            ],
+        }
 
 
 class ImageClassifier:
@@ -36,6 +131,7 @@ class ImageClassifier:
     Supports switching between:
       - ImageNet pre-trained model (1000 classes)
       - Custom CIFAR-100 trained model (100 classes)
+      - VLM Model (Multimodal Visual Assistant - 5-point descriptions)
     """
 
     def __init__(self, model_type="imagenet"):
@@ -43,11 +139,12 @@ class ImageClassifier:
         Initialize the classifier
 
         Args:
-            model_type: "imagenet" or "cifar100"
+            model_type: "imagenet", "cifar100", "custom", or "vlm"
         """
         self.model = None
         self.model_loaded = False
         self.current_model_type = model_type
+        self.vlm_wrapper = None
 
         # Model configuration
         self.model_config = AVAILABLE_MODELS.get(
@@ -63,7 +160,7 @@ class ImageClassifier:
         Switch to a different model type
 
         Args:
-            model_type: "imagenet" or "cifar100"
+            model_type: "imagenet", "cifar100", "custom", or "vlm"
 
         Returns:
             bool: True if switch was successful
@@ -89,6 +186,12 @@ class ImageClassifier:
         self.model = None
         self.model_loaded = False
 
+        # For VLM, use the wrapper
+        if model_type == "vlm":
+            self.vlm_wrapper = VLMInferenceWrapper()
+            self.model_loaded = self.vlm_wrapper.load()
+            return self.model_loaded
+
         # Load new model
         self.load_model()
 
@@ -97,6 +200,15 @@ class ImageClassifier:
     def load_model(self):
         """Load the model based on current_model_type"""
         try:
+            # Handle VLM model separately
+            if self.current_model_type == "vlm":
+                print("Loading VLM model for multimodal visual assistant...")
+                self.vlm_wrapper = VLMInferenceWrapper()
+                self.model_loaded = self.vlm_wrapper.load()
+                if self.model_loaded:
+                    print("[OK] VLM model loaded successfully")
+                return
+
             if self.current_model_type == "imagenet":
                 print("Loading pre-trained MobileNetV2 model with ImageNet weights...")
                 # Load MobileNetV2 with ImageNet weights - includes the top classification layer
@@ -147,7 +259,6 @@ class ImageClassifier:
         except Exception as e:
             print(f"[X] Error loading model: {e}")
             print("  Attempting to load pre-trained ImageNet model as fallback...")
-            self._load_imagenet_fallback()
             self._load_imagenet_fallback()
 
     def _load_imagenet_fallback(self):
@@ -215,21 +326,48 @@ class ImageClassifier:
 
     def predict(self, image_path):
         """
-        Predict the class of an image using ImageNet pre-trained model
+        Predict the class of an image OR generate VLM description
 
         Args:
             image_path: Path to the image file
 
         Returns:
-            Dictionary containing:
-                - success: Whether prediction succeeded
-                - predicted_class: Name of the predicted class
-                - predicted_class_id: ID of the predicted class
-                - confidence: Confidence score (0-1)
-                - all_predictions: List of all class probabilities (top 10)
-                - top_5: Top 5 predictions with class names
-                - error: Error message (if failed)
+            Dictionary containing prediction results
         """
+        # Handle VLM model separately
+        if self.current_model_type == "vlm":
+            if not self.model_loaded or self.vlm_wrapper is None:
+                return {
+                    "success": False,
+                    "error": "VLM model not loaded. Please check the installation.",
+                }
+
+            try:
+                result = self.vlm_wrapper.predict(image_path)
+
+                # Convert VLM result to standard format
+                if result.get("success"):
+                    structured = result.get("structured", {})
+                    return {
+                        "success": True,
+                        "predicted_class": structured.get("1. Class", "Unknown"),
+                        "confidence": 1.0,
+                        "confidence_percent": "100%",
+                        "vlm_description": structured,
+                        "raw_output": result.get("raw_output", ""),
+                        "all_predictions": [],
+                        "model_type": result.get("model_type", "VLM"),
+                        "total_classes": "unlimited",
+                        "is_vlm": True,
+                    }
+                else:
+                    return result
+
+            except Exception as e:
+                print(f"[X] VLM prediction error: {e}")
+                return {"success": False, "error": str(e)}
+
+        # Original CNN prediction logic
         if not self.model_loaded:
             return {
                 "success": False,
@@ -400,6 +538,16 @@ class ImageClassifier:
         Returns:
             Dictionary containing model information
         """
+        # Handle VLM model info
+        if self.current_model_type == "vlm":
+            if self.vlm_wrapper:
+                return self.vlm_wrapper.get_model_info()
+            return {
+                "model_loaded": False,
+                "model_type": "VLM (Multimodal)",
+                "description": "Vision-Language Model for 5-point descriptions",
+            }
+
         is_imagenet = self.current_model_type == "imagenet"
 
         info = {
@@ -463,7 +611,7 @@ def get_classifier():
     """
     global _classifier_instance
     if _classifier_instance is None:
-        _classifier_instance = ImageClassifier()
+        _classifier_instance = ImageClassifier(model_type="cifar100")
     return _classifier_instance
 
 

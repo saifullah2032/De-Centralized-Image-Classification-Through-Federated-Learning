@@ -56,7 +56,7 @@
                                     <div id="dropZone" class="mb-4">
                                         <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--text-tertiary);"></i>
                                         <p class="mb-1 fw-semibold">Drop your image here or click to browse</p>
-                                        <p class="small text-muted mb-0">Supports JPG, PNG, GIF</p>
+                                        <p class="small mb-0" style="color: var(--text-primary); opacity: 0.7;">Supports JPG, PNG, GIF</p>
                                         <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
                                     </div>
 
@@ -133,59 +133,54 @@
                             <div class="small fw-semibold text-secondary mb-2">Select Model</div>
                             <div class="btn-group w-100" role="group">
                                 <button type="button" 
-                                        class="btn btn-sm {% if current_model == 'imagenet' %}btn-primary{% else %}btn-outline-secondary{% endif %}" 
-                                        onclick="switchModel('imagenet')"
-                                        id="btn-imagenet">
-                                    ImageNet
-                                </button>
-                                <button type="button" 
                                         class="btn btn-sm {% if current_model == 'cifar100' %}btn-primary{% else %}btn-outline-secondary{% endif %}" 
                                         onclick="switchModel('cifar100')"
                                         id="btn-cifar100">
                                     CIFAR-100
                                 </button>
                                 <button type="button" 
-                                        class="btn btn-sm {% if current_model == 'custom' %}btn-primary{% else %}btn-outline-secondary{% endif %}" 
-                                        onclick="switchModel('custom')"
-                                        id="btn-custom">
-                                    Custom
+                                        class="btn btn-sm {% if current_model == 'vlm' %}btn-primary{% else %}btn-outline-secondary{% endif %}" 
+                                        onclick="switchModel('vlm')"
+                                        id="btn-vlm"
+                                        title="Multimodal Visual Assistant">
+                                    VLM
                                 </button>
                             </div>
                         </div>
                         
                         <!-- Current Model Info -->
                         <div class="mb-3">
-                            <div class="small text-muted text-uppercase fw-medium mb-1">Model</div>
+                            <div class="small text-uppercase fw-medium mb-1" style="color: var(--text-primary); opacity: 0.7;">Model</div>
                             <div class="fw-semibold" id="current-model-name">
                                 {% if current_model == 'imagenet' %}ImageNet (MobileNetV2){% else %}CIFAR-100{% endif %}
                             </div>
                         </div>
                         <div class="mb-3">
-                            <div class="small text-muted text-uppercase fw-medium mb-1">Classes</div>
+                            <div class="small text-uppercase fw-medium mb-1" style="color: var(--text-primary); opacity: 0.7;">Classes</div>
                             <div id="current-model-classes">
                                 {% if current_model == 'imagenet' %}1000 categories{% else %}100 classes{% endif %}
                             </div>
                         </div>
                         <div class="mb-3">
-                            <div class="small text-muted text-uppercase fw-medium mb-1">Accuracy</div>
+                            <div class="small text-uppercase fw-medium mb-1" style="color: var(--text-primary); opacity: 0.7;">Accuracy</div>
                             <div id="current-model-accuracy">
                                 {% if current_model == 'imagenet' %}~71%{% else %}64.23%{% endif %}
                             </div>
                         </div>
                         <div class="pt-3 border-top" style="border-color: var(--border-color) !important;">
                             <div class="d-flex justify-content-between">
-                                <span class="small text-muted">Architecture</span>
+                                <span class="small" style="color: var(--text-primary); opacity: 0.7;">Architecture</span>
                                 <span class="small fw-semibold">MobileNetV2</span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="small text-muted">Input Size</span>
+                                <span class="small" style="color: var(--text-primary); opacity: 0.7;">Input Size</span>
                                 <span class="small fw-semibold">224x224</span>
                             </div>
                         </div>
                         
                         <div id="model-switch-loading" class="text-center mt-3 d-none">
                             <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                            <span class="ms-2 small text-muted">Switching model...</span>
+                            <span class="ms-2 small" style="color: var(--text-primary);">Switching model...</span>
                         </div>
                     </div>
                 </div>
@@ -252,14 +247,12 @@
         if (modelType === currentModel) return;
         
         const loadingEl = document.getElementById('model-switch-loading');
-        const btnImagenet = document.getElementById('btn-imagenet');
         const btnCifar100 = document.getElementById('btn-cifar100');
-        const btnCustom = document.getElementById('btn-custom');
+        const btnVlm = document.getElementById('btn-vlm');
         
         loadingEl.classList.remove('d-none');
-        btnImagenet.disabled = true;
         btnCifar100.disabled = true;
-        if (btnCustom) btnCustom.disabled = true;
+        btnVlm.disabled = true;
         
         try {
             const response = await fetch('/api/switch_model', {
@@ -281,49 +274,34 @@
             alert('Error switching model. Please try again.');
         } finally {
             loadingEl.classList.add('d-none');
-            btnImagenet.disabled = false;
             btnCifar100.disabled = false;
-            if (btnCustom) btnCustom.disabled = false;
+            btnVlm.disabled = false;
         }
     }
     
     function updateModelUI(modelType) {
-        const btnImagenet = document.getElementById('btn-imagenet');
         const btnCifar100 = document.getElementById('btn-cifar100');
-        const btnCustom = document.getElementById('btn-custom');
+        const btnVlm = document.getElementById('btn-vlm');
         const modelName = document.getElementById('current-model-name');
         const modelClasses = document.getElementById('current-model-classes');
         const modelAccuracy = document.getElementById('current-model-accuracy');
         
-        if (modelType === 'imagenet') {
-            btnImagenet.classList.remove('btn-outline-secondary');
-            btnImagenet.classList.add('btn-primary');
-            btnCifar100.classList.remove('btn-primary');
-            btnCifar100.classList.add('btn-outline-secondary');
-            btnCustom.classList.remove('btn-primary');
-            btnCustom.classList.add('btn-outline-secondary');
+        // Reset all buttons
+        btnCifar100.classList.remove('btn-primary');
+        btnCifar100.classList.add('btn-outline-secondary');
+        btnVlm.classList.remove('btn-primary');
+        btnVlm.classList.add('btn-outline-secondary');
+        
+        if (modelType === 'vlm') {
+            btnVlm.classList.remove('btn-outline-secondary');
+            btnVlm.classList.add('btn-primary');
             
-            modelName.textContent = 'ImageNet (MobileNetV2)';
-            modelClasses.textContent = '1000 categories';
-            modelAccuracy.textContent = '~71%';
-        } else if (modelType === 'custom') {
-            btnCustom.classList.remove('btn-outline-secondary');
-            btnCustom.classList.add('btn-primary');
-            btnImagenet.classList.remove('btn-primary');
-            btnImagenet.classList.add('btn-outline-secondary');
-            btnCifar100.classList.remove('btn-primary');
-            btnCifar100.classList.add('btn-outline-secondary');
-            
-            modelName.textContent = 'Custom (Your Images)';
-            modelClasses.textContent = '12 classes';
-            modelAccuracy.textContent = '~81%';
+            modelName.textContent = 'VLM (Visual Assistant)';
+            modelClasses.textContent = '5-point descriptions';
+            modelAccuracy.textContent = 'AI-generated';
         } else {
             btnCifar100.classList.remove('btn-outline-secondary');
             btnCifar100.classList.add('btn-primary');
-            btnImagenet.classList.remove('btn-primary');
-            btnImagenet.classList.add('btn-outline-secondary');
-            btnCustom.classList.remove('btn-primary');
-            btnCustom.classList.add('btn-outline-secondary');
             
             modelName.textContent = 'CIFAR-100';
             modelClasses.textContent = '100 classes';
