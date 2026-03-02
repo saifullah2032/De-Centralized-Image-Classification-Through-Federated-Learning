@@ -1097,7 +1097,6 @@ input[type="submit"],
 /* HOME PAGE - FULL OCEAN ANIMATION */
 .page-home {
     position: relative;
-    overflow: hidden;
 }
 
 .ocean-background {
@@ -1234,7 +1233,6 @@ input[type="submit"],
 /* Subtle bubble animation for secondary pages */
 .page-secondary {
     position: relative;
-    overflow: hidden;
 }
 
 .subtle-ocean-bg {
