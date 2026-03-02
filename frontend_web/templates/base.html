@@ -24,6 +24,16 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">
+    <!-- Page type detection - added before DOMContentLoaded -->
+    <script>
+        const path = window.location.pathname;
+        if (path === '/' || path === '/index' || path === '/home') {
+            document.body.classList.add('page-home');
+        } else {
+            document.body.classList.add('page-secondary');
+        }
+    </script>
+    
     <!-- Preloader - Ocean/Coral Themed -->
     <div class="preloader" id="preloader">
         <div class="preloader-content">
