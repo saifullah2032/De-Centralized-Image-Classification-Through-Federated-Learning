@@ -5,23 +5,24 @@
 {% block extra_css %}
 <style>
     body.page-home {
-        background-color: #e0f7ff;
+        /* Ocean gradient + dark dots - MUST use background-image to stack properly */
+        background-color: #b8e6ff;
         background-image: 
-            radial-gradient(circle, #000000 1.5px, transparent 1.5px),
-            radial-gradient(circle, #72edf1 1px, transparent 1px),
-            linear-gradient(to bottom, #e0f7ff 0%, #b3e5ff 50%, #80deea 100%);
+            linear-gradient(to bottom, #f0faff 0%, #d4f1ff 50%, #b8e6ff 100%),
+            radial-gradient(circle, #1a1a2e 2px, transparent 2px),
+            radial-gradient(circle, #0f3a66 1.5px, transparent 1.5px);
         background-position: 
             0 0,
-            25px 25px,
-            0 0;
+            0 0,
+            15px 15px;
         background-size: 
-            50px 50px,
-            35px 35px,
-            100% 100%;
+            100% 100%,
+            40px 40px,
+            30px 30px;
         background-attachment: fixed;
     }
     
-    /* Content should appear on top of ocean background */
+    /* Content should appear on top */
     .container, .hero-section {
         position: relative;
         z-index: 10;
@@ -37,15 +38,15 @@
     <div class="row align-items-center">
         <div class="col-lg-8">
             <h1 class="mb-3" style="color: var(--text-primary);">
-                Federated Learning Platform
+                Triple-Layer Consistency Pipeline with Autonomous Error Correction
             </h1>
             <p class="lead mb-4">
-                Train powerful AI models without sharing raw data. Our privacy-preserving platform enables collaborative machine learning while keeping your data secure and local.
+                Advanced Vision-Language AI with Semantic Consistency Layer (SCL) verification. Analyze images with privacy-preserving edge inference and automatic error detection. Our federated learning platform ensures collaborative insights while keeping raw data secure and local. CNN predictions are autonomously verified and corrected when needed.
             </p>
             <div class="d-flex gap-3 flex-wrap">
                 {% if current_user.is_authenticated %}
                     <a href="{{ url_for('predict') }}" class="btn btn-primary btn-lg">
-                        <i class="fas fa-microscope"></i> Classify Images
+                        <i class="fas fa-sparkles"></i> Discover Insights
                     </a>
                     {% if current_user.is_admin() %}
                         <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary btn-lg">
@@ -67,7 +68,7 @@
             </div>
         </div>
         <div class="col-lg-4 d-none d-lg-block text-center">
-            <i class="fas fa-network-wired" style="font-size: 120px; color: var(--primary-light); opacity: 0.8;"></i>
+            <i class="fas fa-brain" style="font-size: 120px; color: var(--primary-light); opacity: 0.8;"></i>
         </div>
     </div>
 </div>
@@ -79,11 +80,11 @@
             <div class="col-4 border-end" style="border-color: var(--border-color) !important;">
                 <div class="p-4" style="min-height: 160px;">
                     <div class="mb-3">
-                        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--success);"></i>
+                        <i class="fas fa-lock" style="font-size: 2.5rem; color: var(--success);"></i>
                     </div>
-                    <h5 class="mb-2" style="color: var(--text-primary);">Privacy First</h5>
+                    <h5 class="mb-2" style="color: var(--text-primary);">Privacy-First Edge AI</h5>
                     <p class="mb-0 small" style="color: var(--text-secondary);">
-                        Your data never leaves your device
+                        Images processed locally, never transmitted raw
                     </p>
                 </div>
             </div>
@@ -91,11 +92,11 @@
             <div class="col-4 border-end" style="border-color: var(--border-color) !important;">
                 <div class="p-4" style="min-height: 160px;">
                     <div class="mb-3">
-                        <i class="fas fa-bolt" style="font-size: 2.5rem; color: var(--warning);"></i>
+                        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: var(--success);"></i>
                     </div>
-                    <h5 class="mb-2" style="color: var(--text-primary);">High Performance</h5>
+                    <h5 class="mb-2" style="color: var(--text-primary);">Autonomous Error Detection</h5>
                     <p class="mb-0 small" style="color: var(--text-secondary);">
-                        Powered by MobileNetV2
+                        SCL verifies and corrects CNN predictions automatically
                     </p>
                 </div>
             </div>
@@ -103,11 +104,11 @@
             <div class="col-4">
                 <div class="p-4" style="min-height: 160px;">
                     <div class="mb-3">
-                        <i class="fas fa-chart-line" style="font-size: 2.5rem; color: var(--primary);"></i>
+                        <i class="fas fa-network-wired" style="font-size: 2.5rem; color: var(--primary);"></i>
                     </div>
-                    <h5 class="mb-2" style="color: var(--text-primary);">Real-Time Analytics</h5>
+                    <h5 class="mb-2" style="color: var(--text-primary);">Federated Learning</h5>
                     <p class="mb-0 small" style="color: var(--text-secondary);">
-                        Live dashboards and metrics
+                        Collaborative training with encrypted LoRA adapters
                     </p>
                 </div>
             </div>
@@ -118,7 +119,7 @@
 <!-- How It Works Section -->
 <div class="card mb-4">
     <div class="card-header">
-        <h3 class="mb-0"><i class="fas fa-cogs me-2"></i> How Federated Learning Works</h3>
+        <h3 class="mb-0"><i class="fas fa-cogs me-2"></i>Triple-Layer Consistency Pipeline</h3>
     </div>
     <div class="card-body p-0">
         <div class="row text-center g-0">
@@ -127,9 +128,21 @@
                     <div class="mb-3">
                         <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.5rem 0.75rem;">1</span>
                     </div>
-                    <h6 class="mb-2" style="color: var(--text-primary);">Initialize</h6>
+                    <h6 class="mb-2" style="color: var(--text-primary);">CNN Detection</h6>
                     <p class="mb-0 small" style="color: var(--text-secondary);">
-                        Server broadcasts global model
+                        MobileNetV2 rapid classification
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-3 border-end" style="border-color: var(--border-color) !important;">
+                <div class="p-4" style="min-height: 140px;">
+                    <div class="mb-3">
+                        <span class="badge badge-success" style="font-size: 1.25rem; padding: 0.5rem 0.75rem;">1.5</span>
+                    </div>
+                    <h6 class="mb-2" style="color: var(--text-primary);">SCL Verification</h6>
+                    <p class="mb-0 small" style="color: var(--text-secondary);">
+                        Autonomous error detection & correction
                     </p>
                 </div>
             </div>
@@ -139,21 +152,9 @@
                     <div class="mb-3">
                         <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.5rem 0.75rem;">2</span>
                     </div>
-                    <h6 class="mb-2" style="color: var(--text-primary);">Local Training</h6>
+                    <h6 class="mb-2" style="color: var(--text-primary);">VLM Analysis</h6>
                     <p class="mb-0 small" style="color: var(--text-secondary);">
-                        Clients train on local data
-                    </p>
-                </div>
-            </div>
-
-            <div class="col-3 border-end" style="border-color: var(--border-color) !important;">
-                <div class="p-4" style="min-height: 140px;">
-                    <div class="mb-3">
-                        <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.5rem 0.75rem;">3</span>
-                    </div>
-                    <h6 class="mb-2" style="color: var(--text-primary);">Share Updates</h6>
-                    <p class="mb-0 small" style="color: var(--text-secondary);">
-                        Send encrypted weights
+                        9-point detailed discovery
                     </p>
                 </div>
             </div>
@@ -161,11 +162,11 @@
             <div class="col-3">
                 <div class="p-4" style="min-height: 140px;">
                     <div class="mb-3">
-                        <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.5rem 0.75rem;">4</span>
+                        <span class="badge badge-primary" style="font-size: 1.25rem; padding: 0.5rem 0.75rem;">3</span>
                     </div>
-                    <h6 class="mb-2" style="color: var(--text-primary);">Aggregate</h6>
+                    <h6 class="mb-2" style="color: var(--text-primary);">Premium Report</h6>
                     <p class="mb-0 small" style="color: var(--text-secondary);">
-                        Combine via FedAvg
+                        Interactive results + PDF export
                     </p>
                 </div>
             </div>
@@ -173,12 +174,18 @@
 
         <div class="mt-4 text-center">
             <div class="p-4 rounded" style="background: var(--accent); border: 1px solid var(--border-color);">
-                <h5 class="mb-3" style="color: var(--text-primary);">FedAvg Algorithm</h5>
-                <code class="font-mono" style="color: var(--text-primary); font-size: 1rem; background: var(--bg-secondary); padding: 0.5rem 1rem; border-radius: 6px; border: 1px solid var(--border-color);">
-                    w<sub>global</sub> = (n<sub>k</sub> / n) x w<sub>k</sub>
-                </code>
-                <p class="mt-3 mb-0 small" style="color: var(--text-secondary);">
-                    Weighted average ensures larger datasets have proportional influence on the global model
+                <h5 class="mb-3" style="color: var(--text-primary);">Privacy-Preserving Triple-Layer Architecture</h5>
+                <p class="mb-2 small" style="color: var(--text-secondary);">
+                    <strong>Stage 1:</strong> CNN rapidly detects and classifies objects (0.1-0.5s)
+                </p>
+                <p class="mb-2 small" style="color: var(--text-secondary);">
+                    <strong>Stage 1.5:</strong> SCL verifies CNN prediction or triggers self-correction (3-8s)
+                </p>
+                <p class="mb-2 small" style="color: var(--text-secondary);">
+                    <strong>Stage 2/3:</strong> VLM performs 9-point analysis with context-aware prompts based on SCL status (5-15s)
+                </p>
+                <p class="mb-0 small" style="color: var(--text-secondary);">
+                    <strong>Privacy:</strong> Images analyzed on-device. Only encrypted LoRA adapters transmitted. Raw images never leave your system.
                 </p>
             </div>
         </div>
@@ -188,9 +195,9 @@
 <!-- CTA Section -->
 {% if not current_user.is_authenticated %}
 <div id="home-cta" class="text-center mb-4" style="background: var(--accent); border: 1px solid var(--border-color);">
-    <h2 class="mb-3">Ready to Get Started?</h2>
+    <h2 class="mb-3">Ready to Discover?</h2>
     <p class="lead mb-4">
-        Join the federated learning network and start training models securely
+        Join the federated learning network and start analyzing images with privacy-preserving generative AI
     </p>
     <div class="d-flex gap-3 justify-content-center">
         <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
@@ -202,6 +209,77 @@
     </div>
 </div>
 {% endif %}
+
+<!-- Technical Specifications Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h3 class="mb-0"><i class="fas fa-microchip me-2"></i>Technical Specifications</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Triple-Layer Pipeline</h6>
+                <ul class="small mb-0" style="color: var(--text-secondary); padding-left: 1.5rem;">
+                    <li><strong>Stage 1:</strong> MobileNetV2 CNN (ImageNet-1K classes)</li>
+                    <li><strong>Stage 1.5:</strong> BLIP-VQA Interrogative SCL Verification</li>
+                    <li><strong>Stage 2/3:</strong> BLIP-VQA Analysis + Narrative Synthesis</li>
+                    <li><strong>Output:</strong> 9-point discovery analysis with SCL status</li>
+                </ul>
+            </div>
+            <div class="col-md-6 mb-3">
+                <h6 class="fw-bold mb-2" style="color: var(--text-primary);">SCL Autonomous Correction</h6>
+                <ul class="small mb-0" style="color: var(--text-secondary); padding-left: 1.5rem;">
+                    <li><strong>Verification:</strong> Interrogative VLM question-based check</li>
+                    <li><strong>Detection:</strong> Identifies CNN vs VLM understanding discrepancies</li>
+                    <li><strong>Routing:</strong> Context-aware (Verified) or generic (Self-Corrected) prompts</li>
+                    <li><strong>Display:</strong> Shows corrected identity when SCL detects error</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-top" style="border-color: var(--border-color) !important;">
+            <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Discovery Analysis Categories</h6>
+            <div class="row small">
+                <div class="col-lg-4 mb-2">
+                    <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 6px; border: 1px solid var(--border-color);">
+                        <strong style="color: var(--text-primary);">Common Identity</strong>
+                        <p class="mb-0 mt-1" style="color: var(--text-secondary);">Object identification with professional language</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-2">
+                    <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 6px; border: 1px solid var(--border-color);">
+                        <strong style="color: var(--text-primary);">Visual Characteristics</strong>
+                        <p class="mb-0 mt-1" style="color: var(--text-secondary);">Physical features, textures, and appearance details</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-2">
+                    <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 6px; border: 1px solid var(--border-color);">
+                        <strong style="color: var(--text-primary);">Utility & Function</strong>
+                        <p class="mb-0 mt-1" style="color: var(--text-secondary);">Applications, use cases, and practical purposes</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-2">
+                    <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 6px; border: 1px solid var(--border-color);">
+                        <strong style="color: var(--text-primary);">Safety Assessment</strong>
+                        <p class="mb-0 mt-1" style="color: var(--text-secondary);">Risk factors and safety considerations</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-2">
+                    <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 6px; border: 1px solid var(--border-color);">
+                        <strong style="color: var(--text-primary);">Maintenance & Care</strong>
+                        <p class="mb-0 mt-1" style="color: var(--text-secondary);">Longevity, care requirements, and preservation</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-2">
+                    <div style="padding: 1rem; background: var(--bg-tertiary); border-radius: 6px; border: 1px solid var(--border-color);">
+                        <strong style="color: var(--text-primary);">SCL Verification</strong>
+                        <p class="mb-0 mt-1" style="color: var(--text-secondary);">Autonomous error detection and correction status</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
     .h-100 { height: 100%; }

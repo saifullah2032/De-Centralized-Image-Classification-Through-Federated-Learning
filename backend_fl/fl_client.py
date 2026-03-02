@@ -371,7 +371,7 @@ def main():
         "--model-name",
         type=str,
         default=VLM_MODEL_NAME,
-        choices=["moondream2", "blip2", "paligemma"],
+        choices=["moondream2"],
         help="VLM model to use",
     )
 

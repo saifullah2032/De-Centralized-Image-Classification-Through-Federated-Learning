@@ -406,8 +406,8 @@ AVAILABLE_MODELS = {
 }
 
 # VLM Model Configuration
-VLM_MODEL_NAME = os.getenv("VLM_MODEL", "blip")
-VLM_MODEL_OPTIONS = ["blip"]
+VLM_MODEL_NAME = os.getenv("VLM_MODEL", "blip-vqa")
+VLM_MODEL_OPTIONS = ["blip-vqa"]
 
 # LoRA Configuration
 LORA_RANK = int(os.getenv("LORA_RANK", 8))

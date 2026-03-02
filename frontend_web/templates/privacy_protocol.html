@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Privacy Protocol - Decentralized Multimodal Visual Assistant{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <!-- Header -->
+        <div class="mb-5">
+            <h1 class="h2 fw-bold mb-3">
+                <i class="fas fa-lock me-3" style="color: var(--primary);"></i>Privacy Protocol
+            </h1>
+            <p class="lead" style="color: var(--text-secondary);">
+                How we protect your data through privacy-preserving edge inference and federated learning
+            </p>
+        </div>
+
+        <!-- Core Privacy Principles -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-shield-alt me-2"></i>Core Privacy Principles</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-2" style="color: var(--text-primary);">
+                                <i class="fas fa-check-circle me-2" style="color: var(--success);"></i>Local Processing
+                            </h5>
+            <p style="color: var(--text-secondary); line-height: 1.6;">
+                All image analysis occurs on your local device via a three-stage Triple-Layer Consistency Pipeline. Images are first identified by a MobileNetV2 classifier, then verified by a Semantic Consistency Layer (SCL) interrogative check, and finally audited by a BLIP-VQA model. No data leaves your system.
+            </p>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-2" style="color: var(--text-primary);">
+                                <i class="fas fa-check-circle me-2" style="color: var(--success);"></i>Zero Data Transmission
+                            </h5>
+                            <p style="color: var(--text-secondary); line-height: 1.6;">
+                                Images are never uploaded or stored on central servers. Only lightweight model weights (LoRA adapters) are synchronized across the federated network. Metadata about your analysis is not logged or tracked.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-2" style="color: var(--text-primary);">
+                                <i class="fas fa-check-circle me-2" style="color: var(--success);"></i>Encrypted Synchronization
+                            </h5>
+                            <p style="color: var(--text-secondary); line-height: 1.6;">
+                                When participating in federated learning, LoRA adapter updates are encrypted before transmission. These lightweight tuning parameters never contain information that could reconstruct your original data.
+                            </p>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="fw-bold mb-2" style="color: var(--text-primary);">
+                                <i class="fas fa-check-circle me-2" style="color: var(--success);"></i>On-Device Models
+                            </h5>
+                            <p style="color: var(--text-secondary); line-height: 1.6;">
+                                The MobileNetV2 (ImageNet-1K) classifier and Salesforce/blip-vqa-base Vision-Language Model run entirely within your local environment. No cloud dependencies for core inference or model execution.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Flow Diagram -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-network-wired me-2"></i>Data Flow Architecture</h3>
+            </div>
+            <div class="card-body">
+                <div style="background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: 8px; padding: 2rem;">
+                    <div class="text-center mb-4">
+                        <h6 style="color: var(--text-primary); font-weight: bold;">Triple-Layer Consistency Pipeline: CNN → SCL → VLM Analysis</h6>
+                    </div>
+
+                    <div class="row align-items-center g-3 text-center">
+                        <div class="col-md-2">
+                            <div style="background: var(--primary); color: white; padding: 1.5rem; border-radius: 8px; border: 2px solid var(--border-color);">
+                                <i class="fas fa-image fa-2x mb-2" style="display: block;"></i>
+                                <strong>1. Upload</strong>
+                                <p class="small mb-0 mt-2">Image</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-1 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-arrow-right fa-lg" style="color: var(--primary);"></i>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div style="background: var(--primary); color: white; padding: 1.5rem; border-radius: 8px; border: 2px solid var(--border-color);">
+                                <i class="fas fa-cube fa-2x mb-2" style="display: block;"></i>
+                                <strong>2. Stage 1</strong>
+                                <p class="small mb-0 mt-2">CNN ID</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-1 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-arrow-right fa-lg" style="color: #ff9800;"></i>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div style="background: #ff9800; color: white; padding: 1.5rem; border-radius: 8px; border: 2px solid #ff9800;">
+                                <i class="fas fa-shield-alt fa-2x mb-2" style="display: block;"></i>
+                                <strong>3. SCL</strong>
+                                <p class="small mb-0 mt-2">Verify</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-1 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-arrow-right fa-lg" style="color: var(--primary);"></i>
+                        </div>
+
+                        <div class="col-md-2">
+                            <div style="background: var(--primary); color: white; padding: 1.5rem; border-radius: 8px; border: 2px solid var(--border-color);">
+                                <i class="fas fa-sparkles fa-2x mb-2" style="display: block;"></i>
+                                <strong>4. Stage 3</strong>
+                                <p class="small mb-0 mt-2">VLM Audit</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top" style="border-color: var(--border-color) !important;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 style="color: var(--success); font-weight: bold;"><i class="fas fa-check-circle me-2"></i>Stays Local</h6>
+                                <ul class="small mb-0" style="color: var(--text-secondary); padding-left: 1.5rem;">
+                                    <li>Raw images</li>
+                                    <li>Image metadata</li>
+                                    <li>Processing logs</li>
+                                    <li>Analysis results (unless you share)</li>
+                                </ul>
+                            </div>
+
+                            <div class="col-md-6">
+                                <h6 style="color: var(--primary); font-weight: bold;"><i class="fas fa-lock me-2"></i>Synchronized if Contributing</h6>
+                                <ul class="small mb-0" style="color: var(--text-secondary); padding-left: 1.5rem;">
+                                    <li>LoRA adapters (encrypted)</li>
+                                    <li>Model tuning parameters only</li>
+                                    <li>Cannot reconstruct images</li>
+                                    <li>Can be disabled anytime</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+         <!-- Technical Details -->
+         <div class="card mb-4">
+             <div class="card-header">
+                 <h3 class="mb-0"><i class="fas fa-code me-2"></i>Technical Implementation</h3>
+             </div>
+             <div class="card-body">
+                 <div class="row">
+                     <div class="col-lg-4">
+                          <h6 class="fw-bold mb-3" style="color: var(--text-primary);">CNN Classifier (Stage 1)</h6>
+                          <ul style="color: var(--text-secondary); line-height: 1.8; font-size: 0.9rem;">
+                              <li><strong>Model:</strong> MobileNetV2 (ImageNet-1K)</li>
+                              <li><strong>Execution:</strong> TensorFlow/Keras locally</li>
+                              <li><strong>Classes:</strong> 1000 object categories</li>
+                              <li><strong>Input Processing:</strong> 224x224 images</li>
+                              <li><strong>Memory:</strong> ~200MB RAM</li>
+                              <li><strong>Inference Time:</strong> 50-200ms</li>
+                         </ul>
+                     </div>
+
+                     <div class="col-lg-4">
+                         <h6 class="fw-bold mb-3" style="color: #ff9800;">Semantic Consistency Layer (Stage 1.5 - NEW)</h6>
+                         <ul style="color: var(--text-secondary); line-height: 1.8; font-size: 0.9rem;">
+                             <li><strong>Type:</strong> Interrogative verification gate</li>
+                             <li><strong>Purpose:</strong> Prevent CNN misidentification errors</li>
+                             <li><strong>Method:</strong> VLM asks "Does image contain [CNN_Class]?"</li>
+                             <li><strong>Trigger:</strong> Activates on high CNN confidence (&gt;70%)</li>
+                             <li><strong>Action:</strong> Can trigger "Global Discovery Mode"</li>
+                             <li><strong>Transparency:</strong> Full audit trail in PDF report</li>
+                         </ul>
+                     </div>
+
+                     <div class="col-lg-4">
+                         <h6 class="fw-bold mb-3" style="color: var(--text-primary);">Vision-Language Model (Stage 3)</h6>
+                         <ul style="color: var(--text-secondary); line-height: 1.8; font-size: 0.9rem;">
+                             <li><strong>Model:</strong> Salesforce/blip-vqa-base</li>
+                             <li><strong>Execution:</strong> PyTorch on CPU/GPU locally</li>
+                             <li><strong>Input Processing:</strong> Images resized to 512x512 max</li>
+                             <li><strong>Output:</strong> Text-based insights (no raw data)</li>
+                             <li><strong>Memory:</strong> ~2GB RAM required</li>
+                             <li><strong>Inference Time:</strong> 1-3 seconds per image</li>
+                         </ul>
+                     </div>
+                 </div>
+
+                 <hr style="margin: 2rem 0; border-color: var(--border-color);" />
+
+                 <div class="row">
+                     <div class="col-lg-6">
+                         <h6 class="fw-bold mb-3" style="color: var(--text-primary);">Federated LoRA Adapters</h6>
+                         <ul style="color: var(--text-secondary); line-height: 1.8;">
+                             <li><strong>Method:</strong> Low-Rank Adaptation for fine-tuning</li>
+                             <li><strong>Adapter Size:</strong> ~2-5MB per model (vs 1GB+ for full weights)</li>
+                             <li><strong>Synchronization:</strong> Encrypted HTTPS transmission</li>
+                             <li><strong>Aggregation:</strong> Federated Averaging (FedAvg) algorithm</li>
+                             <li><strong>Gradient Privacy:</strong> No direct gradients shared</li>
+                             <li><strong>Opt-out:</strong> Can disable at any time</li>
+                         </ul>
+                     </div>
+
+                     <div class="col-lg-6">
+                         <h6 class="fw-bold mb-3" style="color: var(--text-primary);">Audit & Transparency</h6>
+                         <ul style="color: var(--text-secondary); line-height: 1.8;">
+                             <li><strong>SCL Status:</strong> "Verified" or "Self-Corrected" badge in PDF</li>
+                             <li><strong>Full Metadata:</strong> VLM interrogative question & response</li>
+                             <li><strong>Processing Logs:</strong> All stages documented locally</li>
+                             <li><strong>Error Correction:</strong> Autonomous self-correction when VLM disagrees</li>
+                             <li><strong>CSV Export:</strong> Includes SCL verification status</li>
+                             <li><strong>Accountability:</strong> Every decision is traceable</li>
+                         </ul>
+                     </div>
+                 </div>
+             </div>
+         </div>
+
+        <!-- User Control -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Your Privacy Controls</h3>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border-color);">
+                            <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Local Processing</h6>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                Inference is controlled entirely on your device. No network calls are required for basic image analysis.
+                            </p>
+                            <div style="background: var(--bg-secondary); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--border-color); font-family: monospace; font-size: 0.85rem; color: var(--text-secondary);">
+                                # Analysis happens here
+                                <br/>model.generate(image)
+                                <br/>→ Local output only
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border-color);">
+                            <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Federated Learning Opt-in</h6>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                You control whether to participate in federated training. Non-participants can still use all features.
+                            </p>
+                            <button class="btn btn-sm btn-outline-primary" disabled>
+                                <i class="fas fa-toggle-off me-2"></i>Disable Participation
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border-color);">
+                            <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Data Retention</h6>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                Uploaded images are deleted immediately after analysis. No persistent storage on client devices.
+                            </p>
+                            <span class="badge badge-success"><i class="fas fa-check-circle me-1"></i>Auto-delete enabled</span>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div style="padding: 1.5rem; background: var(--bg-tertiary); border-radius: 8px; border: 2px solid var(--border-color);">
+                            <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Transparency Logs</h6>
+                            <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                View all federated operations in your activity log. See exactly what was synchronized.
+                            </p>
+                            <button class="btn btn-sm btn-outline-secondary" disabled>
+                                <i class="fas fa-history me-1"></i>View Activity Log
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Compliance -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-certificate me-2"></i>Privacy Compliance</h3>
+            </div>
+            <div class="card-body">
+                <p style="color: var(--text-secondary); line-height: 1.7;">
+                    This platform is designed with privacy-by-default principles:
+                </p>
+                <ul style="color: var(--text-secondary); line-height: 1.8;">
+                    <li><strong>GDPR Compliant:</strong> No personal data collection. Users have full control over their data.</li>
+                    <li><strong>CCPA Compliant:</strong> Transparent about data practices. No third-party data sharing.</li>
+                    <li><strong>No Tracking:</strong> No cookies, pixels, or tracking scripts. No advertising partners.</li>
+                    <li><strong>No Analytics:</strong> We don't collect usage analytics or behavior data.</li>
+                    <li><strong>Open Source:</strong> All code is auditable. No hidden data collection logic.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Questions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0"><i class="fas fa-question-circle me-2"></i>Frequently Asked Questions</h3>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Can you see my images?</h6>
+                    <p style="color: var(--text-secondary);">
+                        No. Images are processed only on your local device. We never receive or store raw image data. The only data transmitted is optional LoRA adapter parameters for federated learning.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2" style="color: var(--text-primary);">What happens if I participate in federated learning?</h6>
+                    <p style="color: var(--text-secondary);">
+                        Only encrypted, lightweight LoRA adapter updates are shared. These contain model tuning parameters, not your data. The adapters are aggregated with others via FedAvg. You can disable participation anytime.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2" style="color: var(--text-primary);">How are LoRA adapters encrypted?</h6>
+                    <p style="color: var(--text-secondary);">
+                        Adapters are encrypted using TLS 1.3 during transmission. The encryption keys are managed securely. Adapters themselves contain no information that could reconstruct your images.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Can you reconstruct images from LoRA adapters?</h6>
+                    <p style="color: var(--text-secondary);">
+                        No. LoRA adapters are low-rank weight updates (~2MB) that fine-tune the base model. They cannot be inverted or used to reconstruct training data. This is mathematically impossible with the current architecture.
+                    </p>
+                </div>
+
+                <div class="mb-4">
+                    <h6 class="fw-bold mb-2" style="color: var(--text-primary);">Is the source code auditable?</h6>
+                    <p style="color: var(--text-secondary);">
+                        Yes. The platform source code is open source. You can review the implementation, audit the privacy protections, and verify that no data collection occurs.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact -->
+        <div class="text-center mb-4">
+            <p style="color: var(--text-secondary);">
+                Have privacy concerns? <a href="mailto:privacy@example.com" style="color: var(--primary);">Contact our privacy team</a>
+            </p>
+        </div>
+
+        <!-- Back Button -->
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+                <i class="fas fa-arrow-left me-2"></i>Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

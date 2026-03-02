@@ -1,23 +1,57 @@
 {% extends "base.html" %}
 
-{% block title %}Client Dashboard - Federated Learning{% endblock %}
+{% block title %}Edge Discovery Node - Decentralized Multimodal Intelligence{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
     <div class="col-12">
         <h2 class="fw-bold">
-            <i class="fas fa-laptop-code text-primary"></i> Client Training Node
+            <i class="fas fa-shield-halved text-primary"></i> Privacy-Preserving Edge Discovery Node
         </h2>
     </div>
 </div>
 
 <div class="row g-4">
-    <!-- Configuration Panel -->
-    <div class="col-lg-4">
+        <!-- Configuration Panel -->
         <div class="card h-100">
             <div class="card-header">
-                <i class="fas fa-sliders me-2"></i>Node Configuration
+                <i class="fas fa-sliders me-2"></i>Edge Node Configuration
             </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <label for="clientId" class="text-tertiary small text-uppercase fw-bold mb-2 d-block">Discovery Batch</label>
+                    <select class="form-control" id="clientId">
+                        {% for i in range(10) %}
+                        <option value="{{ i }}">Batch {{ i }} (500 images)</option>
+                        {% endfor %}
+                    </select>
+                    <div class="mt-2 small text-secondary">
+                        <i class="fas fa-info-circle me-1"></i> Local processing - zero data transmission
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-primary btn-lg" id="startTraining" onclick="startTraining()">
+                        <i class="fas fa-play"></i> Begin Discovery
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" id="stopTraining" onclick="stopTraining()" disabled>
+                        <i class="fas fa-stop"></i> Halt Processing
+                    </button>
+                </div>
+
+                <div class="mt-4 p-3 bg-dark-2 rounded-3 border border-color">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-lock text-success fs-4"></i>
+                        </div>
+                        <div>
+                            <div class="text-white small fw-bold">Privacy Architecture Active</div>
+                            <div class="text-tertiary smaller">Images + LoRA adapters synced only.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
             <div class="card-body">
                 <div class="mb-4">
                     <label for="clientId" class="text-tertiary small text-uppercase fw-bold mb-2 d-block">Dataset Partition</label>
@@ -55,41 +89,41 @@
         </div>
     </div>
 
-    <!-- Metrics & Progress -->
-    <div class="col-lg-8">
-        <div class="row g-4 mb-4">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body text-center py-4">
-                        <div class="text-tertiary small text-uppercase mb-2">Node Status</div>
-                        <div class="h4 mb-0 fw-bold" id="clientStatus">
-                            <span class="text-secondary">Standby</span>
+        <!-- Metrics & Progress -->
+        <div class="col-lg-8">
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center py-4">
+                            <div class="text-tertiary small text-uppercase mb-2">Processing State</div>
+                            <div class="h4 mb-0 fw-bold" id="clientStatus">
+                                <span class="text-secondary">Idle</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center py-4">
+                            <div class="text-tertiary small text-uppercase mb-2">Insights Generated</div>
+                            <div class="h4 mb-0 fw-bold text-success" id="localAcc">—</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body text-center py-4">
+                            <div class="text-tertiary small text-uppercase mb-2">Images Processed</div>
+                            <div class="h4 mb-0 fw-bold text-info" id="samplesCount">0</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body text-center py-4">
-                        <div class="text-tertiary small text-uppercase mb-2">Local Accuracy</div>
-                        <div class="h4 mb-0 fw-bold text-success" id="localAcc">—</div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body text-center py-4">
-                        <div class="text-tertiary small text-uppercase mb-2">Processed</div>
-                        <div class="h4 mb-0 fw-bold text-info" id="samplesCount">0</div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Progress & Log -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="fas fa-microchip me-2"></i>Compute Progress</span>
+                <span><i class="fas fa-microscope me-2"></i>Discovery Processing Progress</span>
                 <span id="progressPercent" class="badge bg-primary-transparent text-primary">0%</span>
             </div>
             <div class="card-body">
@@ -99,10 +133,10 @@
 
                 <div class="bg-black rounded-3 p-0 overflow-hidden border border-color">
                     <div class="card-header bg-dark-3 py-2 border-bottom border-color">
-                        <span class="smaller text-tertiary"><i class="fas fa-terminal me-2"></i>Process Output</span>
+                        <span class="smaller text-tertiary"><i class="fas fa-terminal me-2"></i>Edge Processing Log</span>
                     </div>
                     <div id="clientLog" class="p-3" style="font-family: 'JetBrains Mono', monospace; height: 300px; overflow-y: auto; font-size: 0.8rem;">
-                        <div class="text-tertiary">Waiting for initialization...</div>
+                        <div class="text-tertiary">Waiting for discovery initialization...</div>
                     </div>
                 </div>
             </div>
@@ -137,11 +171,11 @@
         document.getElementById('startTraining').disabled = true;
         document.getElementById('stopTraining').disabled = false;
         document.getElementById('clientId').disabled = true;
-        document.getElementById('clientStatus').innerHTML = '<span class="text-warning"><i class="fas fa-circle-notch fa-spin me-2"></i>Training</span>';
+        document.getElementById('clientStatus').innerHTML = '<span class="text-warning"><i class="fas fa-circle-notch fa-spin me-2"></i>Processing</span>';
         
         logElement.innerHTML = '';
-        addLog(`Initializing local compute node ${clientId}...`);
-        addLog(`Loading dataset partition into GPU memory...`);
+        addLog(`Starting edge discovery node ${clientId}...`);
+        addLog(`Loading BLIP-VQA model into local memory...`);
         
         simulateTraining(clientId);
     }
@@ -151,18 +185,18 @@
         document.getElementById('startTraining').disabled = false;
         document.getElementById('stopTraining').disabled = true;
         document.getElementById('clientId').disabled = false;
-        document.getElementById('clientStatus').innerHTML = '<span class="text-danger">Terminated</span>';
+        document.getElementById('clientStatus').innerHTML = '<span class="text-danger">Stopped</span>';
         document.getElementById('progressBar').style.width = '0%';
         document.getElementById('progressPercent').textContent = '0%';
         
-        addLog('Training process terminated by supervisor.', 'error');
+        addLog('Discovery processing halted by user.', 'error');
     }
     
     function simulateTraining(clientId) {
-        let epoch = 1;
-        let accuracy = 0.3;
-        let loss = 2.0;
-        let samples = 0;
+        let batch = 1;
+        let quality = 65;
+        let insight_count = 0;
+        let processed = 0;
         
         const interval = setInterval(() => {
             if (!isTraining) {
@@ -170,35 +204,35 @@
                 return;
             }
             
-            samples += 500;
-            accuracy = Math.min(0.95, accuracy + Math.random() * 0.02);
-            loss = Math.max(0.1, loss - Math.random() * 0.05);
+            processed += 50;
+            quality = Math.min(95, quality + Math.random() * 2);
+            insight_count += 5;
             
-            const progress = Math.min((samples / 5000) * 100, 100);
+            const progress = Math.min((processed / 500) * 100, 100);
             
             document.getElementById('progressBar').style.width = progress + '%';
             document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
-            document.getElementById('localAcc').textContent = (accuracy * 100).toFixed(2) + '%';
-            document.getElementById('samplesCount').textContent = Math.min(samples, 5000).toLocaleString();
+            document.getElementById('localAcc').textContent = insight_count;
+            document.getElementById('samplesCount').textContent = Math.min(processed, 500).toLocaleString();
             
-            if (samples % 1000 === 0) {
-                addLog(`Epoch ${epoch}: Loss optimized to ${loss.toFixed(4)}`, 'info');
+            if (processed % 100 === 0) {
+                addLog(`Batch ${batch}: Processed ${processed}/500 images, quality score ${quality.toFixed(1)}%`, 'info');
             }
             
-            if (samples >= 5000) {
-                addLog(`Epoch ${epoch} completed. Global synchronization...`, 'success');
-                epoch++;
-                samples = 0;
+            if (processed >= 500) {
+                addLog(`Batch ${batch} complete. Syncing LoRA adapters to aggregator...`, 'success');
+                batch++;
+                processed = 0;
             }
             
-            if (epoch > 5) {
+            if (batch > 3) {
                 isTraining = false;
                 clearInterval(interval);
-                document.getElementById('clientStatus').innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-2"></i>Synchronized</span>';
+                document.getElementById('clientStatus').innerHTML = '<span class="text-success"><i class="fas fa-check-circle me-2"></i>Synced</span>';
                 document.getElementById('startTraining').disabled = false;
                 document.getElementById('stopTraining').disabled = true;
                 document.getElementById('clientId').disabled = false;
-                addLog('Local training completed and weights pushed to aggregator.', 'success');
+                addLog('Discovery analysis complete. LoRA adapters synchronized with federated network.', 'success');
             }
         }, 800);
     }

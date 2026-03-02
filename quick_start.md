@@ -15,8 +15,8 @@
 
 ```bash
 # Clone repository
-git clone <repo-url>
-cd "Image Classification"
+git clone https://github.com/saifullah2032/De-Centralized-Image-Classification-Through-Federated-Learning
+cd "De-Centralized-Image-Classification-Through-Federated-Learning"
 
 # Create virtual environment
 python -m venv venv
@@ -58,19 +58,42 @@ Login credentials:
 
 1. **Login** with admin credentials
 2. Go to **Predict** page
-3. **Select Model**:
-   - **CIFAR-100**: Standard image classification (100 classes)
-   - **VLM**: Multimodal visual assistant (5-point descriptions)
+3. **Select Prediction Mode**:
+   - **Standard Mode**: Fast MobileNetV2 (ImageNet-1K) classification
+   - **Ensemble Mode**: Triple-Layer with Nuclear Truth Protocol (MobileNetV2 + SCL + BLIP-VQA)
 4. **Upload Image** and get predictions
+5. **Toggle Theme**: Click the theme toggle button (top-right) to switch between light mode (Vibrant Coral) and dark mode (Neon Cyan)
 
 ---
 
 ## Model Options
 
-| Model | Description |
-|-------|-------------|
-| CIFAR-100 | Classifies images into 100 categories |
-| VLM | Generates 5-point structured descriptions |
+| Model | Description | Features |
+|-------|-------------|----------|
+| Standard | Fast MobileNetV2 (ImageNet-1K) classification with confidence scores | ~5-10 seconds |
+| Ensemble | Triple-Layer with Nuclear Truth Protocol: CNN → SCL → VLM Analysis | ~30-40 seconds |
+
+---
+
+## UI/UX Features
+
+### Light Mode (Default)
+- **Primary Color**: Vibrant Ocean Coral (#72edf1)
+- **Typography**: Fredoka font for playful aesthetic
+- **Borders**: Crisp black borders with comic book-style shadows
+- **Background**: Clean white with subtle animated ocean dots
+
+### Dark Mode
+- **Primary Color**: Neon Cyan (#00f3ff)
+- **Background**: Abyssal midnight blue (#0a0e27)
+- **Borders**: Crisp white for maximum contrast
+- **Effects**: Smooth neon glow shadows for depth
+
+### Animations
+- Smooth 200-300ms transitions with cubic-bezier easing
+- 2px hover lift on interactive elements
+- Zero layout shift for optimal performance
+- Animated ocean background with swimming fish on home page
 
 ---
 
@@ -116,13 +139,25 @@ pip install -r requirements.txt
 
 ```
 Image Classification/
-├── backend_fl/          # FL core (server, client, VLM)
-├── frontend_web/       # Flask web app
-├── models/            # Saved models
-├── uploads/           # Uploaded images
-├── Plan.md            # Architecture docs
-├── SUMMARY.md         # Project summary
-└── run_*.py          # Entry points
+├── backend_fl/                    # FL core (server, client, VLM)
+│   ├── vlm_model.py              # VQA model (Salesforce/blip-vqa-base)
+│   ├── server.py                 # Federated Learning server
+│   └── client.py                 # Federated Learning client
+├── frontend_web/                 # Flask web app
+│   ├── static/
+│   │   ├── css/custom.css        # Professional UI styling (light & dark mode)
+│   │   ├── js/ocean-animations.js # Ocean background & fish animations
+│   │   └── svg/                  # Fish SVG assets
+│   ├── templates/                # HTML pages (responsive design)
+│   └── app.py                    # Flask application
+├── models/                       # Saved models (VLM only - MobileNetV2 ImageNet-1K loads from Keras)
+├── uploads/                      # Uploaded images for inference
+├── test_images/                  # Sample images for testing
+├── design-system/                # Design system documentation
+├── Plan.md                       # Architecture & technical docs
+├── SUMMARY.md                    # Project summary
+├── UI_POLISH_FINAL_REPORT.md    # UI/UX enhancements documentation
+└── run_*.py                      # Entry points
 ```
 
 ---
@@ -130,5 +165,7 @@ Image Classification/
 ## Support
 
 - Check logs in terminal output
-- See Plan.md for architecture details
-- See SUMMARY.md for full project info
+- See **Plan.md** for architecture details
+- See **SUMMARY.md** for full project info
+- See **UI_POLISH_FINAL_REPORT.md** for UI/UX implementation details
+- See **design-system/** for design system documentation

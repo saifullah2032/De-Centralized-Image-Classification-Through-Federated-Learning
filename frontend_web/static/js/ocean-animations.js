@@ -195,97 +195,96 @@ class OceanAnimationManager {
   /**
     * Get fish SVG (simplified inline version)
     */
-   getFishSVG(index) {
-     const fishVariants = [
-       // Fish 1 - Pufferfish style (cute and round)
-       `<svg viewBox="0 0 60 50" xmlns="http://www.w3.org/2000/svg">
-         <defs>
-           <linearGradient id="fishGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-             <stop offset="0%" style="stop-color:#72edf1;stop-opacity:1" />
-             <stop offset="100%" style="stop-color:#5fd4d8;stop-opacity:1" />
-           </linearGradient>
-         </defs>
-         <!-- Body -->
-         <ellipse cx="30" cy="25" rx="22" ry="18" fill="url(#fishGrad1)" stroke="#000000" stroke-width="2"/>
-         <!-- Spikes -->
-         <circle cx="12" cy="15" r="3" fill="#72edf1" stroke="#000000" stroke-width="1.5"/>
-         <circle cx="48" cy="15" r="3" fill="#72edf1" stroke="#000000" stroke-width="1.5"/>
-         <circle cx="15" cy="35" r="3" fill="#72edf1" stroke="#000000" stroke-width="1.5"/>
-         <circle cx="45" cy="35" r="3" fill="#72edf1" stroke="#000000" stroke-width="1.5"/>
-         <!-- Eye -->
-         <circle cx="20" cy="20" r="3" fill="#000000"/>
-         <circle cx="21" cy="19" r="1.5" fill="#ffffff"/>
-         <!-- Mouth -->
-         <path d="M 30 32 Q 32 35 30 37" stroke="#000000" stroke-width="2" fill="none" stroke-linecap="round"/>
-         <!-- Tail -->
-         <path d="M 52 25 L 62 20 L 60 25 L 62 30 Z" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
-       </svg>`,
-       // Fish 2 - Angelfish style (tall and elegant)
-       `<svg viewBox="0 0 50 70" xmlns="http://www.w3.org/2000/svg">
-         <defs>
-           <linearGradient id="fishGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
-             <stop offset="0%" style="stop-color:#72edf1;stop-opacity:1" />
-             <stop offset="100%" style="stop-color:#5fd4d8;stop-opacity:1" />
-           </linearGradient>
-         </defs>
-         <!-- Body -->
-         <ellipse cx="20" cy="35" rx="15" ry="25" fill="url(#fishGrad2)" stroke="#000000" stroke-width="2"/>
-         <!-- Top fin -->
-         <path d="M 15 10 Q 18 5 20 10" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
-         <!-- Bottom fin -->
-         <path d="M 15 60 Q 18 65 20 60" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
-         <!-- Eye -->
-         <circle cx="10" cy="30" r="2.5" fill="#000000"/>
-         <circle cx="11" cy="29" r="1" fill="#ffffff"/>
-         <!-- Gill -->
-         <path d="M 12 35 Q 8 35 6 33" stroke="#000000" stroke-width="1.5" fill="none"/>
-         <!-- Tail -->
-         <path d="M 35 30 L 48 20 L 46 35 L 48 50 Z" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
-       </svg>`,
-       // Fish 3 - Tropical fish (striped)
-       `<svg viewBox="0 0 70 45" xmlns="http://www.w3.org/2000/svg">
-         <defs>
-           <linearGradient id="fishGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
-             <stop offset="0%" style="stop-color:#72edf1;stop-opacity:1" />
-             <stop offset="50%" style="stop-color:#ecf0f1;stop-opacity:1" />
-             <stop offset="100%" style="stop-color:#5fd4d8;stop-opacity:1" />
-           </linearGradient>
-         </defs>
-         <!-- Body -->
-         <ellipse cx="30" cy="22" rx="20" ry="15" fill="url(#fishGrad3)" stroke="#000000" stroke-width="2"/>
-         <!-- Stripe 1 -->
-         <path d="M 20 10 Q 25 22 20 35" stroke="#000000" stroke-width="1.5" fill="none" opacity="0.5"/>
-         <!-- Stripe 2 -->
-         <path d="M 35 10 Q 30 22 35 35" stroke="#000000" stroke-width="1.5" fill="none" opacity="0.5"/>
-         <!-- Eye -->
-         <circle cx="12" cy="18" r="2.5" fill="#000000"/>
-         <circle cx="13" cy="17" r="1" fill="#ffffff"/>
-         <!-- Dorsal fin -->
-         <polygon points="25,5 28,2 32,5" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
-         <!-- Tail (fan-shaped) -->
-         <path d="M 50 15 L 65 8 L 63 22 L 65 37 L 50 30 Z" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
-       </svg>`
-     ];
-     return fishVariants[index % fishVariants.length];
-   }
-  }
+    getFishSVG(index) {
+      const fishVariants = [
+        // Fish 1 - Pufferfish style (cute and round) - MIRRORED (eye on right, tail on left)
+        `<svg viewBox="0 0 60 50" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="fishGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" style="stop-color:#72edf1;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#5fd4d8;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <!-- Body -->
+          <ellipse cx="30" cy="25" rx="22" ry="18" fill="url(#fishGrad1)" stroke="#000000" stroke-width="2"/>
+          <!-- Spikes -->
+          <circle cx="48" cy="15" r="3" fill="#72edf1" stroke="#000000" stroke-width="1.5"/>
+          <circle cx="12" cy="15" r="3" fill="#72edf1" stroke="#000000" stroke-width="1.5"/>
+          <circle cx="45" cy="35" r="3" fill="#72edf1" stroke="#000000" stroke-width="1.5"/>
+          <circle cx="15" cy="35" r="3" fill="#72edf1" stroke="#000000" stroke-width="1.5"/>
+          <!-- Eye (on right side now) -->
+          <circle cx="40" cy="20" r="3" fill="#000000"/>
+          <circle cx="39" cy="19" r="1.5" fill="#ffffff"/>
+          <!-- Mouth -->
+          <path d="M 30 32 Q 28 35 30 37" stroke="#000000" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <!-- Tail (on left side now) -->
+          <path d="M 8 25 L -2 20 L 0 25 L -2 30 Z" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
+        </svg>`,
+        // Fish 2 - Angelfish style (tall and elegant) - MIRRORED (eye on right, tail on left)
+        `<svg viewBox="0 0 50 70" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="fishGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" style="stop-color:#72edf1;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#5fd4d8;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <!-- Body -->
+          <ellipse cx="30" cy="35" rx="15" ry="25" fill="url(#fishGrad2)" stroke="#000000" stroke-width="2"/>
+          <!-- Top fin -->
+          <path d="M 35 10 Q 32 5 30 10" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
+          <!-- Bottom fin -->
+          <path d="M 35 60 Q 32 65 30 60" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
+          <!-- Eye (on right side) -->
+          <circle cx="40" cy="30" r="2.5" fill="#000000"/>
+          <circle cx="39" cy="29" r="1" fill="#ffffff"/>
+          <!-- Gill -->
+          <path d="M 38 35 Q 42 35 44 33" stroke="#000000" stroke-width="1.5" fill="none"/>
+          <!-- Tail (on left side) -->
+          <path d="M 15 30 L 2 20 L 4 35 L 2 50 Z" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
+        </svg>`,
+        // Fish 3 - Tropical fish (striped) - MIRRORED (eye on right, tail on left)
+        `<svg viewBox="0 0 70 45" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="fishGrad3" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#72edf1;stop-opacity:1" />
+              <stop offset="50%" style="stop-color:#ecf0f1;stop-opacity:1" />
+              <stop offset="100%" style="stop-color:#5fd4d8;stop-opacity:1" />
+            </linearGradient>
+          </defs>
+          <!-- Body -->
+          <ellipse cx="40" cy="22" rx="20" ry="15" fill="url(#fishGrad3)" stroke="#000000" stroke-width="2"/>
+          <!-- Stripe 1 -->
+          <path d="M 50 10 Q 45 22 50 35" stroke="#000000" stroke-width="1.5" fill="none" opacity="0.5"/>
+          <!-- Stripe 2 -->
+          <path d="M 35 10 Q 40 22 35 35" stroke="#000000" stroke-width="1.5" fill="none" opacity="0.5"/>
+          <!-- Eye (on right side) -->
+          <circle cx="58" cy="18" r="2.5" fill="#000000"/>
+          <circle cx="57" cy="17" r="1" fill="#ffffff"/>
+          <!-- Dorsal fin -->
+          <polygon points="45,5 42,2 38,5" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
+          <!-- Tail (on left side, fan-shaped) -->
+          <path d="M 20 15 L 5 8 L 7 22 L 5 37 L 20 30 Z" fill="#5fd4d8" stroke="#000000" stroke-width="1.5"/>
+        </svg>`
+       ];
+       return fishVariants[index % fishVariants.length];
+     }
 
-  /**
-   * Load SVG elements from external file (optional, for optimization)
-   */
-  loadSVGElements() {
-    // SVG elements are now inline in the HTML, so this is optional
-    // This could load from the external SVG file if needed
-  }
+    /**
+     * Load SVG elements from external file (optional, for optimization)
+     */
+    loadSVGElements() {
+      // SVG elements are now inline in the HTML, so this is optional
+      // This could load from the external SVG file if needed
+    }
 
-  /**
-   * Create subtle background for secondary pages
-   */
-  createSubtleBackground() {
-    const bg = document.createElement('div');
-    bg.className = 'subtle-ocean-bg';
-    document.body.insertBefore(bg, document.body.firstChild);
-  }
+    /**
+     * Create subtle background for secondary pages
+     */
+    createSubtleBackground() {
+      const bg = document.createElement('div');
+      bg.className = 'subtle-ocean-bg';
+      document.body.insertBefore(bg, document.body.firstChild);
+    }
 
   /**
    * Create subtle floating bubbles for secondary pages

@@ -59,7 +59,7 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index') }}">
-                <i class="fas fa-network-wired"></i> <span>FL System</span>
+                <i class="fas fa-network-wired"></i> <span>Industrial Hybrid Intelligence Node</span>
             </a>
             
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border: 1px solid var(--border-color); border-radius: 6px; padding: 0.5rem;">
@@ -76,7 +76,7 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('predict') }}">
-                                <i class="fas fa-search me-1"></i> Classify
+                                <i class="fas fa-sparkles me-1"></i> Discover
                             </a>
                         </li>
                         {% if current_user.is_admin() %}
@@ -93,8 +93,8 @@
                         </li>
                         {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('privacy_report') }}">
-                                <i class="fas fa-shield-alt me-1"></i> Privacy
+                            <a class="nav-link" href="{{ url_for('privacy_protocol') }}">
+                                <i class="fas fa-lock me-1"></i> Privacy
                             </a>
                         </li>
                         <li class="nav-item ms-2">
@@ -151,7 +151,7 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="container text-center">
-            <p class="mb-0">FL System - DecentralizedAI</p>
+            <p class="mb-0"><strong>Industrial Hybrid Intelligence Node</strong> - DecentralizedAI | Powered by MobileNetV2 (ImageNet-1K) + BLIP-VQA + Nuclear Truth Protocol</p>
         </div>
     </footer>
 

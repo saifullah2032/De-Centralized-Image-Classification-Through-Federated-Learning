@@ -2,185 +2,724 @@
 
 {% block title %}Image Analysis - Federated Learning{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* ========================================
+       DEEP OCEAN GLASSMORPHISM THEME
+       ======================================== */
+
+    /* Secondary page subtle ocean background */
+    body.page-secondary {
+        background-color: var(--bg-primary);
+        background-image: 
+            radial-gradient(circle, #000000 1.5px, transparent 1.5px),
+            radial-gradient(circle, #001a33 1px, transparent 1px);
+        background-position: 
+            0 0,
+            25px 25px;
+        background-size: 
+            50px 50px,
+            35px 35px;
+        background-attachment: fixed;
+    }
+
+    /* Deep Ocean Glassmorphism Container */
+    .glassmorphism-card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+    }
+
+    [data-theme="dark"] .glassmorphism-card {
+        background: rgba(0, 26, 51, 0.4);
+        border: 1px solid rgba(0, 212, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Prediction Mode Selection Cards */
+    .mode-selection-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .mode-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(0, 212, 255, 0.2);
+        border-radius: 16px;
+        padding: 1.75rem;
+        cursor: pointer;
+        transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .mode-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, transparent 100%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .mode-card:hover {
+        background: rgba(0, 212, 255, 0.12);
+        border-color: #00d4ff;
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.3), inset 0 0 20px rgba(0, 212, 255, 0.05);
+        transform: translateY(-8px);
+    }
+
+    .mode-card:hover::before {
+        opacity: 1;
+    }
+
+    .mode-card.active {
+        background: rgba(0, 212, 255, 0.15);
+        border-color: #00d4ff;
+        box-shadow: 0 0 40px rgba(0, 212, 255, 0.4), inset 0 0 20px rgba(0, 212, 255, 0.1);
+    }
+
+    /* Ensemble Mode Special Animation */
+    #mode-ensemble-card.active {
+        transform: scale(1.02);
+        background: rgba(0, 212, 255, 0.2);
+        box-shadow: 0 0 60px rgba(0, 212, 255, 0.5), inset 0 0 30px rgba(0, 212, 255, 0.15);
+    }
+
+    #mode-ensemble-card.active .mode-card-icon {
+        animation: ensembleGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes ensembleGlow {
+        0%, 100% {
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            transform: scale(1);
+        }
+        50% {
+            text-shadow: 0 0 25px rgba(0, 212, 255, 0.8);
+            transform: scale(1.1);
+        }
+    }
+
+    #mode-ensemble-card:hover {
+        transform: translateY(-8px) scale(1.01);
+    }
+
+    .mode-card-content {
+        position: relative;
+        z-index: 1;
+    }
+
+    .mode-card-icon {
+        font-size: 2.5rem;
+        color: #00d4ff;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    }
+
+    .mode-card-title {
+        font-weight: 700;
+        font-size: 1.125rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-primary);
+        letter-spacing: -0.5px;
+    }
+
+    .mode-card-subtitle {
+        font-size: 0.85rem;
+        color: #00d4ff;
+        opacity: 0.85;
+        margin-bottom: 0.75rem;
+        font-weight: 500;
+    }
+
+    .mode-card-timing {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        opacity: 0.7;
+    }
+
+    /* Gradient Button Style */
+    .btn-gradient-primary {
+        background: linear-gradient(90deg, #00d4ff, #0066cc);
+        color: #ffffff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.875rem 1.75rem;
+        font-weight: 700;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-gradient-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn-gradient-primary:hover {
+        background: linear-gradient(90deg, #00e6ff, #0066cc);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(0, 212, 255, 0.4);
+    }
+
+    .btn-gradient-primary:hover::before {
+        left: 100%;
+    }
+
+    .btn-gradient-primary:active {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 15px rgba(0, 212, 255, 0.3);
+    }
+
+    .btn-gradient-primary:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Loading Overlay - Professional Neon Design */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+
+    .loading-overlay.active {
+        display: flex;
+    }
+
+    .loading-overlay-content {
+        background: rgba(0, 26, 51, 0.95);
+        backdrop-filter: blur(25px);
+        border: 2px solid #00d4ff;
+        border-radius: 20px;
+        padding: 2.5rem;
+        box-shadow: 0 0 60px rgba(0, 212, 255, 0.3), inset 0 0 30px rgba(0, 212, 255, 0.05);
+        text-align: center;
+        max-width: 420px;
+        width: 90%;
+    }
+
+    /* Neon Scanner Animation */
+    .scanner-animation {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 2rem;
+        position: relative;
+    }
+
+    .scanner-ring {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 3px solid transparent;
+        border-top-color: #00d4ff;
+        border-right-color: #00d4ff;
+        border-radius: 50%;
+        animation: spin 2s linear infinite;
+        box-shadow: 0 0 20px #00d4ff, inset 0 0 10px rgba(0, 212, 255, 0.3);
+    }
+
+    .scanner-ring:nth-child(2) {
+        width: 75%;
+        height: 75%;
+        top: 12.5%;
+        left: 12.5%;
+        border-top-color: rgba(0, 212, 255, 0.7);
+        border-right-color: rgba(0, 212, 255, 0.7);
+        animation: spin 1.5s linear infinite reverse;
+    }
+
+    .scanner-ring:nth-child(3) {
+        width: 50%;
+        height: 50%;
+        top: 25%;
+        left: 25%;
+        border-top-color: rgba(0, 212, 255, 0.4);
+        border-right-color: rgba(0, 212, 255, 0.4);
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .scanner-center {
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        background: #00d4ff;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 25px #00d4ff, 0 0 40px rgba(0, 212, 255, 0.6);
+    }
+
+    .loading-text {
+        font-size: 1.35rem;
+        font-weight: 700;
+        color: #00d4ff;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 0 15px #00d4ff, 0 0 30px rgba(0, 212, 255, 0.3);
+        letter-spacing: 1px;
+    }
+
+    .did-you-know {
+        background: rgba(0, 212, 255, 0.08);
+        border: 2px solid #00d4ff;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 1.75rem;
+        min-height: 90px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .did-you-know-icon {
+        font-size: 1.75rem;
+        color: #00d4ff;
+        flex-shrink: 0;
+        filter: drop-shadow(0 0 8px rgba(0, 212, 255, 0.5));
+    }
+
+    .did-you-know-text {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        text-align: left;
+    }
+
+    .progress-bar-container {
+        background: rgba(0, 212, 255, 0.08);
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+        border: 2px solid #00d4ff;
+        margin-bottom: 0.75rem;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #00d4ff, #0066cc);
+        animation: progress-pulse 2s ease-in-out infinite;
+        box-shadow: 0 0 15px #00d4ff;
+    }
+
+    @keyframes progress-pulse {
+        0%, 100% { width: 5%; }
+        50% { width: 95%; }
+    }
+
+    .progress-label {
+        font-size: 0.8rem;
+        color: #00d4ff;
+        text-align: center;
+        opacity: 0.8;
+    }
+
+    /* Card Styling */
+    .card {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(15px);
+        border: 1px solid rgba(0, 212, 255, 0.15);
+        border-radius: 14px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    [data-theme="dark"] .card {
+        background: rgba(0, 26, 51, 0.4);
+        border: 1px solid rgba(0, 212, 255, 0.12);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .card:hover {
+        border-color: rgba(0, 212, 255, 0.2);
+        box-shadow: 0 12px 40px rgba(0, 212, 255, 0.15);
+    }
+
+    .card-header {
+        background: rgba(0, 212, 255, 0.1) !important;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.15) !important;
+        color: #00d4ff;
+        font-weight: 700;
+        padding: 1.25rem 1.5rem !important;
+    }
+
+    .card-body {
+        padding: 1.5rem !important;
+    }
+
+    /* Alert Styling */
+    .alert-success {
+        background: rgba(0, 212, 255, 0.08);
+        border: 2px solid #00d4ff;
+        color: #00d4ff;
+    }
+
+    .alert-warning {
+        background: rgba(255, 193, 7, 0.08);
+        border: 2px solid rgba(255, 193, 7, 0.5);
+        color: #ffc107;
+    }
+
+    /* Upload Zone */
+    .upload-zone {
+        border: 2px dashed #00d4ff;
+        border-radius: 14px;
+        padding: 2.5rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: rgba(0, 212, 255, 0.04);
+    }
+
+    [data-theme="dark"] .upload-zone {
+        border-color: #00d4ff;
+    }
+
+    .upload-zone:hover {
+        background: rgba(0, 212, 255, 0.08);
+        border-color: #00d4ff;
+        box-shadow: 0 0 30px rgba(0, 212, 255, 0.2), inset 0 0 20px rgba(0, 212, 255, 0.05);
+        transform: scale(1.01);
+    }
+
+    .upload-icon {
+        font-size: 3rem;
+        color: #00d4ff;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 15px rgba(0, 212, 255, 0.4);
+    }
+
+    .upload-text {
+        color: var(--text-primary);
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-hint {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    /* Tab Styling */
+    .nav-tabs {
+        border-bottom: 2px solid rgba(0, 212, 255, 0.2) !important;
+    }
+
+    .nav-link {
+        color: var(--text-secondary) !important;
+        border: 2px solid transparent !important;
+        border-bottom: 3px solid transparent !important;
+        transition: all 0.3s ease !important;
+        font-weight: 600;
+    }
+
+    .nav-link:hover {
+        color: #00d4ff !important;
+        border-bottom-color: #00d4ff !important;
+    }
+
+    .nav-link.active {
+        color: #00d4ff !important;
+        border-bottom-color: #00d4ff !important;
+        background: rgba(0, 212, 255, 0.08);
+    }
+
+    /* System Information Card */
+    .info-item {
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(0, 212, 255, 0.1);
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+        color: #00d4ff;
+        opacity: 0.8;
+        margin-bottom: 0.35rem;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 1.1rem;
+    }
+
+    .info-detail {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-top: 0.25rem;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="row">
-    <div class="col-lg-10 mx-auto">
-        <!-- Header -->
-        <div class="mb-4">
-            <h1 class="h4 mb-1">Image Classification</h1>
-            <p class="text-secondary mb-0">Upload or capture an image to classify using the trained model</p>
+<!-- Loading Overlay with Neon Animation -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-overlay-content">
+        <!-- Neon Scanner Rings -->
+        <div class="scanner-animation">
+            <div class="scanner-ring"></div>
+            <div class="scanner-ring"></div>
+            <div class="scanner-ring"></div>
+            <div class="scanner-center"></div>
         </div>
 
-        <!-- Model Status -->
-        {% if model_info.model_loaded %}
-        <div class="alert alert-success mb-4">
-            <i class="fas fa-check-circle me-2"></i>
-            <div>
-                <strong>Model Ready</strong>
-                <div class="small">The classification model is loaded and ready to use</div>
+        <!-- Loading Text with Glow -->
+        <div class="loading-text">Processing Image</div>
+
+        <!-- Did You Know Facts -->
+        <div class="did-you-know">
+            <div class="did-you-know-icon">💡</div>
+            <div class="did-you-know-text" id="didYouKnowText">
+                Federated Learning protects your privacy by keeping data local.
             </div>
         </div>
-        {% else %}
-        <div class="alert alert-warning mb-4">
-            <i class="fas fa-exclamation-triangle me-2"></i>
-            <div>
-                <strong>Model Not Loaded</strong>
-                <div class="small">Please wait for the model to load before making predictions</div>
-            </div>
+
+        <!-- Progress Bar with Gradient -->
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill"></div>
         </div>
-        {% endif %}
+        <div class="progress-label">Analyzing image... (typically 30-40 seconds)</div>
+    </div>
+</div>
 
-        <!-- Upload Section -->
-        <div class="row g-4">
-            <div class="col-lg-7">
-                <div class="card">
-                    <div class="card-header" style="background: var(--bg-tertiary);">
-                        <ul class="nav nav-tabs card-header-tabs" id="inputTabs" role="tablist" style="border: none; margin: 0; padding: 0;">
-                            <li class="nav-item">
-                                <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-pane" type="button" style="border: 2px solid var(--border-color); border-bottom: none; margin-right: 5px; border-radius: 8px 8px 0 0;">
-                                    <i class="fas fa-upload me-1"></i> Upload
-                                </button>
-                            </li>
-                            <li class="nav-item">
-                                <button class="nav-link" id="capture-tab" data-bs-toggle="tab" data-bs-target="#capture-pane" type="button" style="border: 2px solid var(--border-color); border-bottom: none; border-radius: 8px 8px 0 0;">
-                                    <i class="fas fa-camera me-1"></i> Capture
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="tab-content" id="inputTabsContent">
-                            <!-- Upload Tab -->
-                            <div class="tab-pane fade show active" id="upload-pane" role="tabpanel">
-                                <form id="uploadForm" method="POST" action="/predict" enctype="multipart/form-data">
-                                    <div id="dropZone" class="mb-4">
-                                        <i class="fas fa-cloud-upload-alt fa-2x mb-2" style="color: var(--text-tertiary);"></i>
-                                        <p class="mb-1 fw-semibold">Drop your image here or click to browse</p>
-                                        <p class="small mb-0" style="color: var(--text-primary); opacity: 0.7;">Supports JPG, PNG, GIF</p>
-                                        <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
-                                    </div>
+<div class="container mt-5 mb-5">
+    <!-- Header -->
+    <div class="mb-5">
+        <h1 class="h3 fw-bold mb-2" style="color: var(--text-primary); letter-spacing: -1px;">Image Classification</h1>
+        <p class="text-secondary mb-0">Upload or capture an image to analyze using hybrid intelligence</p>
+    </div>
 
-                                    <div id="imagePreview" class="text-center mb-4 d-none">
-                                        <img id="previewImg" src="" alt="Preview" class="img-fluid rounded" style="max-height: 250px; border: 3px solid var(--border-color);">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="resetUpload()">
-                                            <i class="fas fa-times me-1"></i> Remove
-                                        </button>
-                                    </div>
+    <!-- Model Status Alert -->
+    {% if model_info.model_loaded %}
+    <div class="alert alert-success mb-4">
+        <i class="fas fa-check-circle me-2"></i>
+        <div>
+            <strong>Model Ready</strong>
+            <div class="small">Classification model is loaded and operational</div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-warning mb-4">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        <div>
+            <strong>Model Loading</strong>
+            <div class="small">Please wait for the model to initialize</div>
+        </div>
+    </div>
+    {% endif %}
 
-                                    <button type="submit" class="btn btn-primary w-100" {% if not model_info.model_loaded %}disabled{% endif %}>
-                                        <i class="fas fa-search me-2"></i> Classify Image
-                                    </button>
-                                </form>
-
-                                <div id="loadingIndicator" class="text-center mt-4 d-none">
-                                    <div class="spinner-border text-primary mb-2" role="status"></div>
-                                    <p class="text-secondary small mb-0">Processing image...</p>
-                                </div>
-                            </div>
-                            
-                            <!-- Capture Tab -->
-                            <div class="tab-pane fade" id="capture-pane" role="tabpanel">
-                                <form id="captureForm" method="POST" action="/predict" enctype="multipart/form-data">
-                                    <div class="capture-container mb-4">
-                                        <video id="webcam" autoplay playsinline class="webcam-feed d-none"></video>
-                                        <canvas id="captureCanvas" style="display: none;"></canvas>
-                                        <div id="capturedPreview" class="d-none">
-                                            <img id="capturedImg" src="" alt="Captured" class="img-fluid w-100" style="max-height: 300px; object-fit: contain;">
-                                        </div>
-                                        <div id="webcamPlaceholder" class="webcam-placeholder">
-                                            <i class="fas fa-camera fa-2x mb-2"></i>
-                                            <p class="mb-0 small">Click "Start Camera" to capture</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="d-flex gap-2 mb-4">
-                                        <button type="button" id="startCameraBtn" class="btn btn-outline-primary flex-fill" onclick="startCamera()">
-                                            <i class="fas fa-video me-2"></i> Start Camera
-                                        </button>
-                                        <button type="button" id="captureBtn" class="btn btn-success flex-fill d-none" onclick="captureImage()">
-                                            <i class="fas fa-camera me-2"></i> Capture
-                                        </button>
-                                        <button type="button" id="retakeBtn" class="btn btn-outline-secondary flex-fill d-none" onclick="retakeImage()">
-                                            <i class="fas fa-redo me-2"></i> Retake
-                                        </button>
-                                    </div>
-
-                                    <input type="hidden" id="capturedImageData" name="file">
-                                    
-                                    <button type="submit" class="btn btn-primary w-100" id="captureSubmitBtn" {% if not model_info.model_loaded %}disabled{% endif %}>
-                                        <i class="fas fa-search me-2"></i> Classify Image
-                                    </button>
-                                </form>
-                                
-                                <div id="captureLoadingIndicator" class="text-center mt-4 d-none">
-                                    <div class="spinner-border text-primary mb-2" role="status"></div>
-                                    <p class="text-secondary small mb-0">Processing image...</p>
-                                </div>
-                            </div>
+    <!-- Prediction Mode Selection Card -->
+    <div class="card mb-5 glassmorphism-card">
+        <div class="card-header">
+            <i class="fas fa-sliders-h me-2"></i>Select Analysis Mode
+        </div>
+        <div class="card-body">
+            <p class="text-secondary small mb-4">Choose your analysis approach:</p>
+            
+            <div class="mode-selection-container">
+                <!-- Standard Mode Card -->
+                <div class="mode-card active" id="mode-standard-card">
+                    <div class="mode-card-content">
+                        <div class="mode-card-icon">
+                            <i class="fas fa-cube"></i>
                         </div>
+                        <div class="mode-card-title">Standard Mode</div>
+                        <div class="mode-card-subtitle">MobileNetV2 Classification</div>
+                        <div class="mode-card-timing">~5-10 seconds</div>
+                    </div>
+                </div>
+
+                <!-- Ensemble Mode Card -->
+                <div class="mode-card" id="mode-ensemble-card">
+                    <div class="mode-card-content">
+                        <div class="mode-card-icon">
+                            <i class="fas fa-sitemap"></i>
+                        </div>
+                        <div class="mode-card-title">Ensemble Mode</div>
+                        <div class="mode-card-subtitle">MobileNetV2 + BLIP-VQA Hybrid</div>
+                        <div class="mode-card-timing">~30-40 seconds</div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-5">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-info-circle me-2"></i>Model Information
+            <input type="hidden" id="prediction-mode" name="prediction_mode" value="standard">
+        </div>
+    </div>
+
+    <!-- Main Upload Section -->
+    <div class="row g-4 mb-5">
+        <!-- Upload/Capture Area -->
+        <div class="col-lg-8">
+            <div class="card glassmorphism-card h-100">
+                <div class="card-header">
+                    <ul class="nav nav-tabs card-header-tabs mb-0" id="inputTabs" role="tablist">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-pane" type="button">
+                                <i class="fas fa-upload me-2"></i>Upload Image
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="capture-tab" data-bs-toggle="tab" data-bs-target="#capture-pane" type="button">
+                                <i class="fas fa-camera me-2"></i>Capture Photo
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card-body">
+                    <div class="tab-content" id="inputTabsContent">
+                        <!-- Upload Tab -->
+                        <div class="tab-pane fade show active" id="upload-pane" role="tabpanel">
+                            <form id="uploadForm" method="POST" action="/predict" enctype="multipart/form-data">
+                                <input type="hidden" name="mode" id="upload-mode-field" value="standard">
+                                
+                                <!-- Drop Zone -->
+                                <div id="dropZone" class="upload-zone mb-4">
+                                    <div class="upload-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <p class="upload-text">Drop your image here or click to browse</p>
+                                    <p class="upload-hint">Supports JPG, PNG, GIF, WebP • Maximum 10MB</p>
+                                    <input type="file" id="fileInput" name="file" accept="image/*" style="display: none;">
+                                </div>
+
+                                <!-- Image Preview -->
+                                <div id="imagePreview" class="text-center mb-4 d-none">
+                                    <img id="previewImg" src="" alt="Preview" class="img-fluid rounded" style="max-height: 280px; border: 2px solid rgba(0, 212, 255, 0.3); box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-3" onclick="resetUpload()">
+                                        <i class="fas fa-times me-1"></i> Remove Image
+                                    </button>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-gradient-primary w-100" {% if not model_info.model_loaded %}disabled{% endif %}>
+                                    <i class="fas fa-search me-2"></i>Analyze Image
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Capture Tab -->
+                        <div class="tab-pane fade" id="capture-pane" role="tabpanel">
+                            <form id="captureForm" method="POST" action="/predict" enctype="multipart/form-data">
+                                <input type="hidden" name="mode" id="capture-mode-field" value="standard">
+                                
+                                <!-- Capture Container -->
+                                <div class="mb-4">
+                                    <video id="webcam" autoplay playsinline class="w-100 rounded d-none" style="max-height: 350px; object-fit: cover; border: 2px solid rgba(0, 212, 255, 0.3); box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);"></video>
+                                    <canvas id="captureCanvas" style="display: none;"></canvas>
+                                    
+                                    <div id="capturedPreview" class="d-none">
+                                        <img id="capturedImg" src="" alt="Captured" class="img-fluid w-100 rounded" style="max-height: 350px; object-fit: cover; border: 2px solid rgba(0, 212, 255, 0.3); box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);">
+                                    </div>
+                                    
+                                    <div id="webcamPlaceholder" class="text-center py-5" style="color: var(--text-secondary);">
+                                        <i class="fas fa-camera fa-3x mb-3" style="color: #00d4ff; opacity: 0.6;"></i>
+                                        <p class="mb-0">Click "Start Camera" to begin</p>
+                                    </div>
+                                </div>
+
+                                <!-- Camera Controls -->
+                                <div class="d-flex gap-2 mb-4">
+                                    <button type="button" id="startCameraBtn" class="btn btn-outline-primary flex-fill" onclick="startCamera()">
+                                        <i class="fas fa-video me-2"></i>Start Camera
+                                    </button>
+                                    <button type="button" id="captureBtn" class="btn btn-gradient-primary flex-fill d-none" onclick="captureImage()">
+                                        <i class="fas fa-camera me-2"></i>Capture
+                                    </button>
+                                    <button type="button" id="retakeBtn" class="btn btn-outline-secondary flex-fill d-none" onclick="retakeImage()">
+                                        <i class="fas fa-redo me-2"></i>Retake
+                                    </button>
+                                </div>
+
+                                <input type="hidden" id="capturedImageData" name="file">
+                                
+                                <!-- Submit Button -->
+                                <button type="submit" class="btn btn-gradient-primary w-100" id="captureSubmitBtn" {% if not model_info.model_loaded %}disabled{% endif %}>
+                                    <i class="fas fa-search me-2"></i>Analyze Image
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <!-- Model Selector -->
-                        <div class="mb-4">
-                            <div class="small fw-semibold text-secondary mb-2">Select Model</div>
-                            <div class="btn-group w-100" role="group">
-                                <button type="button" 
-                                        class="btn btn-sm {% if current_model == 'cifar100' %}btn-primary{% else %}btn-outline-secondary{% endif %}" 
-                                        onclick="switchModel('cifar100')"
-                                        id="btn-cifar100">
-                                    CIFAR-100
-                                </button>
-                                <button type="button" 
-                                        class="btn btn-sm {% if current_model == 'vlm' %}btn-primary{% else %}btn-outline-secondary{% endif %}" 
-                                        onclick="switchModel('vlm')"
-                                        id="btn-vlm"
-                                        title="Multimodal Visual Assistant">
-                                    VLM
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Current Model Info -->
-                        <div class="mb-3">
-                            <div class="small text-uppercase fw-medium mb-1" style="color: var(--text-primary); opacity: 0.7;">Model</div>
-                            <div class="fw-semibold" id="current-model-name">
-                                {% if current_model == 'imagenet' %}ImageNet (MobileNetV2){% else %}CIFAR-100{% endif %}
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="small text-uppercase fw-medium mb-1" style="color: var(--text-primary); opacity: 0.7;">Classes</div>
-                            <div id="current-model-classes">
-                                {% if current_model == 'imagenet' %}1000 categories{% else %}100 classes{% endif %}
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <div class="small text-uppercase fw-medium mb-1" style="color: var(--text-primary); opacity: 0.7;">Accuracy</div>
-                            <div id="current-model-accuracy">
-                                {% if current_model == 'imagenet' %}~71%{% else %}64.23%{% endif %}
-                            </div>
-                        </div>
-                        <div class="pt-3 border-top" style="border-color: var(--border-color) !important;">
+                </div>
+            </div>
+        </div>
+
+        <!-- System Information Sidebar -->
+        <div class="col-lg-4">
+            <div class="card glassmorphism-card h-100">
+                <div class="card-header">
+                    <i class="fas fa-info-circle me-2"></i>System Information
+                </div>
+                <div class="card-body">
+                    <!-- Stage 1 -->
+                     <div class="info-item">
+                         <div class="info-label">Stage 1</div>
+                         <div class="info-value">ImageNet-1K</div>
+                         <div class="info-detail">MobileNetV2 • 1000 classes • High accuracy</div>
+                     </div>
+
+                    <!-- Stage 2 -->
+                    <div class="info-item">
+                        <div class="info-label">Stage 2</div>
+                        <div class="info-value">BLIP-VQA</div>
+                        <div class="info-detail">9-point context-aware analysis (Ensemble mode)</div>
+                    </div>
+
+                    <!-- Performance -->
+                    <div class="info-item">
+                        <div class="info-label">Performance</div>
+                        <div style="display: grid; gap: 0.75rem;">
                             <div class="d-flex justify-content-between">
-                                <span class="small" style="color: var(--text-primary); opacity: 0.7;">Architecture</span>
-                                <span class="small fw-semibold">MobileNetV2</span>
+                                <span style="color: var(--text-secondary);">Memory</span>
+                                <span style="color: #00d4ff; font-weight: 700;">< 8GB</span>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <span class="small" style="color: var(--text-primary); opacity: 0.7;">Input Size</span>
-                                <span class="small fw-semibold">224x224</span>
+                                <span style="color: var(--text-secondary);">Speed</span>
+                                <span style="color: #00d4ff; font-weight: 700;">5-40s</span>
                             </div>
-                        </div>
-                        
-                        <div id="model-switch-loading" class="text-center mt-3 d-none">
-                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                            <span class="ms-2 small" style="color: var(--text-primary);">Switching model...</span>
+                            <div class="d-flex justify-content-between">
+                                <span style="color: var(--text-secondary);">Input Size</span>
+                                <span style="color: #00d4ff; font-weight: 700;">224x224</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -188,31 +727,97 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
 {% block extra_js %}
 <script>
+    const didYouKnowFacts = [
+        "Privacy First: Your images never leave your device - only mathematical patterns are shared.",
+        "Smart Learning: Federated Learning allows AI to improve without centralizing personal data.",
+        "Green AI: Distributed processing reduces carbon footprint by avoiding centralized server farms.",
+        "Hospital Safe: Medical institutions can collaborate on AI without exposing patient records.",
+        "Edge Intelligence: Your device becomes an AI processor, not just a dumb client.",
+        "Zero Knowledge: Servers receive weights, not pixels - they cannot reconstruct your images.",
+        "Decentralized: Thousands of devices can collectively train a model independently.",
+        "Google Invented: Federated Learning was created to improve keyboard predictions privately.",
+        "Cryptographically Secure: Multi-party computation ensures no single entity can 'cheat'.",
+        "Future-Ready: This is how AI should work - respecting both capability and privacy."
+    ];
+
+    let factIndex = 0;
+
+    function rotateFact() {
+        const factElement = document.getElementById('didYouKnowText');
+        if (factElement) {
+            factElement.textContent = didYouKnowFacts[factIndex];
+            factIndex = (factIndex + 1) % didYouKnowFacts.length;
+        }
+    }
+
+    function showLoadingOverlay() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.classList.add('active');
+            factIndex = 0;
+            rotateFact();
+            window.factRotationInterval = setInterval(rotateFact, 5000);
+        }
+    }
+
+    function hideLoadingOverlay() {
+        const overlay = document.getElementById('loadingOverlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+            if (window.factRotationInterval) {
+                clearInterval(window.factRotationInterval);
+            }
+        }
+    }
+
+    // Mode Selection
+    const modeStandardCard = document.getElementById('mode-standard-card');
+    const modeEnsembleCard = document.getElementById('mode-ensemble-card');
+    const predictionModeInput = document.getElementById('prediction-mode');
+
+    modeStandardCard.addEventListener('click', () => {
+        modeStandardCard.classList.add('active');
+        modeEnsembleCard.classList.remove('active');
+        predictionModeInput.value = 'standard';
+        document.getElementById('upload-mode-field').value = 'standard';
+        document.getElementById('capture-mode-field').value = 'standard';
+    });
+
+    modeEnsembleCard.addEventListener('click', () => {
+        modeEnsembleCard.classList.add('active');
+        modeStandardCard.classList.remove('active');
+        predictionModeInput.value = 'ensemble';
+        document.getElementById('upload-mode-field').value = 'ensemble';
+        document.getElementById('capture-mode-field').value = 'ensemble';
+    });
+
+    // File Upload Handling
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('fileInput');
     const previewImg = document.getElementById('previewImg');
     const imagePreview = document.getElementById('imagePreview');
-    
-    let currentModel = '{{ current_model }}';
     let stream = null;
-    
+
     dropZone.addEventListener('click', () => fileInput.click());
-    
+
     dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        dropZone.style.backgroundColor = 'var(--bg-tertiary)';
+        dropZone.style.borderColor = '#00d4ff';
+        dropZone.style.background = 'rgba(0, 212, 255, 0.15)';
     });
-    
+
     ['dragleave', 'drop'].forEach(evt => {
         dropZone.addEventListener(evt, () => {
-            dropZone.style.backgroundColor = '';
+            dropZone.style.borderColor = '#00d4ff';
+            dropZone.style.background = 'rgba(0, 212, 255, 0.04)';
         });
     });
-    
+
     dropZone.addEventListener('drop', (e) => {
         e.preventDefault();
         const files = e.dataTransfer.files;
@@ -221,13 +826,16 @@
             handleFiles(files[0]);
         }
     });
-    
+
     fileInput.addEventListener('change', (e) => {
         if (e.target.files.length) handleFiles(e.target.files[0]);
     });
-    
+
     function handleFiles(file) {
-        if (!file.type.startsWith('image/')) return;
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
         const reader = new FileReader();
         reader.onload = (e) => {
             previewImg.src = e.target.result;
@@ -236,81 +844,15 @@
         };
         reader.readAsDataURL(file);
     }
-    
+
     function resetUpload() {
         fileInput.value = '';
         imagePreview.classList.add('d-none');
         dropZone.classList.remove('d-none');
     }
-    
-    async function switchModel(modelType) {
-        if (modelType === currentModel) return;
-        
-        const loadingEl = document.getElementById('model-switch-loading');
-        const btnCifar100 = document.getElementById('btn-cifar100');
-        const btnVlm = document.getElementById('btn-vlm');
-        
-        loadingEl.classList.remove('d-none');
-        btnCifar100.disabled = true;
-        btnVlm.disabled = true;
-        
-        try {
-            const response = await fetch('/api/switch_model', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model_type: modelType })
-            });
-            
-            const data = await response.json();
-            
-            if (data.success) {
-                currentModel = modelType;
-                updateModelUI(modelType);
-            } else {
-                alert('Failed to switch model: ' + (data.error || 'Unknown error'));
-            }
-        } catch (error) {
-            console.error('Error switching model:', error);
-            alert('Error switching model. Please try again.');
-        } finally {
-            loadingEl.classList.add('d-none');
-            btnCifar100.disabled = false;
-            btnVlm.disabled = false;
-        }
-    }
-    
-    function updateModelUI(modelType) {
-        const btnCifar100 = document.getElementById('btn-cifar100');
-        const btnVlm = document.getElementById('btn-vlm');
-        const modelName = document.getElementById('current-model-name');
-        const modelClasses = document.getElementById('current-model-classes');
-        const modelAccuracy = document.getElementById('current-model-accuracy');
-        
-        // Reset all buttons
-        btnCifar100.classList.remove('btn-primary');
-        btnCifar100.classList.add('btn-outline-secondary');
-        btnVlm.classList.remove('btn-primary');
-        btnVlm.classList.add('btn-outline-secondary');
-        
-        if (modelType === 'vlm') {
-            btnVlm.classList.remove('btn-outline-secondary');
-            btnVlm.classList.add('btn-primary');
-            
-            modelName.textContent = 'VLM (Visual Assistant)';
-            modelClasses.textContent = '5-point descriptions';
-            modelAccuracy.textContent = 'AI-generated';
-        } else {
-            btnCifar100.classList.remove('btn-outline-secondary');
-            btnCifar100.classList.add('btn-primary');
-            
-            modelName.textContent = 'CIFAR-100';
-            modelClasses.textContent = '100 classes';
-            modelAccuracy.textContent = '64.23%';
-        }
-    }
-    
+
     let isSubmitting = false;
-    
+
     document.getElementById('uploadForm').addEventListener('submit', function(e) {
         if (isSubmitting) {
             e.preventDefault();
@@ -324,18 +866,16 @@
         }
         
         isSubmitting = true;
-        document.getElementById('loadingIndicator').classList.remove('d-none');
-        document.getElementById('submitBtn').disabled = true;
-        
+        showLoadingOverlay();
         return true;
     });
-    
+
     async function startCamera() {
         const video = document.getElementById('webcam');
         const placeholder = document.getElementById('webcamPlaceholder');
         const startBtn = document.getElementById('startCameraBtn');
         const captureBtn = document.getElementById('captureBtn');
-        
+
         try {
             stream = await navigator.mediaDevices.getUserMedia({ 
                 video: { width: { ideal: 640 }, height: { ideal: 480 }, facingMode: 'environment' } 
@@ -346,11 +886,10 @@
             startBtn.classList.add('d-none');
             captureBtn.classList.remove('d-none');
         } catch (err) {
-            console.error('Error accessing camera:', err);
-            alert('Unable to access camera. Please ensure camera permissions are granted.');
+            alert('Camera access denied. Please check permissions.');
         }
     }
-    
+
     function captureImage() {
         const video = document.getElementById('webcam');
         const canvas = document.getElementById('captureCanvas');
@@ -358,67 +897,69 @@
         const capturedImg = document.getElementById('capturedImg');
         const captureBtn = document.getElementById('captureBtn');
         const retakeBtn = document.getElementById('retakeBtn');
-        
+
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
-        
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0);
-        
-        const dataURL = canvas.toDataURL('image/jpeg', 0.9);
+
+        const dataURL = canvas.toDataURL('image/jpeg', 0.95);
         capturedImg.src = dataURL;
         document.getElementById('capturedImageData').value = dataURL;
-        
+
         video.classList.add('d-none');
         capturedPreview.classList.remove('d-none');
         captureBtn.classList.add('d-none');
         retakeBtn.classList.remove('d-none');
-        
+
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
             stream = null;
         }
     }
-    
+
     function retakeImage() {
         const video = document.getElementById('webcam');
         const capturedPreview = document.getElementById('capturedPreview');
         const startBtn = document.getElementById('startCameraBtn');
         const captureBtn = document.getElementById('captureBtn');
         const retakeBtn = document.getElementById('retakeBtn');
-        
+
         capturedPreview.classList.add('d-none');
         startBtn.classList.remove('d-none');
         captureBtn.classList.add('d-none');
         retakeBtn.classList.add('d-none');
         document.getElementById('capturedImageData').value = '';
     }
-    
+
     document.getElementById('captureForm').addEventListener('submit', function(e) {
         const capturedData = document.getElementById('capturedImageData').value;
-        
+
         if (!capturedData) {
             e.preventDefault();
             alert('Please capture an image first');
             return false;
         }
-        
+
         if (isSubmitting) {
             e.preventDefault();
             return false;
         }
-        
+
         isSubmitting = true;
-        document.getElementById('captureLoadingIndicator').classList.remove('d-none');
-        document.getElementById('captureSubmitBtn').disabled = true;
-        
+        showLoadingOverlay();
         return true;
     });
-    
+
     window.addEventListener('beforeunload', function() {
         if (stream) {
             stream.getTracks().forEach(track => track.stop());
         }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('page-secondary');
     });
 </script>
 {% endblock %}

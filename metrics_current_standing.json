@@ -1,0 +1,30 @@
+{
+  "stage_1_cnn": {
+    "accuracy": 0.2775000035762787,
+    "loss": 3.5627856254577637,
+    "best_accuracy": 0.2775000035762787,
+    "best_round": 20,
+    "total_rounds": 20
+  },
+  "stage_1_5_scl": {
+    "base_accuracy": 0.2775000035762787,
+    "correction_rate": 0.35,
+    "success_rate": 0.8,
+    "additional_gain": 0.20229999899864196,
+    "estimated_corrected": 0.4798000025749206
+  },
+  "stage_4_ensemble": {
+    "cnn_accuracy": 0.2775000035762787,
+    "vlm_recovery_rate": 0.5,
+    "ensemble_accuracy": 0.6387500017881393,
+    "improvement": 0.36124999821186066
+  },
+  "latency": {
+    "Stage 1 - CNN (MobileNetV2)": 0.35,
+    "Stage 1.5 - SCL (BLIP-VQA)": 5.5,
+    "Stage 2/3 - VLM (BLIP-VQA)": 8.2,
+    "Stage 4 - Synthesis (NLP)": 0.75,
+    "Total (End-to-End)": 15.1
+  },
+  "extraction_date": "2026-03-14"
+}

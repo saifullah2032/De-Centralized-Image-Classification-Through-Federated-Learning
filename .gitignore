@@ -70,3 +70,17 @@ data/
 *.csv
 *.json
 !models/model_history.json
+
+# OpenCode
+.opencode/
+.ruff_cache/
+
+# Test datasets and images
+test_images/
+dataset/
+
+# Design documentation
+design-system/
+
+# Database
+app.db
